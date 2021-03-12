@@ -79,6 +79,19 @@ def format_names(names):
     for nm in sorted(names):
         yield '      \"%s\",' % (nm)
 
+def format_orders(orders):
+    template_str = """   if(order == BigInt("%s"))\n      return OID{%s};\n""";
+
+    orders_seen = set([])
+
+    for (order,oid) in orders:
+        order = format_int(order)
+        if order in orders_seen:
+            raise Exception("Duplicate EC group order %s" % (order))
+        orders_seen.add(order)
+        oid = oid[0].replace('.', ',')
+        yield template_str % (order, oid)
+
 def main(args = None):
     if args is None:
         args = sys.argv
@@ -88,11 +101,12 @@ def main(args = None):
     template_str = open('./src/build-data/ec_named.cpp.in').read()
 
     names = "\n".join(format_names([c['Name'] for c in curves]))
+    orders = "\n".join(format_orders([(c['N'], c['OID']) for c in curves]))
     curves = '\n'.join([print_curve(curve) for curve in curves])
     this_script = sys.argv[0]
     today = datetime.date.today().strftime("%Y-%m-%d")
 
-    print(template_str % (this_script, today, curves, names))
+    print(template_str % (this_script, today, curves, orders, names))
 
 if __name__ == '__main__':
     sys.exit(main())
