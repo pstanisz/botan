@@ -82,7 +82,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @param label_len size of label in bytes
       * @return the derived key
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    const uint8_t secret[], size_t secret_len,
                    const uint8_t salt[], size_t salt_len,
@@ -101,7 +101,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    std::span<const uint8_t> secret,
                    std::string_view salt = "",
@@ -123,7 +123,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    std::span<const uint8_t> secret,
                    std::span<const uint8_t> salt,
@@ -144,7 +144,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    std::span<const uint8_t> secret,
                    const uint8_t salt[], size_t salt_len,
@@ -166,7 +166,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    const uint8_t secret[], size_t secret_len,
                    std::string_view salt = "",

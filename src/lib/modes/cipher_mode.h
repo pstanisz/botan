@@ -140,7 +140,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param buffer in/out parameter which will possibly be resized
       * @param offset an offset into blocks to begin processing
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void update(T& buffer, size_t offset = 0)
          {
          BOTAN_ASSERT(buffer.size() >= offset, "Offset ok");
@@ -170,7 +170,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       *        minimum_final_size() bytes, and will be set to any final output
       * @param offset an offset into final_block to begin processing
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void finish(T& final_block, size_t offset = 0)
          {
          Botan::secure_vector<uint8_t> tmp(final_block.begin(), final_block.end());

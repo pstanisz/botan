@@ -82,8 +82,8 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * Incorporate some additional data into the RNG state.
       */
       template<typename T> void add_entropy_T(const T& t)
-         requires std::is_standard_layout<T>::value && std::is_trivial<T>::value
          {
+         static_assert(std::is_standard_layout<T>::value && std::is_trivial<T>::value, "add_entropy_T data must be POD");
          this->add_entropy(reinterpret_cast<const uint8_t*>(&t), sizeof(T));
          }
 
@@ -186,7 +186,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param  bytes number of random bytes to initialize the container with
       * @throws Exception if RNG or memory allocation fails
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void random_vec(T& v, size_t bytes)
          {
          v.resize(bytes);
@@ -201,8 +201,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @return       a container of type T with @p bytes random bytes
       * @throws Exception if RNG or memory allocation fails
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
-      requires concepts::default_initializable<T>
+      template<typename T = secure_vector<uint8_t>, typename = std::enable_if_t<concepts::is_resizable_byte_buffer_v<T> && concepts::is_default_initializable_v<T>>>
       T random_vec(size_t bytes)
          {
          T result;

@@ -100,7 +100,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       *
       * @param bytes The number of bytes to be produced
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = Botan::concepts::resizable_byte_buffer<T>>
       T keystream_bytes(size_t bytes)
          {
          T out(bytes);

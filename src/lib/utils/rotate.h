@@ -19,8 +19,8 @@ namespace Botan {
 */
 template<size_t ROT, typename T>
 inline constexpr T rotl(T input)
-   requires (ROT > 0 && ROT < 8*sizeof(T))
    {
+   static_assert(ROT > 0 && ROT < 8*sizeof(T), "Invalid rotation constant");
    return static_cast<T>((input << ROT) | (input >> (8*sizeof(T) - ROT)));
    }
 
@@ -31,8 +31,8 @@ inline constexpr T rotl(T input)
 */
 template<size_t ROT, typename T>
 inline constexpr T rotr(T input)
-   requires (ROT > 0 && ROT < 8*sizeof(T))
    {
+   static_assert(ROT > 0 && ROT < 8*sizeof(T), "Invalid rotation constant");
    return static_cast<T>((input >> ROT) | (input << (8*sizeof(T) - ROT)));
    }
 
