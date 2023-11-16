@@ -39,15 +39,15 @@ class Strong_Base
       const T& get() const { return m_value; }
    };
 
-template <typename T>
+template <typename T, typename = void>
 class Strong_Adapter : public Strong_Base<T>
    {
    public:
       using Strong_Base<T>::Strong_Base;
    };
 
-template <concepts::container T>
-class Strong_Adapter<T> : public Strong_Base<T>
+template <typename T>
+class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public Strong_Base<T>
    {
    public:
       using value_type = typename T::value_type;
@@ -61,19 +61,22 @@ class Strong_Adapter<T> : public Strong_Base<T>
       using Strong_Base<T>::Strong_Base;
 
       explicit Strong_Adapter(std::span<const value_type> span)
-      requires(concepts::contiguous_container<T>)
-         : Strong_Adapter(T(span.begin(), span.end())) {}
+         : Strong_Adapter(T(span.begin(), span.end())) {
+            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
+         }
 
       explicit Strong_Adapter(size_t size)
-      requires(concepts::resizable_container<T>)
-         : Strong_Adapter(T(size)) {}
+         : Strong_Adapter(T(size)) {
+            static_assert(concepts::is_resizable_container_v<T>, "resizable_container required");
+         }
 
       // Disambiguates the usage of string literals, otherwise:
       // Strong_Adapter(std::span<>) and Strong_Adapter(const char*)
       // would be ambiguous.
       explicit Strong_Adapter(const char* str)
-      requires(std::same_as<T, std::string>)
-         : Strong_Adapter(std::string(str)) {}
+         : Strong_Adapter(std::string(str)) {
+            static_assert(concepts::same_as_v<T, std::string>, "type same as std::string required");
+         }
 
    public:
       decltype(auto) begin() noexcept(noexcept(this->get().begin()))
@@ -104,20 +107,28 @@ class Strong_Adapter<T> : public Strong_Base<T>
          { return this->get().size(); }
 
       decltype(auto) data() noexcept(noexcept(this->get().data()))
-      requires(concepts::contiguous_container<T>)
-         { return this->get().data(); }
+         { 
+            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
+            return this->get().data();
+         }
 
       decltype(auto) data() const noexcept(noexcept(this->get().data()))
-      requires(concepts::contiguous_container<T>)
-         { return this->get().data(); }
+         { 
+            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
+            return this->get().data();
+         }
 
       bool empty() const noexcept(noexcept(this->get().empty()))
-      requires(concepts::has_empty<T>)
-         { return this->get().empty(); }
+         { 
+             static_assert(concepts::has_empty_method_v<T>, "has_empty required");
+             return this->get().empty();
+         }
 
       void resize(size_type size) noexcept(noexcept(this->get().resize(size)))
-      requires(concepts::resizable_container<T>)
-         { this->get().resize(size); }
+         { 
+            static_assert(concepts::is_resizable_container_v<T>, "resizable_container required");
+            this->get().resize(size);
+         }
    };
 
 }
@@ -143,20 +154,30 @@ class Strong : public detail::Strong_Adapter<T>
       using Tag = TagTypeT;
    };
 
-template<typename T, typename... Tags>
-requires(concepts::streamable<T>)
+template<typename T, typename... Tags, typename = concepts::streamable<T>>
 decltype(auto) operator<<(std::ostream& os, const Strong<T, Tags...>& v)
-   { return os << v.get(); }
+   { 
+      return os << v.get();
+   }
 
-template<typename T, typename... Tags>
-requires(concepts::equality_comparable<T>)
+template<typename T, typename... Tags, typename = concepts::equality_comparable<T>>
 bool operator==(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
-   { return lhs.get() == rhs.get(); }
+   { 
+      return lhs.get() == rhs.get();
+   }
 
-template<typename T, typename... Tags>
-requires(concepts::three_way_comparable<T>)
-auto operator<=>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
-   { return lhs.get() <=> rhs.get(); }
+// template<typename T, typename... Tags>
+// requires(concepts::three_way_comparable<T>)
+// auto operator<=>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
+//    { return lhs.get() <=> rhs.get(); }
+
+template<typename T, typename... Tags, typename = concepts::less_comparable<T>>
+auto operator<(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
+   { return lhs.get() < rhs.get(); }
+
+template<typename T, typename... Tags, typename = concepts::greater_comparable<T>>
+auto operator>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
+   { return lhs.get() > rhs.get(); }
 
 }
 

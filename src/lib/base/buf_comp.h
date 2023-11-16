@@ -80,7 +80,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * final result as a container of your choice.
       * @return a contiguous container holding the result
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T final()
          {
          T output(output_length());
@@ -99,7 +99,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
          final_result(out.data());
          }
 
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void final(T& out)
          {
          out.resize(output_length());
@@ -113,7 +113,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * @param length the length of the byte array
       * @result the result of the call to final()
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T process(const uint8_t in[], size_t length)
          {
          update(in, length);
@@ -126,7 +126,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * @param in the input to process as a string
       * @result the result of the call to final()
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T process(std::string_view in)
          {
          update(in);
@@ -139,7 +139,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * @param in the input to process as a contiguous container
       * @result the result of the call to final()
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T process(std::span<const uint8_t> in)
          {
          update(in);
