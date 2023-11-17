@@ -60,23 +60,20 @@ class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public 
    public:
       using Strong_Base<T>::Strong_Base;
 
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
       explicit Strong_Adapter(std::span<const value_type> span)
-         : Strong_Adapter(T(span.begin(), span.end())) {
-            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
-         }
+         : Strong_Adapter(T(span.begin(), span.end())) {}
 
+      template <typename U = T, typename = std::enable_if_t<concepts::is_resizable_container_v<U>>>
       explicit Strong_Adapter(size_t size)
-         : Strong_Adapter(T(size)) {
-            static_assert(concepts::is_resizable_container_v<T>, "resizable_container required");
-         }
+         : Strong_Adapter(T(size)) {}
 
       // Disambiguates the usage of string literals, otherwise:
       // Strong_Adapter(std::span<>) and Strong_Adapter(const char*)
       // would be ambiguous.
+      template <typename U = T, typename = std::enable_if_t<concepts::same_as_v<U, std::string>>>
       explicit Strong_Adapter(const char* str)
-         : Strong_Adapter(std::string(str)) {
-            static_assert(concepts::same_as_v<T, std::string>, "type same as std::string required");
-         }
+         : Strong_Adapter(std::string(str)) {}
 
    public:
       decltype(auto) begin() noexcept(noexcept(this->get().begin()))
@@ -106,29 +103,21 @@ class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public 
       size_type size() const noexcept(noexcept(this->get().size()))
          { return this->get().size(); }
 
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
       decltype(auto) data() noexcept(noexcept(this->get().data()))
-         { 
-            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
-            return this->get().data();
-         }
+         { return this->get().data(); }
 
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
       decltype(auto) data() const noexcept(noexcept(this->get().data()))
-         { 
-            static_assert(concepts::is_contiguous_container_v<T>, "contiguous_container required");
-            return this->get().data();
-         }
+         { return this->get().data(); }
 
+      template <typename U = T, typename = std::enable_if_t<concepts::has_empty_method_v<U>>>
       bool empty() const noexcept(noexcept(this->get().empty()))
-         { 
-             static_assert(concepts::has_empty_method_v<T>, "has_empty required");
-             return this->get().empty();
-         }
+         { return this->get().empty(); }
 
+      template <typename U = T, typename = std::enable_if_t<concepts::is_resizable_container_v<U>>>
       void resize(size_type size) noexcept(noexcept(this->get().resize(size)))
-         { 
-            static_assert(concepts::is_resizable_container_v<T>, "resizable_container required");
-            this->get().resize(size);
-         }
+         { this->get().resize(size); }
    };
 
 }
