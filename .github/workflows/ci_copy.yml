@@ -13,9 +13,9 @@ permissions:
 
 on:
   push:
-    branches: [ 3.0.0_nocpncepts ]
+    branches: [ 3.0.0_noconcepts ]
   pull_request:
-    branches: [ 3.0.0_nocpncepts ]
+    branches: [ 3.0.0_noconcepts ]
 
 # cancel running workflows when new commits are being pushed in pull requests
 # but not on the master branch
