@@ -162,13 +162,13 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks
          m_timestamp(from_milliseconds_since_epoch(timestamp))
          {}
 
-      void tls_emit_data(std::span<const uint8_t> data) override
+      void tls_emit_data(Botan::span<const uint8_t> data) override
          {
          count_callback_invocation("tls_emit_data");
          send_buffer.insert(send_buffer.end(), data.begin(), data.end());
          }
 
-      void tls_record_received(uint64_t seq_no, std::span<const uint8_t> data) override
+      void tls_record_received(uint64_t seq_no, Botan::span<const uint8_t> data) override
          {
          count_callback_invocation("tls_record_received");
          received_seq_no = seq_no;

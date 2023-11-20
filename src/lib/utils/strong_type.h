@@ -2,6 +2,7 @@
  * A wrapper class to implement strong types
  * (C) 2022 Jack Lloyd
  *     2022 René Meusel - Rohde & Schwarz Cybersecurity
+ *     2023 Piotr Staniszewski - CodeVision
  *
  * Botan is released under the Simplified BSD License (see license.txt)
  */
@@ -10,7 +11,7 @@
 #define BOTAN_STRONG_TYPE_H_
 
 #include <ostream>
-#include <span>
+#include <botan/span.h>
 
 #include <botan/concepts.h>
 
@@ -61,7 +62,7 @@ class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public 
       using Strong_Base<T>::Strong_Base;
 
       template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
-      explicit Strong_Adapter(std::span<const value_type> span)
+      explicit Strong_Adapter(Botan::span<const value_type> span)
          : Strong_Adapter(T(span.begin(), span.end())) {}
 
       template <typename U = T, typename = std::enable_if_t<concepts::is_resizable_container_v<U>>>
@@ -69,7 +70,7 @@ class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public 
          : Strong_Adapter(T(size)) {}
 
       // Disambiguates the usage of string literals, otherwise:
-      // Strong_Adapter(std::span<>) and Strong_Adapter(const char*)
+      // Strong_Adapter(Botan::span<>) and Strong_Adapter(const char*)
       // would be ambiguous.
       template <typename U = T, typename = std::enable_if_t<concepts::same_as_v<U, std::string>>>
       explicit Strong_Adapter(const char* str)

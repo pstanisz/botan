@@ -67,9 +67,9 @@ class Empty_Credentials_Manager : public Botan::Credentials_Manager {};
 class Session_Manager_Callbacks : public Botan::TLS::Callbacks
    {
    public:
-      void tls_emit_data(std::span<const uint8_t>) override
+      void tls_emit_data(Botan::span<const uint8_t>) override
          { BOTAN_ASSERT_NOMSG(false); }
-      void tls_record_received(uint64_t, std::span<const uint8_t>) override
+      void tls_record_received(uint64_t, Botan::span<const uint8_t>) override
          { BOTAN_ASSERT_NOMSG(false); }
       void tls_alert(Botan::TLS::Alert) override
          { BOTAN_ASSERT_NOMSG(false); }
@@ -409,7 +409,7 @@ std::vector<Test::Result> test_session_manager_choose_ticket()
          );
       };
 
-   auto ticket = [&](std::span<const uint8_t> identity)
+   auto ticket = [&](Botan::span<const uint8_t> identity)
       {
       return Botan::TLS::Ticket(Botan::TLS::Opaque_Session_Handle(identity), 0);
       };

@@ -360,12 +360,12 @@ class TLS_Handshake_Test final
                   }
                }
 
-            void tls_emit_data(std::span<const uint8_t> bits) override
+            void tls_emit_data(Botan::span<const uint8_t> bits) override
                {
                m_outbound.insert(m_outbound.end(), bits.begin(), bits.end());
                }
 
-            void tls_record_received(uint64_t /*seq*/, std::span<const uint8_t> bits) override
+            void tls_record_received(uint64_t /*seq*/, Botan::span<const uint8_t> bits) override
                {
                m_recv.insert(m_recv.end(), bits.begin(), bits.end());
                }
@@ -1114,12 +1114,12 @@ class DTLS_Reconnection_Test : public Test
                   m_recv(recv_buf)
                   {}
 
-               void tls_emit_data(std::span<const uint8_t> bits) override
+               void tls_emit_data(Botan::span<const uint8_t> bits) override
                   {
                   m_outbound.insert(m_outbound.end(), bits.begin(), bits.end());
                   }
 
-               void tls_record_received(uint64_t /*seq*/, std::span<const uint8_t> bits) override
+               void tls_record_received(uint64_t /*seq*/, Botan::span<const uint8_t> bits) override
                   {
                   m_recv.insert(m_recv.end(), bits.begin(), bits.end());
                   }

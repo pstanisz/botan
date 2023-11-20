@@ -91,7 +91,7 @@ size_t SIV_Mode::maximum_associated_data_inputs() const
    return block_size() * 8 - 2;
    }
 
-void SIV_Mode::set_associated_data_n(size_t n, std::span<const uint8_t> ad)
+void SIV_Mode::set_associated_data_n(size_t n, Botan::span<const uint8_t> ad)
    {
    const size_t max_ads = maximum_associated_data_inputs();
    if(n > max_ads)

@@ -50,7 +50,7 @@ class Testsuite_RNG final : public Botan::RandomNumberGenerator
          return true;
          }
 
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override
          {
          for(const auto byte : input)
             { mix(byte); }

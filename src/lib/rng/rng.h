@@ -17,7 +17,7 @@
 #include <type_traits>
 #include <chrono>
 #include <string>
-#include <span>
+#include <botan/span.h>
 #include <concepts>
 
 namespace Botan {
@@ -50,7 +50,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws PRNG_Unseeded if the RNG fails because it has not enough entropy
       * @throws Exception if the RNG fails
       */
-      void randomize(std::span<uint8_t> output)
+      void randomize(Botan::span<uint8_t> output)
          { this->fill_bytes_with_input(output, {}); }
       void randomize(uint8_t output[], size_t length)
          { this->randomize(std::span(output, length)); }
@@ -74,7 +74,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param input a byte array containing the entropy to be added
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void add_entropy(std::span<const uint8_t> input) { this->fill_bytes_with_input({}, input); }
+      void add_entropy(Botan::span<const uint8_t> input) { this->fill_bytes_with_input({}, input); }
       void add_entropy(const uint8_t input[], size_t length)
          { this->add_entropy(std::span(input, length)); }
 
@@ -103,7 +103,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws Exception if the RNG fails
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void randomize_with_input(std::span<uint8_t> output, std::span<const uint8_t> input)
+      void randomize_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
          { this->fill_bytes_with_input(output, input); }
       void randomize_with_input(uint8_t output[], size_t output_len,
                                 const uint8_t input[], size_t input_len)
@@ -123,7 +123,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws Exception if the RNG fails
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void randomize_with_ts_input(std::span<uint8_t> output);
+      void randomize_with_ts_input(Botan::span<uint8_t> output);
       void randomize_with_ts_input(uint8_t output[], size_t output_len)
          { this->randomize_with_ts_input(std::span(output, output_len)); }
 
@@ -175,7 +175,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param  v     the container to be filled with @p bytes random bytes
       * @throws Exception if RNG fails
       */
-      void random_vec(std::span<uint8_t> v)
+      void random_vec(Botan::span<uint8_t> v)
          { this->randomize(v); }
 
       /**
@@ -251,7 +251,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       *                the RNG's internal state. Implementations may choose to
       *                ignore the bytes in this buffer.
       */
-      virtual void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) = 0;
+      virtual void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) = 0;
    };
 
 /**
@@ -284,7 +284,7 @@ class BOTAN_PUBLIC_API(2,0) Null_RNG final : public RandomNumberGenerator
       std::string name() const override { return "Null_RNG"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          // throw if caller tries to obtain random bytes
          if(output.size() > 0)

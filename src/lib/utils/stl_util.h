@@ -14,7 +14,7 @@
 #include <string>
 #include <map>
 #include <set>
-#include <span>
+#include <botan/span.h>
 #include <tuple>
 
 #include <botan/secmem.h>
@@ -129,7 +129,7 @@ void map_remove_if(Pred pred, T& assoc)
 class BufferSlicer final
    {
    public:
-      BufferSlicer(std::span<const uint8_t> buffer) : m_remaining(buffer)
+      BufferSlicer(Botan::span<const uint8_t> buffer) : m_remaining(buffer)
          {}
 
       template <typename ContainerT>
@@ -142,7 +142,7 @@ class BufferSlicer final
       auto take_vector(const size_t count) { return take_as<std::vector<uint8_t>>(count); }
       auto take_secure_vector(const size_t count) { return take_as<secure_vector<uint8_t>>(count); }
 
-      std::span<const uint8_t> take(const size_t count)
+      Botan::span<const uint8_t> take(const size_t count)
          {
          BOTAN_STATE_CHECK(remaining() >= count);
          auto result = m_remaining.first(count);
@@ -150,7 +150,7 @@ class BufferSlicer final
          return result;
          }
 
-      void copy_into(std::span<uint8_t> sink)
+      void copy_into(Botan::span<uint8_t> sink)
          {
          const auto data = take(sink.size());
          std::copy(data.begin(), data.end(), sink.begin());
@@ -162,7 +162,7 @@ class BufferSlicer final
       bool empty() const { return m_remaining.empty(); }
 
    private:
-      std::span<const uint8_t> m_remaining;
+      Botan::span<const uint8_t> m_remaining;
    };
 
 /**

@@ -40,7 +40,7 @@ class BOTAN_PUBLIC_API(2,0) Curve25519_PublicKey : public virtual Public_Key
       * @param key_bits DER encoded public key bits
       */
       Curve25519_PublicKey(const AlgorithmIdentifier& alg_id,
-                           std::span<const uint8_t> key_bits);
+                           Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a Curve25519 Public Key.
@@ -74,7 +74,7 @@ class BOTAN_PUBLIC_API(2,0) Curve25519_PrivateKey final : public Curve25519_Publ
       * @param key_bits PKCS #8 structure
       */
       Curve25519_PrivateKey(const AlgorithmIdentifier& alg_id,
-                            std::span<const uint8_t> key_bits);
+                            Botan::span<const uint8_t> key_bits);
 
       /**
       * Generate a private key.

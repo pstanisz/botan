@@ -17,7 +17,7 @@
 
 namespace Botan {
 
-void RandomNumberGenerator::randomize_with_ts_input(std::span<uint8_t> output)
+void RandomNumberGenerator::randomize_with_ts_input(Botan::span<uint8_t> output)
    {
    if(this->accepts_input())
       {

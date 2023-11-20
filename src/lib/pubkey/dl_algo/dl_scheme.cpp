@@ -13,7 +13,7 @@ namespace Botan {
 
 namespace {
 
-BigInt decode_single_bigint(std::span<const uint8_t> key_bits)
+BigInt decode_single_bigint(Botan::span<const uint8_t> key_bits)
    {
    BigInt x;
    BER_Decoder(key_bits).decode(x);
@@ -49,7 +49,7 @@ DL_PublicKey::DL_PublicKey(const DL_Group& group,
    }
 
 DL_PublicKey::DL_PublicKey(const AlgorithmIdentifier& alg_id,
-                           std::span<const uint8_t> key_bits,
+                           Botan::span<const uint8_t> key_bits,
                            DL_Group_Format format) :
    m_group(alg_id.parameters(), format),
    m_public_key(decode_single_bigint(key_bits))
@@ -103,7 +103,7 @@ DL_PrivateKey::DL_PrivateKey(const DL_Group& group,
    }
 
 DL_PrivateKey::DL_PrivateKey(const AlgorithmIdentifier& alg_id,
-                             std::span<const uint8_t> key_bits,
+                             Botan::span<const uint8_t> key_bits,
                              DL_Group_Format format) :
    m_group(alg_id.parameters(), format),
    m_private_key(check_dl_private_key_input(decode_single_bigint(key_bits), m_group)),

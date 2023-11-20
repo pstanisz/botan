@@ -9,7 +9,7 @@
 #define BOTAN_BASE64_CODEC_H_
 
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 
@@ -48,7 +48,7 @@ std::string BOTAN_PUBLIC_API(2,0) base64_encode(const uint8_t input[],
 * @param input some input
 * @return base64adecimal representation of input
 */
-inline std::string base64_encode(std::span<const uint8_t> input)
+inline std::string base64_encode(Botan::span<const uint8_t> input)
    {
    return base64_encode(input.data(), input.size());
    }
@@ -109,7 +109,7 @@ size_t BOTAN_PUBLIC_API(3,0) base64_decode(uint8_t output[],
                    exception if whitespace is encountered
 * @return number of bytes written to output
 */
-size_t BOTAN_PUBLIC_API(3,0) base64_decode(std::span<uint8_t> output,
+size_t BOTAN_PUBLIC_API(3,0) base64_decode(Botan::span<uint8_t> output,
                                            std::string_view input,
                                            bool ignore_ws = true);
 

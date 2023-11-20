@@ -86,7 +86,7 @@ size_t Client::downgrade()
       }
    }
 
-size_t Client::from_peer(std::span<const uint8_t> data)
+size_t Client::from_peer(Botan::span<const uint8_t> data)
    {
    auto read = m_impl->from_peer(data);
 
@@ -145,7 +145,7 @@ bool Client::secure_renegotiation_supported() const
    return m_impl->secure_renegotiation_supported();
    }
 
-void Client::to_peer(std::span<const uint8_t> data)
+void Client::to_peer(Botan::span<const uint8_t> data)
    {
    m_impl->to_peer(data);
    }

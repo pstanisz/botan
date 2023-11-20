@@ -87,7 +87,7 @@ class BOTAN_PUBLIC_API(2,0) TPM_RNG final : public Hardware_RNG
       bool is_seeded() const override { return true; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override
          {
          if(!input.empty())
             { m_ctx.stir_random(input.data(), input.size()); }

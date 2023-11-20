@@ -122,14 +122,14 @@ std::vector<Test::Result> test_container_strong_type()
          result.confirm("Test_Size is not resizable_container", !Botan::concepts::is_resizable_container_v<Test_Size>);
          }),
 
-      Botan_Tests::CHECK("binds to a std::span<>", [](auto& result)
+      Botan_Tests::CHECK("binds to a Botan::span<>", [](auto& result)
          {
-         auto get_size = [](std::span<const uint8_t> data)
+         auto get_size = [](Botan::span<const uint8_t> data)
             { return data.size(); };
 
          const auto nonce = Test_Nonce(Botan::hex_decode("DEADBEEF"));
 
-         result.test_is_eq("can bind to std::span<>", get_size(nonce), nonce.size());
+         result.test_is_eq("can bind to Botan::span<>", get_size(nonce), nonce.size());
          }),
 
       Botan_Tests::CHECK("std::string container", [](auto& result)

@@ -138,7 +138,7 @@ std::vector<uint8_t> TLS_CBC_HMAC_AEAD_Mode::assoc_data_with_len(uint16_t len)
    return ad;
    }
 
-void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    BOTAN_ARG_CHECK(idx == 0, "TLS 1.2 CBC/HMAC: cannot handle non-zero index in set_associated_data_n");
    if(ad.size() != 13)
@@ -146,7 +146,7 @@ void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, std::span<const u
    m_ad.assign(ad.begin(), ad.end());
    }
 
-void TLS_CBC_HMAC_AEAD_Encryption::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void TLS_CBC_HMAC_AEAD_Encryption::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(idx, ad);
 

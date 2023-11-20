@@ -43,7 +43,7 @@ class Callbacks : public Botan::TLS::Callbacks
 
       std::ostream& output();
       bool flag_set(const std::string& flag_name) const;
-      void send(std::span<const uint8_t> buffer);
+      void send(Botan::span<const uint8_t> buffer);
 
       void tls_verify_cert_chain(
          const std::vector<Botan::X509_Certificate>& cert_chain,
@@ -119,7 +119,7 @@ class Callbacks : public Botan::TLS::Callbacks
             }
          }
 
-      void tls_emit_data(std::span<const uint8_t> buf) override
+      void tls_emit_data(Botan::span<const uint8_t> buf) override
          {
          if(flag_set("debug"))
             {
@@ -134,7 +134,7 @@ class Callbacks : public Botan::TLS::Callbacks
          output() << "Alert: " << alert.type_string() << "\n";
          }
 
-      void tls_record_received(uint64_t /*seq_no*/, std::span<const uint8_t> buf) override
+      void tls_record_received(uint64_t /*seq_no*/, Botan::span<const uint8_t> buf) override
          {
          for(const auto c : buf)
             {
@@ -370,7 +370,7 @@ class TLS_Client final : public Command
       using Command::output;
       using Command::flag_set;
 
-      void send(std::span<const uint8_t> buf) const
+      void send(Botan::span<const uint8_t> buf) const
          {
          while(!buf.empty())
             {
@@ -461,7 +461,7 @@ bool Callbacks::flag_set(const std::string& flag_name) const
    return m_client_command.flag_set(flag_name);
    }
 
-void Callbacks::send(std::span<const uint8_t> buffer)
+void Callbacks::send(Botan::span<const uint8_t> buffer)
    {
    m_client_command.send(buffer);
    }

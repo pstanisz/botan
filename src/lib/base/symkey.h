@@ -10,7 +10,7 @@
 
 #include <botan/secmem.h>
 #include <string>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -90,7 +90,7 @@ class BOTAN_PUBLIC_API(2,0) OctetString final
       * Create a new OctetString
       * @param in a bytestring
       */
-      explicit OctetString(std::span<const uint8_t> in) : m_data(in.begin(), in.end()) {}
+      explicit OctetString(Botan::span<const uint8_t> in) : m_data(in.begin(), in.end()) {}
 
       /**
       * Create a new OctetString

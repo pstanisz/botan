@@ -57,7 +57,7 @@ class Test_Buf_Comp final : public Botan::Buffered_Computation
       size_t m_counter;
    };
 
-void check(Test::Result& result, std::span<const uint8_t> produced, size_t expected)
+void check(Test::Result& result, Botan::span<const uint8_t> produced, size_t expected)
    {
    const uint8_t* eptr = reinterpret_cast<const uint8_t*>(&expected);
    result.confirm("result is correct", Botan::same_mem(produced.data(), eptr, sizeof(size_t)));

@@ -69,7 +69,7 @@ Channel_Impl_13::Channel_Impl_13(const std::shared_ptr<Callbacks>& callbacks,
 
 Channel_Impl_13::~Channel_Impl_13() = default;
 
-size_t Channel_Impl_13::from_peer(std::span<const uint8_t> data)
+size_t Channel_Impl_13::from_peer(Botan::span<const uint8_t> data)
    {
    BOTAN_STATE_CHECK(!is_downgrading());
 
@@ -289,7 +289,7 @@ void Channel_Impl_13::send_dummy_change_cipher_spec()
    send_record(Record_Type::ChangeCipherSpec, {0x01});
    }
 
-void Channel_Impl_13::to_peer(std::span<const uint8_t> data)
+void Channel_Impl_13::to_peer(Botan::span<const uint8_t> data)
    {
    if(!is_active())
       { throw Invalid_State("Data cannot be sent on inactive TLS connection"); }

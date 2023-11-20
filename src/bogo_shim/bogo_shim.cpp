@@ -1368,7 +1368,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
 
       bool saw_close_notify() const { return m_got_close; }
 
-      void tls_emit_data(std::span<const uint8_t> data) override
+      void tls_emit_data(Botan::span<const uint8_t> data) override
          {
          shim_log("sending record of len " + std::to_string(data.size()));
 
@@ -1414,7 +1414,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
           return {};
           }
 
-      void tls_record_received(uint64_t /*seq_no*/, std::span<const uint8_t> data) override
+      void tls_record_received(uint64_t /*seq_no*/, Botan::span<const uint8_t> data) override
          {
          if(data.empty())
             {

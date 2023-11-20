@@ -11,7 +11,7 @@
 #include <botan/concepts.h>
 #include <botan/secmem.h>
 #include <string_view>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -38,7 +38,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * Add new input to process.
       * @param in the input to process as a contiguous data range
       */
-      void update(std::span<const uint8_t> in)
+      void update(Botan::span<const uint8_t> in)
          {
          add_data(in.data(), in.size());
          }
@@ -93,7 +93,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
          return final<std::vector<uint8_t>>();
          }
 
-      void final(std::span<uint8_t> out)
+      void final(Botan::span<uint8_t> out)
          {
          BOTAN_ASSERT_NOMSG(out.size() >= output_length());
          final_result(out.data());
@@ -140,7 +140,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * @result the result of the call to final()
       */
       template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
-      T process(std::span<const uint8_t> in)
+      T process(Botan::span<const uint8_t> in)
          {
          update(in);
          return final<T>();

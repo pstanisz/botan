@@ -17,7 +17,7 @@
 
 #include <botan/tls_exceptn.h>
 
-#include <span>
+#include <botan/span.h>
 
 namespace Botan::TLS {
 
@@ -52,7 +52,7 @@ New_Session_Ticket_12::New_Session_Ticket_12(const std::vector<uint8_t>& buf)
 namespace {
 
 template <typename lifetime_t = uint32_t>
-void store_lifetime(std::span<uint8_t> sink, std::chrono::seconds lifetime)
+void store_lifetime(Botan::span<uint8_t> sink, std::chrono::seconds lifetime)
    {
    BOTAN_ARG_CHECK(lifetime.count() >= 0 && lifetime.count() <= std::numeric_limits<lifetime_t>::max(),
                    "Ticket lifetime is out of range");

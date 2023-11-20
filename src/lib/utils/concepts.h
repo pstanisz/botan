@@ -2,6 +2,7 @@
  * Useful concepts that are available throughout the library
  * (C) 2023 Jack Lloyd
  *     2023 René Meusel - Rohde & Schwarz Cybersecurity
+ *     2023 Piotr Staniszewski - CodeVision
  *
  * Botan is released under the Simplified BSD License (see license.txt)
  */

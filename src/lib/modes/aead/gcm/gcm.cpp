@@ -97,7 +97,7 @@ void GCM_Mode::key_schedule(const uint8_t key[], size_t keylen)
    m_ghash->set_key(H);
    }
 
-void GCM_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void GCM_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    BOTAN_ARG_CHECK(idx == 0, "GCM: cannot handle non-zero index in set_associated_data_n");
    m_ghash->set_associated_data(ad.data(), ad.size());

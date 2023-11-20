@@ -13,7 +13,7 @@
 
 namespace {
 
-Botan::TLS::Handshake_Layer prepare(std::span<const uint8_t> data)
+Botan::TLS::Handshake_Layer prepare(Botan::span<const uint8_t> data)
    {
    Botan::TLS::Handshake_Layer hl(Botan::TLS::Connection_Side::Client);
    hl.copy_data(data);

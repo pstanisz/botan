@@ -55,7 +55,7 @@ Server::Server(const std::shared_ptr<Callbacks>& callbacks,
 
 Server::~Server() = default;
 
-size_t Server::from_peer(std::span<const uint8_t> data)
+size_t Server::from_peer(Botan::span<const uint8_t> data)
    {
    auto read = m_impl->from_peer(data);
 
@@ -128,7 +128,7 @@ bool Server::secure_renegotiation_supported() const
    return m_impl->secure_renegotiation_supported();
    }
 
-void Server::to_peer(std::span<const uint8_t> data)
+void Server::to_peer(Botan::span<const uint8_t> data)
    {
    m_impl->to_peer(data);
    }

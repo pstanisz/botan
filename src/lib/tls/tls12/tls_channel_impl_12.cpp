@@ -272,7 +272,7 @@ void Channel_Impl_12::activate_session()
    callbacks().tls_session_activated();
    }
 
-size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
+size_t Channel_Impl_12::from_peer(Botan::span<const uint8_t> data)
    {
    const bool allow_epoch0_restart = m_is_datagram && m_is_server && policy().allow_dtls_epoch0_restart();
 
@@ -578,7 +578,7 @@ void Channel_Impl_12::send_record_under_epoch(uint16_t epoch, Record_Type record
    send_record_array(epoch, record_type, record.data(), record.size());
    }
 
-void Channel_Impl_12::to_peer(std::span<const uint8_t> data)
+void Channel_Impl_12::to_peer(Botan::span<const uint8_t> data)
    {
    if(!is_active())
       throw Invalid_State("Data cannot be sent on inactive TLS connection");

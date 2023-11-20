@@ -135,7 +135,7 @@ void RSA_PublicKey::init(BigInt&& n, BigInt&& e)
    }
 
 RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/,
-                             std::span<const uint8_t> key_bits)
+                             Botan::span<const uint8_t> key_bits)
    {
    BigInt n, e;
    BER_Decoder(key_bits)
@@ -235,7 +235,7 @@ void RSA_PrivateKey::init(BigInt&& d, BigInt&& p, BigInt&& q,
    }
 
 RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/,
-                               std::span<const uint8_t> key_bits)
+                               Botan::span<const uint8_t> key_bits)
    {
    BigInt n, e, d, p, q, d1, d2, c;
 

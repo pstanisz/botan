@@ -118,7 +118,7 @@ size_t AutoSeeded_RNG::reseed(Entropy_Sources& srcs,
    return m_rng->reseed(srcs, poll_bits, poll_timeout);
    }
 
-void AutoSeeded_RNG::fill_bytes_with_input(std::span<uint8_t> out, std::span<const uint8_t> in)
+void AutoSeeded_RNG::fill_bytes_with_input(Botan::span<uint8_t> out, Botan::span<const uint8_t> in)
    {
    if(in.empty())
       { m_rng->randomize_with_ts_input(out); }

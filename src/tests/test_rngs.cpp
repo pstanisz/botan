@@ -24,7 +24,7 @@ void CTR_DRBG_AES256::clear()
    m_V1 = 0;
    }
 
-void CTR_DRBG_AES256::fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input)
+void CTR_DRBG_AES256::fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
    {
    if(!input.empty())
       {
@@ -57,13 +57,13 @@ void CTR_DRBG_AES256::fill_bytes_with_input(std::span<uint8_t> output, std::span
       }
    }
 
-CTR_DRBG_AES256::CTR_DRBG_AES256(std::span<const uint8_t> seed)
+CTR_DRBG_AES256::CTR_DRBG_AES256(Botan::span<const uint8_t> seed)
    {
    m_cipher = Botan::BlockCipher::create_or_throw("AES-256");
    add_entropy(seed);
    }
 
-void CTR_DRBG_AES256::incr_V_into(std::span<uint8_t> output)
+void CTR_DRBG_AES256::incr_V_into(Botan::span<uint8_t> output)
    {
    BOTAN_ASSERT_NOMSG(output.size() == 16);
 
@@ -74,11 +74,11 @@ void CTR_DRBG_AES256::incr_V_into(std::span<uint8_t> output)
    Botan::store_be<uint64_t>(output.data(), m_V0, m_V1);
    }
 
-void CTR_DRBG_AES256::update(std::span<const uint8_t> provided_data)
+void CTR_DRBG_AES256::update(Botan::span<const uint8_t> provided_data)
    {
    std::array<uint8_t, 3*16> temp = { 0 };
 
-   std::span<uint8_t> t(temp);
+   Botan::span<uint8_t> t(temp);
    for(size_t i = 0; i != 3; ++i)
       {
       incr_V_into(t.subspan(16*i, 16));

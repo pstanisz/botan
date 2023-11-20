@@ -29,7 +29,7 @@ class BOTAN_PUBLIC_API(2,0) BER_Decoder final
       /**
       * Set up to BER decode the data in buf of length len
       */
-      BER_Decoder(std::span<const uint8_t> buf) :
+      BER_Decoder(Botan::span<const uint8_t> buf) :
          BER_Decoder(buf.data(), buf.size()) {}
 
       /**

@@ -14,7 +14,7 @@
 #include <botan/exceptn.h>
 #include <string_view>
 #include <string>
-#include <span>
+#include <botan/span.h>
 #include <vector>
 
 namespace Botan {
@@ -87,7 +87,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * Begin processing a message with a fresh nonce.
       * @param nonce the per message nonce
       */
-      void start(std::span<const uint8_t> nonce)
+      void start(Botan::span<const uint8_t> nonce)
          {
          start_msg(nonce.data(), nonce.size());
          }
@@ -130,7 +130,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param msg the message to be processed
       * @return bytes written in-place
       */
-      size_t process(std::span<uint8_t> msg)
+      size_t process(Botan::span<uint8_t> msg)
          { return this->process_msg(msg.data(), msg.size()); }
       size_t process(uint8_t msg[], size_t msg_len)
          { return this->process_msg(msg, msg_len); }

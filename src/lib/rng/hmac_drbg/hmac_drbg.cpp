@@ -140,7 +140,7 @@ std::string HMAC_DRBG::name() const
 * HMAC_DRBG generation
 * See NIST SP800-90A section 10.1.2.5
 */
-void HMAC_DRBG::generate_output(std::span<uint8_t> output, std::span<const uint8_t> input)
+void HMAC_DRBG::generate_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
    {
    BOTAN_ASSERT_NOMSG(!output.empty());
 
@@ -166,7 +166,7 @@ void HMAC_DRBG::generate_output(std::span<uint8_t> output, std::span<const uint8
 * Reset V and the mac key with new values
 * See NIST SP800-90A section 10.1.2.2
 */
-void HMAC_DRBG::update(std::span<const uint8_t> input)
+void HMAC_DRBG::update(Botan::span<const uint8_t> input)
    {
    secure_vector<uint8_t> T(m_V.size());
    m_mac->update(m_V);

@@ -36,9 +36,9 @@ two contexts.
 
   .. cpp:function:: template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>> \
       T derive_key(size_t key_len, \
-                   std::span<const uint8_t> secret, \
-                   std::span<const uint8_t> salt, \
-                   std::span<const uint8_t> label) const
+                   Botan::span<const uint8_t> secret, \
+                   Botan::span<const uint8_t> salt, \
+                   Botan::span<const uint8_t> label) const
 
       This version is parameterized to the output buffer type, so it can be used
       to return a ``std::vector``, a ``secure_vector``, or anything else

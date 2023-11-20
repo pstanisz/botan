@@ -21,7 +21,7 @@
 
 #include <array>
 #include <vector>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan::Dilithium {
 
@@ -693,7 +693,7 @@ class Polynomial
       *              - const uint8_t *a: byte array with bit-packed_t1 polynomial
       *           - const DilithiumModeConstants& mode: reference to dilihtium mode values
       **************************************************/
-      static Polynomial polyeta_unpack(std::span<const uint8_t> a, const DilithiumModeConstants& mode)
+      static Polynomial polyeta_unpack(Botan::span<const uint8_t> a, const DilithiumModeConstants& mode)
          {
          Polynomial r;
 
@@ -794,7 +794,7 @@ class Polynomial
       * Arguments:   - poly *r: pointer to output polynomial
       *              - const uint8_t *a: byte array with bit-packed_t1 polynomial
       **************************************************/
-      static Polynomial polyt0_unpack(std::span<const uint8_t> a)
+      static Polynomial polyt0_unpack(Botan::span<const uint8_t> a)
          {
          Polynomial r;
 
@@ -1456,7 +1456,7 @@ class PolynomialVector
          return packed_eta;
          }
 
-      static PolynomialVector unpack_eta(std::span<const uint8_t> buffer, size_t size,
+      static PolynomialVector unpack_eta(Botan::span<const uint8_t> buffer, size_t size,
                                          const DilithiumModeConstants& mode)
          {
          BOTAN_ARG_CHECK(buffer.size() == mode.polyeta_packedbytes() * size, "Invalid buffer size");
@@ -1479,7 +1479,7 @@ class PolynomialVector
          return packed_t0;
          }
 
-      static PolynomialVector unpack_t0(std::span<const uint8_t> buffer, const DilithiumModeConstants& mode)
+      static PolynomialVector unpack_t0(Botan::span<const uint8_t> buffer, const DilithiumModeConstants& mode)
          {
          BOTAN_ARG_CHECK(static_cast<int32_t>(buffer.size()) == DilithiumModeConstants::POLYT0_PACKEDBYTES * mode.k(), "Invalid buffer size");
 
@@ -1501,7 +1501,7 @@ class PolynomialVector
          return packed_t1;
          }
 
-      static PolynomialVector unpack_t1(std::span<const uint8_t> packed_t1, const DilithiumModeConstants& mode)
+      static PolynomialVector unpack_t1(Botan::span<const uint8_t> packed_t1, const DilithiumModeConstants& mode)
          {
          BOTAN_ARG_CHECK(static_cast<int32_t>(packed_t1.size()) == DilithiumModeConstants::POLYT1_PACKEDBYTES * mode.k(), "Invalid buffer size");
 

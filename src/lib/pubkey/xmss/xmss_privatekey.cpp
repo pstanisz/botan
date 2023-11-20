@@ -35,7 +35,7 @@ namespace Botan {
 namespace {
 
 // fall back to raw decoding for previous versions, which did not encode an OCTET STRING
-secure_vector<uint8_t> extract_raw_private_key(std::span<const uint8_t> key_bits,
+secure_vector<uint8_t> extract_raw_private_key(Botan::span<const uint8_t> key_bits,
                                                const XMSS_Parameters& xmss_params)
    {
    secure_vector<uint8_t> raw_key;
@@ -86,7 +86,7 @@ class XMSS_PrivateKey_Internal
 
       XMSS_PrivateKey_Internal(const XMSS_Parameters& xmss_params,
                                const XMSS_WOTS_Parameters& wots_params,
-                               std::span<const uint8_t> key_bits)
+                               Botan::span<const uint8_t> key_bits)
          : m_xmss_params(xmss_params)
          , m_wots_params(wots_params)
          , m_hash(m_xmss_params)
@@ -220,7 +220,7 @@ class XMSS_PrivateKey_Internal
       XMSS_Index_Registry& m_index_reg;
    };
 
-XMSS_PrivateKey::XMSS_PrivateKey(std::span<const uint8_t> key_bits)
+XMSS_PrivateKey::XMSS_PrivateKey(Botan::span<const uint8_t> key_bits)
    : XMSS_PublicKey(key_bits)
    , m_private(std::make_shared<XMSS_PrivateKey_Internal>(
          m_xmss_params, m_wots_params, key_bits)) {}

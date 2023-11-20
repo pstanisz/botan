@@ -602,7 +602,7 @@ class Stream
 
             virtual ~StreamCore() = default;
 
-            void tls_emit_data(std::span<const uint8_t> data) override
+            void tls_emit_data(Botan::span<const uint8_t> data) override
                {
                send_buffer.commit(
                   boost::asio::buffer_copy(
@@ -611,7 +611,7 @@ class Stream
                );
                }
 
-            void tls_record_received(uint64_t, std::span<const uint8_t> data) override
+            void tls_record_received(uint64_t, Botan::span<const uint8_t> data) override
                {
                receive_buffer.commit(
                   boost::asio::buffer_copy(

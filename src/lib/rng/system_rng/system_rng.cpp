@@ -58,7 +58,7 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "RtlGenRandom"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          const size_t limit = std::numeric_limits<ULONG>::max();
 
@@ -119,7 +119,7 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "crypto_ng"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          /*
          There is a flag BCRYPT_RNG_USE_ENTROPY_IN_BUFFER to provide
@@ -161,7 +161,7 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "CCRandomGenerateBytes"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          if (::CCRandomGenerateBytes(output.data(), output.size()) != kCCSuccess)
             {
@@ -183,7 +183,7 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "arc4random"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          // macOS 10.15 arc4random crashes if called with buf == nullptr && len == 0
          // however it uses ccrng_generate internally which returns a status, ignored
@@ -208,7 +208,7 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "getrandom"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          const unsigned int flags = 0;
 
@@ -297,15 +297,15 @@ class System_RNG_Impl final : public RandomNumberGenerator
       std::string name() const override { return "urandom"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override;
-      void maybe_write_entropy(std::span<const uint8_t> input);
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override;
+      void maybe_write_entropy(Botan::span<const uint8_t> input);
 
    private:
       int m_fd;
       bool m_writable;
    };
 
-void System_RNG_Impl::fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input)
+void System_RNG_Impl::fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
    {
    maybe_write_entropy(input);
 
@@ -329,7 +329,7 @@ void System_RNG_Impl::fill_bytes_with_input(std::span<uint8_t> output, std::span
       }
    }
 
-void System_RNG_Impl::maybe_write_entropy(std::span<const uint8_t> entropy_input)
+void System_RNG_Impl::maybe_write_entropy(Botan::span<const uint8_t> entropy_input)
    {
    if(!m_writable || entropy_input.empty())
       return;

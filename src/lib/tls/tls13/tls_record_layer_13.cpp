@@ -166,13 +166,13 @@ Record_Layer::Record_Layer(Connection_Side side)
    , m_receiving_compat_mode(true) {}
 
 
-void Record_Layer::copy_data(std::span<const uint8_t> data)
+void Record_Layer::copy_data(Botan::span<const uint8_t> data)
    {
    m_read_buffer.insert(m_read_buffer.end(), data.begin(), data.end());
    }
 
 std::vector<uint8_t> Record_Layer::prepare_records(const Record_Type type,
-      std::span<const uint8_t> data,
+      Botan::span<const uint8_t> data,
       Cipher_State* cipher_state) const
    {
    // RFC 8446 5.

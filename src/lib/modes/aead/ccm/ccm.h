@@ -21,7 +21,7 @@ namespace Botan {
 class CCM_Mode : public AEAD_Mode
    {
    public:
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) override final;
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override final;
 
       bool associated_data_requires_key() const override final { return false; }
 

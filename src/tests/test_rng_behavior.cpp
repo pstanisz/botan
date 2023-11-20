@@ -644,7 +644,7 @@ std::vector<Test::Result> hmac_drbg_multiple_requests()
          rng1->randomize_with_input(bulk, seed);
 
          std::vector<uint8_t> split(3*rng_max_output);
-         std::span<uint8_t> split_span(split);
+         Botan::span<uint8_t> split_span(split);
          rng2->randomize_with_input(split_span.subspan(0, rng_max_output), seed);
          rng2->randomize_with_input(split_span.subspan(rng_max_output, rng_max_output), {});
          rng2->randomize_with_input(split_span.subspan(2*rng_max_output), {});

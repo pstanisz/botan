@@ -78,7 +78,7 @@ namespace {
 //
 // Finds the truncation offset in a serialization of Client Hello as defined in
 // RFC 8446 4.2.11.2 used for the calculation of PSK binder MACs.
-size_t find_client_hello_truncation_mark(std::span<const uint8_t> client_hello)
+size_t find_client_hello_truncation_mark(Botan::span<const uint8_t> client_hello)
    {
    TLS_Data_Reader reader("Client Hello Truncation", client_hello);
 
@@ -155,7 +155,7 @@ std::vector<uint8_t> read_hash_state(std::unique_ptr<HashFunction>& hash)
 
 }  // namespace
 
-void Transcript_Hash_State::update(std::span<const uint8_t> serialized_message_s)
+void Transcript_Hash_State::update(Botan::span<const uint8_t> serialized_message_s)
    {
    auto serialized_message = serialized_message_s.data();
    auto serialized_message_length = serialized_message_s.size();
