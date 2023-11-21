@@ -9,6 +9,9 @@
 #include <botan/span.h>
 #include <array>
 
+// TODO: remove
+#include <iostream>
+
 namespace Botan_Tests {
 
 namespace {
@@ -210,11 +213,151 @@ std::vector<Test::Result> test_observers()
       };
    }
 
+std::vector<Test::Result> test_subviews()
+   {
+   return
+      {
+      Botan_Tests::CHECK("first(0) from empty", [](auto& result)
+         {
+         Botan::span<int> s;
+         auto sub = s.first(0UL);
+
+         result.test_is_eq("first(0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("first(0) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.first(0UL);
+
+         result.test_is_eq("first(0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("first(1) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.first(1UL);
+
+         result.test_is_eq("first(1) gives one element span", sub.size(), size_t(1UL));
+         result.test_is_eq("first(1) gives first element", &(*sub.begin()), &ARRAY[0]);
+         }),
+      Botan_Tests::CHECK("first(SIZE) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.first(SIZE);
+
+         result.test_is_eq("first(SIZE) gives SIZE element span", sub.size(), size_t(SIZE));
+         }),
+      Botan_Tests::CHECK("last(0) from empty", [](auto& result)
+         {
+         Botan::span<int> s;
+         auto sub = s.last(0UL);
+
+         result.test_is_eq("last(0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("last(0) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.last(0UL);
+
+         result.test_is_eq("last(0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("last(1) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.last(1UL);
+
+         result.test_is_eq("last(1) gives one element span", sub.size(), size_t(1UL));
+         result.test_is_eq("last(1) gives last element", &(*(--sub.end())), &ARRAY[SIZE - 1]);
+         }),
+      Botan_Tests::CHECK("last(SIZE) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.last(SIZE);
+
+         result.test_is_eq("last(SIZE) gives SIZE element span", sub.size(), size_t(SIZE));
+         }),
+      Botan_Tests::CHECK("subspan(0, 0) from empty", [](auto& result)
+         {
+         Botan::span<int> s;
+         auto sub = s.subspan(0UL, 0UL);
+
+         result.test_is_eq("subspan(0, 0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("subspan(0, 0) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.subspan(0UL, 0UL);
+
+         result.test_is_eq("subspan(0, 0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("subspan(1, 0) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.subspan(1UL, 0UL);
+
+         result.test_is_eq("subspan(1, 0) gives empty span", sub.empty(), true);
+         }),
+      Botan_Tests::CHECK("subspan(1, 1) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.subspan(1UL, 1UL);
+
+         result.test_is_eq("subspan(1, 1) gives one element span", sub.size(), size_t(1UL));
+         result.test_is_eq("subspan(1, 1) starts from second element", &(*sub.begin()), &ARRAY[1]);
+         }),
+      Botan_Tests::CHECK("subspan(1, 4) from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto sub = s.subspan(1UL, 4UL);
+
+         result.test_is_eq("subspan(1, 4) gives 4 elements span", sub.size(), size_t(SIZE - 1UL));
+         result.test_is_eq("subspan(1, 4) starts from second element", &(*sub.begin()), &ARRAY[1]);
+         result.test_is_eq("subspan(1, 4) ends with last element", &(*(--sub.end())), &ARRAY[SIZE - 1UL]);
+         })
+      };
+   }
+
+std::vector<Test::Result> test_non_member()
+   {
+   return
+      {
+      Botan_Tests::CHECK("as_bytes() from empty", [](auto& result)
+         {
+         Botan::span<int> s;
+         auto const const_bytes = std::as_bytes(s);
+
+         result.test_is_eq("as_bytes() gives empty span", const_bytes.empty(), true);
+         }),
+      Botan_Tests::CHECK("as_writable_bytes() from empty", [](auto& result)
+         {
+         Botan::span<int> s;
+         auto bytes = std::as_bytes(s);
+
+         result.test_is_eq("as_writable_bytes() gives empty span", bytes.empty(), true);
+         }),
+      Botan_Tests::CHECK("as_bytes() from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto const const_bytes = std::as_bytes(s);
+
+         result.test_is_eq("as_bytes() gives sizeof(ARRAY) elements const span", const_bytes.size(), size_t(sizeof(ARRAY)));
+         }),
+      Botan_Tests::CHECK("as_writable_bytes() from non-empty", [](auto& result)
+         {
+         Botan::span<int> s(ARRAY);
+         auto bytes = std::as_writable_bytes(s);
+
+         result.test_is_eq("as_writable_bytes() gives sizeof(ARRAY) elements non-const span", bytes.size(), size_t(sizeof(ARRAY)));
+         }),
+      };
+   }
+
 BOTAN_REGISTER_TEST_FN("utils", "span", test_ctors,
                                         test_assignment_operator,
                                         test_iterators,
                                         test_element_access,
-                                        test_observers);
+                                        test_observers,
+                                        test_subviews,
+                                        test_non_member);
 }
 
 }
