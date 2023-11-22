@@ -26,7 +26,7 @@ void RandomNumberGenerator::randomize_with_ts_input(Botan::span<uint8_t> output)
       constexpr auto s_pid    = sizeof(decltype(OS::get_process_id()));
 
       std::array<uint8_t, s_hd_clk + s_sys_ts + s_pid> additional_input = {0};
-      auto s_additional_input = std::span(additional_input.begin(), additional_input.end());
+      auto s_additional_input = Botan::span(additional_input.begin(), additional_input.end());
 
       store_le(OS::get_high_resolution_clock(), s_additional_input.data());
       s_additional_input = s_additional_input.subspan(s_hd_clk);

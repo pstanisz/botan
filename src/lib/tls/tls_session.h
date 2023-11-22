@@ -378,7 +378,7 @@ class BOTAN_PUBLIC_API(3,0) Session final : public Session_Base
       static inline Session decrypt(const uint8_t ctext[],
                                     size_t ctext_size,
                                     const SymmetricKey& key)
-         { return Session::decrypt(std::span(ctext, ctext_size), key); }
+         { return Session::decrypt(Botan::span(ctext, ctext_size), key); }
 
       /**
       * Decrypt a session created by encrypt
