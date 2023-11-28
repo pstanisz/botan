@@ -8,12 +8,327 @@
 #ifndef BOTAN_SPAN_H_
 #define BOTAN_SPAN_H_
 
-#include <span>
+#include <cstddef>
+#include <limits>
+#include <array>
 
 namespace Botan {
 
-template <typename T, std::size_t Extent = std::dynamic_extent>
-using span = std::span<T, Extent>;
+// Non-member span constant
+inline constexpr std::size_t dynamic_extent = std::numeric_limits<std::size_t>::max();
+
+// Forward
+template <typename Type, std::size_t Extent = dynamic_extent>
+class span;
+
+namespace detail {
+
+template <typename T, typename U>
+struct is_span_convertible {
+    static constexpr bool value = std::is_convertible_v<T(*)[], U(*)[]>;
+};
+
+template <std::size_t E, std::size_t N>
+struct is_span_capacity {
+    static constexpr bool value = (E == dynamic_extent || E == N);
+};
+
+template <typename T, std::size_t E, typename U, std::size_t N>
+struct is_span_compatible {
+    static constexpr bool value = is_span_capacity<E, N>::value && is_span_convertible<U, T>::value;
+};
+
+template <std::size_t E, std::size_t N>
+struct is_span_implicit {
+    static constexpr bool value = (E == dynamic_extent || N != dynamic_extent);
+};
+
+template <typename T, std::size_t E, typename U, std::size_t N>
+struct is_span_copyable {
+    static constexpr bool value = (N == dynamic_extent || is_span_capacity<E, N>::value) && is_span_convertible<U, T>::value;
+};
+
+template <typename>
+struct is_span {
+    static constexpr bool value = false;
+};
+
+template <typename T, std::size_t E>
+struct is_span<span<T, E> > {
+    static constexpr bool value = true;
+};
+
+template <typename>
+struct is_std_array : std::false_type {};
+
+template <typename T, std::size_t N>
+struct is_std_array<std::array<T, N>> : std::true_type {};
+
+template <typename Container>
+constexpr auto size(const Container& c) -> decltype(c.size()) {
+    return c.size();
+}
+
+template <typename T, std::size_t N>
+constexpr std::size_t size(const T (&)[N]) noexcept {
+    return N;
+}
+
+template <typename Container>
+constexpr auto data(Container& c) -> decltype(c.data()) {
+    return c.data();
+}
+
+template <typename Container>
+constexpr auto data(const Container& c) -> decltype(c.data()) {
+    return c.data();
+}
+
+template <typename T, std::size_t N>
+constexpr T* data(T (&arr)[N]) noexcept {
+    return arr;
+}
+
+template <typename, typename = void>
+struct has_size : std::false_type {};
+
+template <typename T>
+struct has_size<T, std::void_t<decltype(Botan::detail::size(std::declval<T>()))>> : std::true_type {};
+
+template <typename, typename = void>
+struct has_data : std::false_type {};
+
+template <typename T>
+struct has_data<T, std::void_t<decltype(Botan::detail::data(std::declval<T>()))>> : std::true_type {};
+
+template <typename Container, typename U = std::remove_cvref_t<Container>>
+struct is_container {
+    static constexpr bool value = !is_span<U>::value && !is_std_array<U>::value &&
+        !std::is_array<U>::value && has_size<Container>::value && has_data<Container>::value;
+};
+
+template <typename, typename, typename = void>
+struct is_container_type_compatible : std::false_type {};
+
+template <typename T, typename E>
+struct is_container_type_compatible<T, E,
+    typename std::enable_if_t<!std::is_same_v<typename std::remove_cv_t<decltype(Botan::detail::data(std::declval<T>()))>, void> &&
+        std::is_convertible_v<std::remove_pointer_t<decltype(Botan::detail::data(std::declval<T>()))> (*)[], E (*)[]>>> : std::true_type {};
+
+} // detail
+
+
+// Span implementation according to https://en.cppreference.com/w/cpp/container/span
+template <typename Type, std::size_t Extent>
+class span {
+public:
+    // Member types
+    using element_type = Type;
+    using value_type = typename std::remove_cv_t<Type>;
+    using size_type = std::size_t;
+    using difference_type = std::ptrdiff_t;
+    using pointer = Type*;
+    using const_pointer = const Type*;
+    using reference = Type&;
+    using const_reference = const Type&;
+    using iterator = pointer;
+    using reverse_iterator = std::reverse_iterator<iterator>;
+
+    // Member constant
+    static constexpr std::size_t extent = Extent;
+
+    // Constructors
+    template <std::size_t N = Extent, 
+        typename std::enable_if_t<N == 0 || N == dynamic_extent, bool> = true>
+    constexpr span() noexcept : m_data(nullptr), m_size(0UL) {}
+
+    template <typename Iter_first,
+        typename std::enable_if_t<Extent == dynamic_extent && detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+    constexpr span(Iter_first* first, size_type count) noexcept : m_data(first), m_size(count) {}
+
+    template <typename Iter_first,
+        typename std::enable_if_t<Extent != dynamic_extent && detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+    explicit constexpr span(Iter_first* first, size_type count) noexcept : m_data(first), m_size(count) {}
+
+    template <typename Iter_first, typename Iter_last,
+        typename std::enable_if_t<Extent == dynamic_extent &&
+            detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+    constexpr span(Iter_first* first, Iter_last* last) noexcept : m_data(first), m_size(last - first) {}
+
+    template <typename Iter_first, typename Iter_last,
+        typename std::enable_if_t<Extent != dynamic_extent &&
+            detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+    explicit constexpr span(Iter_first* first, Iter_last* last) noexcept : m_data(first), m_size(last - first) {}
+    
+    template <std::size_t N,
+        typename std::enable_if_t<detail::is_span_capacity<Extent, N>::value, bool> = true>
+    constexpr span(typename std::enable_if_t<true, Type> (&arr)[N]) noexcept : m_data(arr), m_size(N) {}
+
+    template <typename U, std::size_t N,
+        typename std::enable_if_t<detail::is_span_compatible<Type, Extent, U, N>::value, bool> = true>
+    constexpr span(std::array<U, N>& arr) noexcept : m_data(arr.data()), m_size(N) {}
+
+    template <typename U, std::size_t N,
+        typename std::enable_if_t<detail::is_span_compatible<Type, Extent, const U, N>::value, bool> = true>
+    constexpr span(const std::array<U, N>& arr) noexcept : m_data(arr.data()), m_size(N) {}
+
+    // Instead of ranges
+    template <typename Container, std::size_t E = Extent,
+        typename std::enable_if_t<E == dynamic_extent && detail::is_container<Container>::value &&
+                detail::is_container_type_compatible<Container&, Type>::value, bool> = true>
+    constexpr span(Container& cont)
+        :  m_data(Botan::detail::data(cont)), m_size(Botan::detail::size(cont)) {}
+
+    template <typename Container, std::size_t E = Extent,
+        typename std::enable_if_t<E == dynamic_extent && detail::is_container<Container>::value &&
+                detail::is_container_type_compatible<Container&, Type>::value, bool> = true>
+    constexpr span(const Container& cont)
+        :  m_data(Botan::detail::data(cont)), m_size(Botan::detail::size(cont)) {}
+
+    // TODO: remove when not needed
+    // template <typename C, std::size_t E = Extent, std::enable_if_t<Botan::concepts::is_contiguous_container_v<C>>>
+    // constexpr span(C& c) noexcept : m_data(c.data()), m_size(c.size()) {}
+
+    // template <typename C, std::size_t E = Extent, std::enable_if_t<Botan::concepts::is_contiguous_container_v<C>>>
+    // constexpr span(const C& c) noexcept : m_data(c.data()), m_size(c.size()) {}
+
+    // template <typename U = std::remove_cvref_t<T>>
+    // constexpr span(const Botan::secure_vector<U>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    // template <typename U = std::remove_cvref_t<T>>
+    // constexpr span(Botan::secure_vector<U>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+    
+    // template <typename U = std::remove_const_t<T>>
+    // constexpr span(const std::vector<U>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    // template <typename U = std::remove_const_t<T>>
+    // constexpr span(std::vector<U>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    //  template <template <typename> typename C>
+    //  constexpr span(const C<T>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    // template <template <typename, typename> typename C, template <typename> typename Allocator, std::size_t E = Extent, typename U = std::remove_cvref_t<T>>
+    // constexpr span(const C<U, Allocator<U>>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    // template <template <typename, typename> typename C, template <typename> typename Allocator, std::size_t E = Extent, typename U = std::remove_cvref_t<T>>
+    // constexpr span(C<U, Allocator<U>>& vec) noexcept : m_data(vec.data()), m_size(vec.size()) {}
+
+    constexpr span(const span& other) noexcept = default;
+
+    template <typename U, std::size_t N,
+        typename std::enable_if_t<detail::is_span_implicit<Extent, N>::value &&
+            detail::is_span_copyable<Type, Extent, U, N>::value, bool> = true>
+    constexpr span(const span<U, N>& other) noexcept : m_data(other.data()), m_size(other.size()) {}
+
+    template <typename U, std::size_t N,
+        typename std::enable_if_t<!detail::is_span_implicit<Extent, N>::value &&
+            detail::is_span_copyable<Type, Extent, U, N>::value, bool> = true>
+    explicit constexpr span(const span<U, N>& other) noexcept : m_data(other.data()), m_size(other.size()) {}
+
+    constexpr span& operator=(const span& other) noexcept = default;
+
+    // Iterators
+    constexpr iterator begin() const noexcept { return data(); }
+    constexpr iterator end() const noexcept { return data() + size(); }
+    constexpr reverse_iterator rbegin() const noexcept { return reverse_iterator(end()); }
+    constexpr reverse_iterator rend() const noexcept { return reverse_iterator(begin()); }
+
+    // Element access
+    constexpr reference front() const { return *data(); }
+    constexpr reference back() const { return *(data() + (size() - 1)); }
+    constexpr reference operator[](size_type idx) const { return *(data() + idx); }
+    constexpr pointer data() const noexcept { return m_data; }
+    
+    // Observers
+    constexpr std::size_t size() const noexcept { return m_size; }
+    constexpr size_type size_bytes() const noexcept { return size() * sizeof(Type); }
+    constexpr bool empty() const noexcept { return (size() == 0); }
+    
+    // Subviews
+    template <std::size_t Count>
+    constexpr span<Type, Count> first() const { 
+        static_assert(Count <= Extent, "Count <= Extent");
+        return span<Type, Count>(data(), Count);
+    }
+
+    constexpr span<Type, dynamic_extent> first(size_type count) const { return span<Type, dynamic_extent>(data(), count); }
+
+    template <std::size_t Count>
+    constexpr span<Type, Count> last() const {
+        static_assert(Count <= Extent, "Count <= Extent");
+        return span<Type, Count>(data() + (size() - Count), Count); }
+    
+    constexpr span<Type, dynamic_extent> last(size_type count) const { return span<Type, dynamic_extent>(data() + (size() - count), count); }
+
+    template <std::size_t Offset, std::size_t Count = dynamic_extent>
+    constexpr typename std::enable_if_t<Count != dynamic_extent, span<Type, Count>> subspan() const {
+        static_assert(Offset <= Extent && Count <= Extent - Offset, "Offset <= Extent && Count <= Extent - Offset");
+        return span<Type, Count>(data() + Offset, Count);
+    }
+    
+    constexpr span<Type, dynamic_extent> subspan(size_type offset, size_type count = dynamic_extent) const {
+        return span<Type, dynamic_extent>(data() + offset, (count == dynamic_extent ? size() - offset : count));
+    }
+
+private:
+    element_type*   m_data;
+    size_type       m_size;
+};
+
+// Deduction guidelines as described in https://en.cppreference.com/w/cpp/container/span/deduction_guides
+// template <typename Type, typename N>
+// span(Type*, N) -> span<Type>;
+
+// template <typename Type, size_t N>
+// span(Type (&)[N]) -> span<Type, N>;
+
+// template <typename Type, size_t N>
+// span(std::array<Type, N>&) -> span<Type, N>;
+
+// template <typename Type, size_t N>
+// span(const std::array<Type, N>&) -> span<const Type, N>;
+
+// template <typename Container>
+// span(Container&) -> span<typename std::remove_reference_t<decltype(*Botan::detail::data(std::declval<Container&>()))>>;
+
+// template <typename Container>
+// span(const Container&) -> span<const typename Container::value_type>;
+
+template <typename Iter_first, typename End_or_size >
+span(Iter_first*, End_or_size) -> span<std::remove_reference_t<Iter_first>>;
+
+template <typename Type, std::size_t N>
+span(Type (&)[N] ) -> span<Type, N>;
+
+template <typename Type, std::size_t N>
+span(std::array<Type, N>&) -> span<Type, N>;
+
+template <typename Type, std::size_t N>
+span(const std::array<Type, N>&) -> span<const Type, N>;
+
+// Instead of ranges
+template <typename Container>
+span(Container&) -> span<typename std::remove_reference_t<decltype(*Botan::detail::data(std::declval<Container&>()))>>;
+
+template <typename Container>
+span(const Container&) -> span<const typename Container::value_type>;
+
+// Non-member span functions
+template <typename Type, std::size_t Extent>
+span<const std::byte, ((Extent == dynamic_extent) ? dynamic_extent : sizeof(Type) * Extent)> as_bytes(span<Type, Extent> s) noexcept {
+    return {reinterpret_cast<const std::byte*>(s.data()), s.size_bytes()};
+}
+
+template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const<Type>::value, bool> = true>
+span<std::byte, ((Extent == dynamic_extent) ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
+    return {reinterpret_cast<std::byte*>(s.data()), s.size_bytes()};
+}
+
+// TODO: remove when not needed
+// template <typename Type, std::size_t Extent = std::dynamic_extent>
+// using span = std::span<Type, Extent>;
+template <typename Type, std::size_t Extent = Botan::dynamic_extent>
+using span = Botan::span<Type, Extent>;
 
 }
 
