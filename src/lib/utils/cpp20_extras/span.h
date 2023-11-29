@@ -28,41 +28,66 @@ struct is_span_convertible {
     static constexpr bool value = std::is_convertible_v<T(*)[], U(*)[]>;
 };
 
+template <typename T, typename U>
+inline constexpr bool is_span_convertible_v = is_span_convertible<T, U>::value;
+
+template <std::size_t E>
+struct is_dynamic_extent {
+    static constexpr bool value = (E == dynamic_extent);
+};
+
+template <std::size_t E>
+inline constexpr bool is_dynamic_extent_v = is_dynamic_extent<E>::value;
+
 template <std::size_t E, std::size_t N>
 struct is_span_capacity {
-    static constexpr bool value = (E == dynamic_extent || E == N);
+    static constexpr bool value = (is_dynamic_extent_v<E> || E == N);
 };
+
+template <std::size_t E, std::size_t N>
+inline constexpr bool is_span_capacity_v = is_span_capacity<E, N>::value;
 
 template <typename T, std::size_t E, typename U, std::size_t N>
 struct is_span_compatible {
-    static constexpr bool value = is_span_capacity<E, N>::value && is_span_convertible<U, T>::value;
-};
-
-template <std::size_t E, std::size_t N>
-struct is_span_implicit {
-    static constexpr bool value = (E == dynamic_extent || N != dynamic_extent);
+    static constexpr bool value = is_span_capacity_v<E, N> && is_span_convertible_v<U, T>;
 };
 
 template <typename T, std::size_t E, typename U, std::size_t N>
-struct is_span_copyable {
-    static constexpr bool value = (N == dynamic_extent || is_span_capacity<E, N>::value) && is_span_convertible<U, T>::value;
+inline constexpr bool is_span_compatible_v = is_span_compatible<T, E, U, N>::value;
+
+template <std::size_t E, std::size_t N>
+struct is_span_explicit {
+    static constexpr bool value = (!is_dynamic_extent_v<E> && is_dynamic_extent_v<N>);
 };
+
+template <std::size_t E, std::size_t N>
+inline constexpr bool is_span_explicit_v = is_span_explicit<E, N>::value;
+
+template <typename T, std::size_t E, typename U, std::size_t N>
+struct is_span_copyable {
+    static constexpr bool value = (is_dynamic_extent_v<N> || is_span_capacity_v<E, N>) && is_span_convertible_v<U, T>;
+};
+
+template <typename T, std::size_t E, typename U, std::size_t N>
+inline constexpr bool is_span_copyable_v = is_span_copyable<T, E, U, N>::value;
 
 template <typename>
-struct is_span {
-    static constexpr bool value = false;
-};
+struct is_span : std::false_type {};
 
 template <typename T, std::size_t E>
-struct is_span<span<T, E> > {
-    static constexpr bool value = true;
-};
+struct is_span<span<T, E>> : std::true_type {};
+
+template <typename C>
+inline constexpr bool is_span_v = is_span<C>::value;
 
 template <typename>
 struct is_std_array : std::false_type {};
 
 template <typename T, std::size_t N>
 struct is_std_array<std::array<T, N>> : std::true_type {};
+
+template <typename C>
+inline constexpr bool is_std_array_v = is_std_array<C>::value;
 
 template <typename Container>
 constexpr auto size(const Container& c) -> decltype(c.size()) {
@@ -92,28 +117,39 @@ constexpr T* data(T (&arr)[N]) noexcept {
 template <typename, typename = void>
 struct has_size : std::false_type {};
 
-template <typename T>
-struct has_size<T, std::void_t<decltype(Botan::detail::size(std::declval<T>()))>> : std::true_type {};
+template <typename C>
+struct has_size<C, std::void_t<decltype(Botan::detail::size(std::declval<C>()))>> : std::true_type {};
+
+template <typename C>
+inline constexpr bool has_size_v = has_size<C>::value;
 
 template <typename, typename = void>
 struct has_data : std::false_type {};
 
-template <typename T>
-struct has_data<T, std::void_t<decltype(Botan::detail::data(std::declval<T>()))>> : std::true_type {};
+template <typename C>
+struct has_data<C, std::void_t<decltype(Botan::detail::data(std::declval<C>()))>> : std::true_type {};
 
-template <typename Container, typename U = std::remove_cvref_t<Container>>
+template <typename C>
+inline constexpr bool has_data_v = has_data<C>::value;
+
+template <typename C, typename U = std::remove_cvref_t<C>>
 struct is_container {
-    static constexpr bool value = !is_span<U>::value && !is_std_array<U>::value &&
-        !std::is_array<U>::value && has_size<Container>::value && has_data<Container>::value;
+    static constexpr bool value = !is_span_v<U> && !is_std_array_v<U> && !std::is_array_v<U> && 
+        has_size_v<C> && has_data_v<C>;
 };
+
+template <typename C>
+inline constexpr bool is_container_v = is_container<C>::value;
 
 template <typename, typename, typename = void>
 struct is_container_type_compatible : std::false_type {};
 
-template <typename T, typename E>
-struct is_container_type_compatible<T, E,
-    typename std::enable_if_t<!std::is_same_v<typename std::remove_cv_t<decltype(Botan::detail::data(std::declval<T>()))>, void> &&
-        std::is_convertible_v<std::remove_pointer_t<decltype(Botan::detail::data(std::declval<T>()))> (*)[], E (*)[]>>> : std::true_type {};
+template <typename C, typename U>
+struct is_container_type_compatible<C, U,
+    typename std::enable_if_t<std::is_convertible_v<std::remove_pointer_t<decltype(Botan::detail::data(std::declval<C>()))> (*)[], U (*)[]>>> : std::true_type {};
+
+template <typename C, typename U>
+inline constexpr bool is_container_type_compatible_v = is_container_type_compatible<C, U>::value;
 
 } // detail
 
@@ -139,49 +175,49 @@ public:
 
     // Constructors
     template <std::size_t N = Extent, 
-        typename std::enable_if_t<N == 0 || N == dynamic_extent, bool> = true>
+        typename std::enable_if_t<N == 0 || detail::is_dynamic_extent_v<N>, bool> = true>
     constexpr span() noexcept : m_data(nullptr), m_size(0UL) {}
 
     template <typename Iter_first,
-        typename std::enable_if_t<Extent == dynamic_extent && detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+        typename std::enable_if_t<detail::is_dynamic_extent_v<Extent> && detail::is_span_convertible_v<Iter_first, Type>, bool> = true>
     constexpr span(Iter_first* first, size_type count) noexcept : m_data(first), m_size(count) {}
 
     template <typename Iter_first,
-        typename std::enable_if_t<Extent != dynamic_extent && detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+        typename std::enable_if_t<!detail::is_dynamic_extent_v<Extent> && detail::is_span_convertible_v<Iter_first, Type>, bool> = true>
     explicit constexpr span(Iter_first* first, size_type count) noexcept : m_data(first), m_size(count) {}
 
     template <typename Iter_first, typename Iter_last,
-        typename std::enable_if_t<Extent == dynamic_extent &&
-            detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+        typename std::enable_if_t<detail::is_dynamic_extent_v<Extent> &&
+            detail::is_span_convertible_v<Iter_first, Type>, bool> = true>
     constexpr span(Iter_first* first, Iter_last* last) noexcept : m_data(first), m_size(last - first) {}
 
     template <typename Iter_first, typename Iter_last,
-        typename std::enable_if_t<Extent != dynamic_extent &&
-            detail::is_span_convertible<Iter_first, Type>::value, bool> = true>
+        typename std::enable_if_t<!detail::is_dynamic_extent_v<Extent> &&
+            detail::is_span_convertible_v<Iter_first, Type>, bool> = true>
     explicit constexpr span(Iter_first* first, Iter_last* last) noexcept : m_data(first), m_size(last - first) {}
     
     template <std::size_t N,
-        typename std::enable_if_t<detail::is_span_capacity<Extent, N>::value, bool> = true>
+        typename std::enable_if_t<detail::is_span_capacity_v<Extent, N>, bool> = true>
     constexpr span(typename std::enable_if_t<true, Type> (&arr)[N]) noexcept : m_data(arr), m_size(N) {}
 
     template <typename U, std::size_t N,
-        typename std::enable_if_t<detail::is_span_compatible<Type, Extent, U, N>::value, bool> = true>
+        typename std::enable_if_t<detail::is_span_compatible_v<Type, Extent, U, N>, bool> = true>
     constexpr span(std::array<U, N>& arr) noexcept : m_data(arr.data()), m_size(N) {}
 
     template <typename U, std::size_t N,
-        typename std::enable_if_t<detail::is_span_compatible<Type, Extent, const U, N>::value, bool> = true>
+        typename std::enable_if_t<detail::is_span_compatible_v<Type, Extent, const U, N>, bool> = true>
     constexpr span(const std::array<U, N>& arr) noexcept : m_data(arr.data()), m_size(N) {}
 
     // Instead of ranges
     template <typename Container, std::size_t E = Extent,
-        typename std::enable_if_t<E == dynamic_extent && detail::is_container<Container>::value &&
-                detail::is_container_type_compatible<Container&, Type>::value, bool> = true>
+        typename std::enable_if_t<detail::is_dynamic_extent_v<E> && detail::is_container_v<Container> &&
+                detail::is_container_type_compatible_v<Container&, Type>, bool> = true>
     constexpr span(Container& cont)
         :  m_data(Botan::detail::data(cont)), m_size(Botan::detail::size(cont)) {}
 
     template <typename Container, std::size_t E = Extent,
-        typename std::enable_if_t<E == dynamic_extent && detail::is_container<Container>::value &&
-                detail::is_container_type_compatible<Container&, Type>::value, bool> = true>
+        typename std::enable_if_t<detail::is_dynamic_extent_v<E> && detail::is_container_v<Container> &&
+                detail::is_container_type_compatible_v<Container&, Type>, bool> = true>
     constexpr span(const Container& cont)
         :  m_data(Botan::detail::data(cont)), m_size(Botan::detail::size(cont)) {}
 
@@ -216,13 +252,13 @@ public:
     constexpr span(const span& other) noexcept = default;
 
     template <typename U, std::size_t N,
-        typename std::enable_if_t<detail::is_span_implicit<Extent, N>::value &&
-            detail::is_span_copyable<Type, Extent, U, N>::value, bool> = true>
+        typename std::enable_if_t<!detail::is_span_explicit_v<Extent, N> &&
+            detail::is_span_copyable_v<Type, Extent, U, N>, bool> = true>
     constexpr span(const span<U, N>& other) noexcept : m_data(other.data()), m_size(other.size()) {}
 
     template <typename U, std::size_t N,
-        typename std::enable_if_t<!detail::is_span_implicit<Extent, N>::value &&
-            detail::is_span_copyable<Type, Extent, U, N>::value, bool> = true>
+        typename std::enable_if_t<detail::is_span_explicit_v<Extent, N> &&
+            detail::is_span_copyable_v<Type, Extent, U, N>, bool> = true>
     explicit constexpr span(const span<U, N>& other) noexcept : m_data(other.data()), m_size(other.size()) {}
 
     constexpr span& operator=(const span& other) noexcept = default;
@@ -276,24 +312,6 @@ private:
 };
 
 // Deduction guidelines as described in https://en.cppreference.com/w/cpp/container/span/deduction_guides
-// template <typename Type, typename N>
-// span(Type*, N) -> span<Type>;
-
-// template <typename Type, size_t N>
-// span(Type (&)[N]) -> span<Type, N>;
-
-// template <typename Type, size_t N>
-// span(std::array<Type, N>&) -> span<Type, N>;
-
-// template <typename Type, size_t N>
-// span(const std::array<Type, N>&) -> span<const Type, N>;
-
-// template <typename Container>
-// span(Container&) -> span<typename std::remove_reference_t<decltype(*Botan::detail::data(std::declval<Container&>()))>>;
-
-// template <typename Container>
-// span(const Container&) -> span<const typename Container::value_type>;
-
 template <typename Iter_first, typename End_or_size >
 span(Iter_first*, End_or_size) -> span<std::remove_reference_t<Iter_first>>;
 
@@ -315,20 +333,14 @@ span(const Container&) -> span<const typename Container::value_type>;
 
 // Non-member span functions
 template <typename Type, std::size_t Extent>
-span<const std::byte, ((Extent == dynamic_extent) ? dynamic_extent : sizeof(Type) * Extent)> as_bytes(span<Type, Extent> s) noexcept {
+span<const std::byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_bytes(span<Type, Extent> s) noexcept {
     return {reinterpret_cast<const std::byte*>(s.data()), s.size_bytes()};
 }
 
-template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const<Type>::value, bool> = true>
-span<std::byte, ((Extent == dynamic_extent) ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
+template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const_v<Type>, bool> = true>
+span<std::byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
     return {reinterpret_cast<std::byte*>(s.data()), s.size_bytes()};
 }
-
-// TODO: remove when not needed
-// template <typename Type, std::size_t Extent = std::dynamic_extent>
-// using span = std::span<Type, Extent>;
-template <typename Type, std::size_t Extent = Botan::dynamic_extent>
-using span = Botan::span<Type, Extent>;
 
 }
 

@@ -11,6 +11,7 @@
 #include <cstddef>
 #include <limits>
 #include <array>
+#include <vector>
 #include <iostream>
 
 namespace Botan_Tests {
@@ -21,6 +22,27 @@ constexpr size_t SIZE = 5UL;
 int C_ARRAY[SIZE] = {1, 2, 3, 4, 5};
 std::array<int, SIZE> ARRAY = {1, 2, 3, 4, 5};
 const std::array<int, SIZE> CONST_ARRAY = {1, 2, 3, 4, 5};
+std::vector<int> VECTOR = {1, 2, 3, 4, 5};
+const std::vector<int> CONST_VECTOR = {1, 2, 3, 4, 5};
+const std::string CONST_STRING = "abcdef";
+
+template <typename T>
+struct Dummy {};
+
+template <typename T>
+struct With_size {
+   std::size_t size() const noexcept { return 1; }
+};
+
+template <typename T>
+struct With_data {
+   T* data() const noexcept { return &value; }
+
+   T value;
+};
+
+template <typename T>
+struct With_size_and_data : public With_size<T>, With_data<T> {};
 
 std::vector<Test::Result> test_ctors()
    {
@@ -67,6 +89,18 @@ std::vector<Test::Result> test_ctors()
 
          result.test_is_eq("size()", s.size(), CONST_ARRAY.size());
          result.test_is_eq("data()", s.data(), CONST_ARRAY.begin());
+         }),
+      Botan_Tests::CHECK("ctor with std::vector", [](auto& result)
+         {
+         Botan::span<int> s(VECTOR);
+
+         result.test_is_eq("size()", s.size(), VECTOR.size());
+         }),
+      Botan_Tests::CHECK("ctor with const std::vector", [](auto& result)
+         {
+         const Botan::span<const int> s(CONST_VECTOR);
+
+         result.test_is_eq("size()", s.size(), CONST_VECTOR.size());
          }),
       Botan_Tests::CHECK("ctor with span", [](auto& result)
          {
@@ -352,28 +386,21 @@ std::vector<Test::Result> test_non_member()
       };
    }
 
-// TODO:
 std::vector<Test::Result> test_misc()
    {
    return
       {
-      Botan_Tests::CHECK("from vector<int>", [](auto& result)
+      Botan_Tests::CHECK("implicit from std::vector", [](auto& result)
          {
          std::vector<int> vec {1, 2, 3};
          Botan::span s(vec);
-
-         const Botan::secure_vector<unsigned char> vec1 {1, 2, 3};
-         const Botan::span s1(vec1);
          }), 
-      Botan_Tests::CHECK("from secure_vector", [](auto& result)
+      Botan_Tests::CHECK("implicit from secure_vector", [](auto& result)
          {
          Botan::secure_vector<uint8_t> vec {1, 2, 3};
          Botan::span s(vec);
-
-         const Botan::secure_vector<unsigned char> vec1 {1, 2, 3};
-         const Botan::span s1(vec1);
          }),
-      Botan_Tests::CHECK("from const secure_vector", [](auto& result)
+      Botan_Tests::CHECK("implicit from std::string", [](auto& result)
          {
          std::string str = "abc";
          Botan::span s(str);
@@ -381,36 +408,140 @@ std::vector<Test::Result> test_misc()
       };
    }
 
-// TODO:
 std::vector<Test::Result> test_span_detail()
    {
    return
       {
-      Botan_Tests::CHECK("is_span_convertible", [](auto& result)
+      Botan_Tests::CHECK("is_span_convertible_v", [](auto& result)
          {
-         result.test_is_eq("is_span_convertible<int, int>", Botan::detail::is_span_convertible<int, int>::value, true);
-         result.test_is_eq("is_span_convertible<int, const int>", Botan::detail::is_span_convertible<int, const int>::value, true);
-         result.test_is_eq("is_span_convertible<int, unsigned int>", Botan::detail::is_span_convertible<int, unsigned int>::value, false);
-         result.test_is_eq("is_span_convertible<int*, void*>", Botan::detail::is_span_convertible<int*, void*>::value, false);
+         result.test_is_eq("is_span_convertible_v<int, int>", Botan::detail::is_span_convertible_v<int, int>, true);
+         result.test_is_eq("is_span_convertible_v<int, const int>", Botan::detail::is_span_convertible_v<int, const int>, true);
+         result.test_is_eq("is_span_convertible_v<int, char>", Botan::detail::is_span_convertible_v<int, char>, false);
+         result.test_is_eq("is_span_convertible_v<int, unsigned int>", Botan::detail::is_span_convertible_v<int, unsigned int>, false);
+         result.test_is_eq("is_span_convertible_v<int*, void*>", Botan::detail::is_span_convertible_v<int*, void*>, false);
          }),
-      Botan_Tests::CHECK("is_span_capacity", [](auto& result)
+      Botan_Tests::CHECK("is_dynamic_extent_v", [](auto& result)
          {
-         result.test_is_eq("is_span_capacity<0, 0>", Botan::detail::is_span_capacity<0, 0>::value, true);
-         result.test_is_eq("is_span_capacity<10, 10>", Botan::detail::is_span_capacity<10, 10>::value, true);
-         result.test_is_eq("is_span_capacity<1, 0>", Botan::detail::is_span_capacity<1, 0>::value, false);
-         result.test_is_eq("is_span_capacity<10, 11>", Botan::detail::is_span_capacity<10, 11>::value, false);
-         result.test_is_eq("is_span_capacity<10UL, 10>", Botan::detail::is_span_capacity<10UL, 10>::value, true);
-         result.test_is_eq("is_span_capacity<dynamic_extent, 10>", Botan::detail::is_span_capacity<Botan::dynamic_extent, 10>::value, true);
+         result.test_is_eq("is_dynamic_extent_v<0>", Botan::detail::is_dynamic_extent_v<0>, false);
+         result.test_is_eq("is_dynamic_extent_v<100UL>", Botan::detail::is_dynamic_extent_v<100UL>, false);
+         result.test_is_eq("is_dynamic_extent_v<Botan::dynamic_extent>", Botan::detail::is_dynamic_extent_v<Botan::dynamic_extent>, true);
          }),
-      Botan_Tests::CHECK("is_span_compatible", [](auto& result)
+      Botan_Tests::CHECK("is_span_capacity_v", [](auto& result)
          {
-         result.test_is_eq("is_span_compatible<int, 5, int, 5>", Botan::detail::is_span_compatible<int, 5, int, 5>::value, true);
-         result.test_is_eq("is_span_compatible<int, 5, int, 10>", Botan::detail::is_span_compatible<int, 5, int, 10>::value, false);
-         result.test_is_eq("is_span_compatible<int, 5, const int, 5>", Botan::detail::is_span_compatible<int, 5, const int, 5>::value, false);
-         result.test_is_eq("is_span_compatible<int, dynamic_extent, int, 5>", Botan::detail::is_span_compatible<int, Botan::dynamic_extent, int, 5>::value, true);
-         result.test_is_eq("is_span_compatible<int, dynamic_extent, long, 5>", Botan::detail::is_span_compatible<int, Botan::dynamic_extent, long, 5>::value, false);
+         result.test_is_eq("is_span_capacity_v<0, 0>", Botan::detail::is_span_capacity_v<0, 0>, true);
+         result.test_is_eq("is_span_capacity_v<10, 10>", Botan::detail::is_span_capacity_v<10, 10>, true);
+         result.test_is_eq("is_span_capacity_v<1, 0>", Botan::detail::is_span_capacity_v<1, 0>, false);
+         result.test_is_eq("is_span_capacity_v<10, 11>", Botan::detail::is_span_capacity_v<10, 11>, false);
+         result.test_is_eq("is_span_capacity_v<10UL, 10>", Botan::detail::is_span_capacity_v<10UL, 10>, true);
+         result.test_is_eq("is_span_capacity_v<dynamic_extent, 10>", Botan::detail::is_span_capacity_v<Botan::dynamic_extent, 10>, true);
          }),
-         
+      Botan_Tests::CHECK("is_span_compatible_v", [](auto& result)
+         {
+         result.test_is_eq("is_span_compatible_v<int, 5, int, 5>", Botan::detail::is_span_compatible_v<int, 5, int, 5>, true);
+         result.test_is_eq("is_span_compatible_v<int, 5, int, 10>", Botan::detail::is_span_compatible_v<int, 5, int, 10>, false);
+         result.test_is_eq("is_span_compatible_v<int, 5, const int, 5>", Botan::detail::is_span_compatible_v<int, 5, const int, 5>, false);
+         result.test_is_eq("is_span_compatible_v<int, dynamic_extent, int, 5>", Botan::detail::is_span_compatible_v<int, Botan::dynamic_extent, int, 5>, true);
+         result.test_is_eq("is_span_compatible_v<int, dynamic_extent, long, 5>", Botan::detail::is_span_compatible_v<int, Botan::dynamic_extent, long, 5>, false);
+         }),
+      Botan_Tests::CHECK("is_span_explicit_v", [](auto& result)
+         {
+         result.test_is_eq("is_span_explicit_v<0, 0>", Botan::detail::is_span_explicit_v<0, 0>, false);
+         result.test_is_eq("is_span_explicit_v<10, 10>", Botan::detail::is_span_explicit_v<10, 10>, false);
+         result.test_is_eq("is_span_explicit_v<dynamic_extent, 10>", Botan::detail::is_span_explicit_v<Botan::dynamic_extent, 10>, false);
+         result.test_is_eq("is_span_explicit_v<10, dynamic_extent>", Botan::detail::is_span_explicit_v<10, Botan::dynamic_extent>, true);
+         result.test_is_eq("is_span_explicit_v<dynamic_extent, dynamic_extent>", Botan::detail::is_span_explicit_v<Botan::dynamic_extent, Botan::dynamic_extent>, false);
+         }),
+      Botan_Tests::CHECK("is_span_copyable_v", [](auto& result)
+         {
+         result.test_is_eq("is_span_copyable_v<int, 5, int, 10>", Botan::detail::is_span_copyable_v<int, 5, int, 10>, false);
+         result.test_is_eq("is_span_copyable_v<int, 10, int, 10>", Botan::detail::is_span_copyable_v<int, 10, int, 10>, true);
+         result.test_is_eq("is_span_copyable_v<int, 5, int, dynamic_extent>", Botan::detail::is_span_copyable_v<int, 5, int, Botan::dynamic_extent>, true);
+         result.test_is_eq("is_span_copyable_v<int, 10, int, dynamic_extent>", Botan::detail::is_span_copyable_v<int, 10, int, Botan::dynamic_extent>, true);
+         result.test_is_eq("is_span_copyable_v<const int, 5, int, dynamic_extent>", Botan::detail::is_span_copyable_v<const int, 5, int, Botan::dynamic_extent>, true);
+         result.test_is_eq("is_span_copyable_v<const int, 10, int, dynamic_extent>", Botan::detail::is_span_copyable_v<const int, 10, int, Botan::dynamic_extent>, true);
+         result.test_is_eq("is_span_copyable_v<int, 10, long, dynamic_extent>", Botan::detail::is_span_copyable_v<int, 10, long, Botan::dynamic_extent>, false);
+         }),
+      Botan_Tests::CHECK("is_span_v", [](auto& result)
+         {
+         result.test_is_eq("is_span_v<int>", Botan::detail::is_span_v<int>, false);
+         result.test_is_eq("is_span_v<std::string>", Botan::detail::is_span_v<std::string>, false);
+         result.test_is_eq("is_span_v<std::array<int, 5>>", Botan::detail::is_span_v<std::array<int, 5>>, false);
+         result.test_is_eq("is_span_v<std::vector<int>>", Botan::detail::is_span_v<std::vector<int>>, false);
+         result.test_is_eq("is_span_v<Botan::span<int>>", Botan::detail::is_span_v<Botan::span<int>>, true);
+         }),
+      Botan_Tests::CHECK("is_std_array_v", [](auto& result)
+         {
+         result.test_is_eq("is_std_array_v<int>", Botan::detail::is_std_array_v<int>, false);
+         result.test_is_eq("is_std_array_v<std::string>", Botan::detail::is_std_array_v<std::string>, false);
+         result.test_is_eq("is_std_array_v<std::array<int, 5>>", Botan::detail::is_std_array_v<std::array<int, 5>>, true);
+         result.test_is_eq("is_std_array_v<std::vector<int>>", Botan::detail::is_std_array_v<std::vector<int>>, false);
+         result.test_is_eq("is_std_array_v<Botan::span<int>>", Botan::detail::is_std_array_v<Botan::span<int>>, false);
+         }),
+      Botan_Tests::CHECK("size(const Container& c)", [](auto& result)
+         {
+         result.test_is_eq("size(C_ARRAY)", Botan::detail::size(C_ARRAY), SIZE);
+         result.test_is_eq("size(ARRAY)", Botan::detail::size(ARRAY), ARRAY.size());
+         result.test_is_eq("size(CONST_ARRAY)", Botan::detail::size(CONST_ARRAY), CONST_ARRAY.size());
+         result.test_is_eq("size(VECTOR)", Botan::detail::size(VECTOR), VECTOR.size());
+         result.test_is_eq("size(CONST_VECTOR)", Botan::detail::size(CONST_VECTOR), CONST_VECTOR.size());
+         result.test_is_eq("size(CONST_STRING)", Botan::detail::size(CONST_STRING), CONST_STRING.size());
+         }),
+       Botan_Tests::CHECK("data(const Container& c)", [](auto& result)
+         {
+         result.test_is_eq("data(C_ARRAY)", Botan::detail::data(C_ARRAY), &C_ARRAY[0]);
+         result.test_is_eq("data(ARRAY)", Botan::detail::data(ARRAY), ARRAY.data());
+         result.test_is_eq("data(CONST_ARRAY)", Botan::detail::data(CONST_ARRAY), CONST_ARRAY.data());
+         result.test_is_eq("data(VECTOR)", Botan::detail::data(VECTOR), VECTOR.data());
+         result.test_is_eq("data(CONST_VECTOR)", Botan::detail::data(CONST_VECTOR), CONST_VECTOR.data());
+         result.test_is_eq("data(CONST_STRING)", Botan::detail::data(CONST_STRING), CONST_STRING.data());
+         }),
+      Botan_Tests::CHECK("has_size_v", [](auto& result)
+         {
+         result.test_is_eq("has_size_v<int>", Botan::detail::has_size_v<int>, false);
+         result.test_is_eq("has_size_v<float>", Botan::detail::has_size_v<float>, false);
+         result.test_is_eq("has_size_v<Dummy<int>>", Botan::detail::has_size_v<Dummy<int>>, false);
+         result.test_is_eq("has_size_v<With_size<int>>", Botan::detail::has_size_v<With_size<int>>, true);
+         result.test_is_eq("has_size_v<std::string>", Botan::detail::has_size_v<std::string>, true);
+         result.test_is_eq("has_size_v<std::array<int, 5>>", Botan::detail::has_size_v<std::array<int, 5>>, true);
+         result.test_is_eq("has_size_v<std::vector<int>>", Botan::detail::has_size_v<std::vector<int>>, true);
+         result.test_is_eq("has_size_v<Botan::span<int>>", Botan::detail::has_size_v<Botan::span<int>>, true);
+         }),
+      Botan_Tests::CHECK("has_data_v", [](auto& result)
+         {
+         result.test_is_eq("has_data_v<int>", Botan::detail::has_data_v<int>, false);
+         result.test_is_eq("has_data_v<float>", Botan::detail::has_data_v<float>, false);
+         result.test_is_eq("has_data_v<Dummy<int>>", Botan::detail::has_data_v<Dummy<int>>, false);
+         result.test_is_eq("has_data_v<With_data<int>>", Botan::detail::has_data_v<With_data<int>>, true);
+         result.test_is_eq("has_data_v<std::string>", Botan::detail::has_data_v<std::string>, true);
+         result.test_is_eq("has_data_v<std::array<int, 5>>", Botan::detail::has_data_v<std::array<int, 5>>, true);
+         result.test_is_eq("has_data_v<std::vector<int>>", Botan::detail::has_data_v<std::vector<int>>, true);
+         result.test_is_eq("has_data_v<Botan::span<int>>", Botan::detail::has_data_v<Botan::span<int>>, true);
+         }),
+      Botan_Tests::CHECK("is_container_v", [](auto& result)
+         {
+         result.test_is_eq("is_container_v<int>", Botan::detail::is_container_v<int>, false);
+         result.test_is_eq("is_container_v<float>", Botan::detail::is_container_v<float>, false);
+         result.test_is_eq("is_container_v<Dummy<int>>", Botan::detail::is_container_v<Dummy<int>>, false);
+         result.test_is_eq("is_container_v<With_size<int>>", Botan::detail::is_container_v<With_size<int>>, false);
+         result.test_is_eq("is_container_v<With_data<int>>", Botan::detail::is_container_v<With_data<int>>, false);
+         result.test_is_eq("is_container_v<With_size_and_data<int>>", Botan::detail::is_container_v<With_size_and_data<int>>, true);
+         result.test_is_eq("is_container_v<std::string>", Botan::detail::is_container_v<std::string>, true);
+         result.test_is_eq("is_container_v<std::array<int, 5>>", Botan::detail::is_container_v<std::array<int, 5>>, false);
+         result.test_is_eq("is_container_v<std::vector<int>>", Botan::detail::is_container_v<std::vector<int>>, true);
+         result.test_is_eq("is_container_v<Botan::span<int>>", Botan::detail::is_container_v<Botan::span<int>>, false);
+         }),
+      Botan_Tests::CHECK("is_container_type_compatible_v", [](auto& result)
+         {
+         result.test_is_eq("is_container_type_compatible_v<int, int>", Botan::detail::is_container_type_compatible_v<int, int>, false);
+         result.test_is_eq("is_container_type_compatible_v<Dummy<int>, int>", Botan::detail::is_container_type_compatible_v<Dummy<int>, int>, false);
+         result.test_is_eq("is_container_type_compatible_v<With_size_and_data<int>, float>", Botan::detail::is_container_type_compatible_v<With_size_and_data<int>, float>, false);
+         result.test_is_eq("is_container_type_compatible_v<With_size_and_data<int>, int>", Botan::detail::is_container_type_compatible_v<With_size_and_data<int>, int>, true);
+         result.test_is_eq("is_container_type_compatible_v<std::string, int>", Botan::detail::is_container_type_compatible_v<std::string, int>, false);
+         result.test_is_eq("is_container_type_compatible_v<std::array<int, 5>, const int>", Botan::detail::is_container_type_compatible_v<std::array<int, 5>, const int>, true);
+         result.test_is_eq("is_container_type_compatible_v<std::vector<int>, unsigned int>", Botan::detail::is_container_type_compatible_v<std::vector<int>, unsigned int>, false);
+         result.test_is_eq("is_container_type_compatible_v<Botan::span<int>, const int>", Botan::detail::is_container_type_compatible_v<Botan::span<int>, const int>, true);
+         result.test_is_eq("is_container_type_compatible_v<Botan::span<const int>, int>", Botan::detail::is_container_type_compatible_v<Botan::span<const int>, int>, false);
+         }),
       };
    }
 
