@@ -17,6 +17,7 @@
    #include <botan/x509_crl.h>
    #include <botan/pkcs10.h>
    #include <botan/exceptn.h>
+   #include <botan/contains.h>
 
    #include <fstream>
    #include <string>
@@ -1170,7 +1171,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
                               path_result.result(), expected);
             if(also_expected)
                {
-               result.confirm("Secondary error is also present", flatten(path_result.all_statuses()).contains(also_expected.value()));
+               result.confirm("Secondary error is also present", Botan::contains(flatten(path_result.all_statuses()), also_expected.value()));
                }
             };
 
@@ -1218,7 +1219,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
 
                result.test_is_eq("Path validation with forged OCSP response should fail with",
                                  path_result.result(), expected);
-               result.confirm("Secondary error is also present", flatten(path_result.all_statuses()).contains(also_expected));
+               result.confirm("Secondary error is also present", Botan::contains(flatten(path_result.all_statuses()), also_expected));
                result.test_note(std::string("Failed with: ") + Botan::to_string(path_result.result()));
             };
 

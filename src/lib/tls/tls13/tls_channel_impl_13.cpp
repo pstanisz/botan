@@ -22,12 +22,12 @@
 namespace {
 bool is_user_canceled_alert(const Botan::TLS::Alert& alert)
    {
-   return alert.type() == Botan::TLS::Alert::UserCanceled;
+   return alert.type() == Botan::TLS::AlertType::UserCanceled;
    }
 
 bool is_close_notify_alert(const Botan::TLS::Alert& alert)
    {
-   return alert.type() == Botan::TLS::Alert::CloseNotify;
+   return alert.type() == Botan::TLS::AlertType::CloseNotify;
    }
 
 bool is_error_alert(const Botan::TLS::Alert& alert)
@@ -200,17 +200,17 @@ size_t Channel_Impl_13::from_peer(Botan::span<const uint8_t> data)
       // RFC 8446 5.2
       //    If the decryption fails, the receiver MUST terminate the connection
       //    with a "bad_record_mac" alert.
-      send_fatal_alert(Alert::BadRecordMac);
+      send_fatal_alert(AlertType::BadRecordMac);
       throw;
       }
    catch(Decoding_Error&)
       {
-      send_fatal_alert(Alert::DecodeError);
+      send_fatal_alert(AlertType::DecodeError);
       throw;
       }
    catch(...)
       {
-      send_fatal_alert(Alert::InternalError);
+      send_fatal_alert(AlertType::InternalError);
       throw;
       }
    }
@@ -424,7 +424,7 @@ void Channel_Impl_13::process_alert(const secure_vector<uint8_t>& record)
          }
       else
          {
-         throw TLS_Exception(Alert::DecodeError, "Error alert not marked fatal");  // will shutdown in send_alert
+         throw TLS_Exception(AlertType::DecodeError, "Error alert not marked fatal");  // will shutdown in send_alert
          }
       }
 

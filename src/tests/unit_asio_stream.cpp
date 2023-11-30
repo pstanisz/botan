@@ -78,7 +78,7 @@ class ThrowingMockChannel : public MockChannel
    public:
       static boost::system::error_code expected_ec()
          {
-         return Botan::TLS::Alert::UnexpectedMessage;
+         return Botan::TLS::AlertType::UnexpectedMessage;
          }
 
       ThrowingMockChannel(std::shared_ptr<Botan::TLS::Callbacks> core) : MockChannel(core)

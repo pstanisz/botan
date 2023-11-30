@@ -37,21 +37,21 @@ bool Protocol_Version::is_datagram_protocol() const
 
 bool Protocol_Version::is_pre_tls_13() const
    {
-   return (!is_datagram_protocol() && *this <= Protocol_Version::TLS_V12) ||
-          ( is_datagram_protocol() && *this <= Protocol_Version::DTLS_V12);
+   return (!is_datagram_protocol() && *this <= Version_Code::TLS_V12) ||
+          ( is_datagram_protocol() && *this <= Version_Code::DTLS_V12);
    }
 
 bool Protocol_Version::is_tls_13_or_later() const
    {
-   return (!is_datagram_protocol() && *this >= Protocol_Version::TLS_V13) ||
-          ( is_datagram_protocol() && *this >= Protocol_Version::DTLS_V13);
+   return (!is_datagram_protocol() && *this >= Version_Code::TLS_V13) ||
+          ( is_datagram_protocol() && *this >= Version_Code::DTLS_V13);
    }
 
 
 bool Protocol_Version::operator>(const Protocol_Version& other) const
    {
    if(this->is_datagram_protocol() != other.is_datagram_protocol())
-      throw TLS_Exception(Alert::ProtocolVersion,
+      throw TLS_Exception(AlertType::ProtocolVersion,
                           "Version comparing " + to_string() +
                           " with " + other.to_string());
 
@@ -84,11 +84,11 @@ bool Protocol_Version::valid() const
 
 bool Protocol_Version::known_version() const
    {
-   return (m_version == static_cast<uint16_t>(Protocol_Version::TLS_V12) ||
+   return (m_version == static_cast<uint16_t>(Version_Code::TLS_V12) ||
 #if defined(BOTAN_HAS_TLS_13)
-           m_version == static_cast<uint16_t>(Protocol_Version::TLS_V13) ||
+           m_version == static_cast<uint16_t>(Version_Code::TLS_V13) ||
 #endif
-           m_version == static_cast<uint16_t>(Protocol_Version::DTLS_V12));
+           m_version == static_cast<uint16_t>(Version_Code::DTLS_V12));
    }
 
 }

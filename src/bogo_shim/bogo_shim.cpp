@@ -1050,17 +1050,17 @@ class Shim_Policy final : public Botan::TLS::Policy
 
       bool allow_tls12() const override
          {
-         return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") && allow_version(Botan::TLS::Protocol_Version::TLS_V12);
+         return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") && allow_version(Botan::TLS::Version_Code::TLS_V12);
          }
 
       bool allow_tls13() const override
          {
-         return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls13") && allow_version(Botan::TLS::Protocol_Version::TLS_V13);
+         return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls13") && allow_version(Botan::TLS::Version_Code::TLS_V13);
          }
 
       bool allow_dtls12() const override
          {
-         return m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") && allow_version(Botan::TLS::Protocol_Version::DTLS_V12);
+         return m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") && allow_version(Botan::TLS::Version_Code::DTLS_V12);
          }
 
       //Botan::TLS::Group_Params default_dh_group() const override;
@@ -1469,15 +1469,15 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
             m_args.flag_set("use-ocsp-callback") &&
             m_args.flag_set("fail-ocsp-callback"))
             {
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::BadCertificateStatusResponse,
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::BadCertificateStatusResponse,
                                             "Simulated OCSP callback failure");
             }
 
          if(m_args.flag_set("verify-fail"))
             {
-            auto alert = Botan::TLS::Alert::HandshakeFailure;
+            auto alert = Botan::TLS::AlertType::HandshakeFailure;
             if(m_args.flag_set("use-custom-verify-callback"))
-               alert = Botan::TLS::Alert::CertificateUnknown;
+               alert = Botan::TLS::AlertType::CertificateUnknown;
 
             throw Botan::TLS::TLS_Exception(alert, "Test requires rejecting cert");
             }
@@ -1502,7 +1502,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
             return ""; // shouldn't happen?
 
          if(m_args.flag_set("reject-alpn"))
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::NoApplicationProtocol,
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::NoApplicationProtocol,
                                             "Rejecting ALPN request with alert");
 
          if(m_args.flag_set("decline-alpn"))
@@ -1529,12 +1529,12 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
          else
             shim_log("Got a warning alert " + alert.type_string());
 
-         if(alert.type() == Botan::TLS::Alert::RecordOverflow)
+         if(alert.type() == Botan::TLS::AlertType::RecordOverflow)
             {
             shim_exit_with_error(":TLSV1_ALERT_RECORD_OVERFLOW:");
             }
 
-         if(alert.type() == Botan::TLS::Alert::DecompressionFailure)
+         if(alert.type() == Botan::TLS::AlertType::DecompressionFailure)
             {
             shim_exit_with_error(":SSLV3_ALERT_DECOMPRESSION_FAILURE:");
             }
@@ -1546,7 +1546,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
                shim_exit_with_error(":TOO_MANY_WARNING_ALERTS:");
             }
 
-         if(alert.type() == Botan::TLS::Alert::CloseNotify)
+         if(alert.type() == Botan::TLS::AlertType::CloseNotify)
             {
             if(m_got_close == false && !m_args.flag_set("shim-shuts-down"))
                {
@@ -1611,7 +1611,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
          {
          if(m_args.flag_set("send-alert"))
             {
-            m_channel->send_fatal_alert(Botan::TLS::Alert::DecompressionFailure);
+            m_channel->send_fatal_alert(Botan::TLS::AlertType::DecompressionFailure);
             return;
             }
 
@@ -1634,7 +1634,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
 
          if(alpn == "baz" && !m_args.flag_set("allow-unknown-alpn-protos"))
             {
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::IllegalParameter,
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::IllegalParameter,
                                             "Unexpected ALPN protocol");
             }
 

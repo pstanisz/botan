@@ -8,6 +8,7 @@
 #include "argparse.h"
 #include <botan/rng.h>
 #include <botan/internal/os_utils.h>
+#include <botan/contains.h>
 #include <iostream>
 #include <fstream>
 
@@ -330,7 +331,7 @@ Command::Registration::Registration(const std::string& name, const Command::cmd_
    {
    std::map<std::string, Command::cmd_maker_fn>& reg = Command::global_registry();
 
-   if(reg.contains(name))
+   if(Botan::contains(reg, name))
       {
       throw CLI_Error("Duplicated registration of command " + name);
       }

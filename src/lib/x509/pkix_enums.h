@@ -151,7 +151,7 @@ class BOTAN_PUBLIC_API(3,0) Key_Constraints
          return Key_Constraints(Key_Constraints::KeyCertSign | Key_Constraints::CrlSign);
          }
 
-      bool operator==(const Key_Constraints&) const = default;
+      bool operator==(const Key_Constraints& other) const { return m_value == other.m_value; }
 
       void operator|=(Key_Constraints::Bits other)
          {

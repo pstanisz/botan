@@ -8,6 +8,7 @@
 #include <botan/pk_algs.h>
 #include <botan/internal/parsing.h>
 #include <botan/internal/fmt.h>
+#include <botan/starts_with.h>
 
 #if defined(BOTAN_HAS_RSA)
   #include <botan/rsa.h>
@@ -107,7 +108,7 @@ load_public_key(const AlgorithmIdentifier& alg_id,
 #endif
 
 #if defined(BOTAN_HAS_KYBER) || defined(BOTAN_HAS_KYBER_90S)
-   if(alg_name == "Kyber" || alg_name.starts_with("Kyber-"))
+   if(alg_name == "Kyber" || starts_with(alg_name, "Kyber-"))
       return std::make_unique<Kyber_PublicKey>(alg_id, key_bits);
 #endif
 
@@ -167,7 +168,7 @@ load_public_key(const AlgorithmIdentifier& alg_id,
 #endif
 
 #if defined(BOTAN_HAS_DILITHIUM) || defined(BOTAN_HAS_DILITHIUM_AES)
-   if(alg_name == "Dilithium" || alg_name.starts_with("Dilithium-"))
+   if(alg_name == "Dilithium" || starts_with(alg_name, "Dilithium-"))
       return std::make_unique<Dilithium_PublicKey>(alg_id, key_bits);
 #endif
 
@@ -213,7 +214,7 @@ load_private_key(const AlgorithmIdentifier& alg_id,
 #endif
 
 #if defined(BOTAN_HAS_KYBER) || defined(BOTAN_HAS_KYBER_90S)
-   if(alg_name == "Kyber" || alg_name.starts_with("Kyber-"))
+   if(alg_name == "Kyber" || starts_with(alg_name, "Kyber-"))
       return std::make_unique<Kyber_PrivateKey>(alg_id, key_bits);
 #endif
 
@@ -258,7 +259,7 @@ load_private_key(const AlgorithmIdentifier& alg_id,
 #endif
 
 #if defined(BOTAN_HAS_DILITHIUM) || defined(BOTAN_HAS_DILITHIUM_AES)
-   if(alg_name == "Dilithium" || alg_name.starts_with("Dilithium-"))
+   if(alg_name == "Dilithium" || starts_with(alg_name, "Dilithium-"))
       return std::make_unique<Dilithium_PrivateKey>(alg_id, key_bits);
 #endif
 

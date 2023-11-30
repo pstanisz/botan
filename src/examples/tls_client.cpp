@@ -75,7 +75,7 @@ int main() {
   // open the tls connection
   Botan::TLS::Client client(callbacks, session_mgr, creds, policy, rng,
                             Botan::TLS::Server_Information("botan.randombit.net", 443),
-                            Botan::TLS::Protocol_Version::TLS_V12);
+                            Botan::TLS::Version_Code::TLS_V12);
 
   while (!client.is_closed()) {
     // read data received from the tls server, e.g., using BSD sockets or boost asio

@@ -13,6 +13,8 @@
 #include <vector>
 #include "cli_exceptions.h"
 
+#include <botan/contains.h>
+
 namespace Botan_CLI {
 
 class Argument_Parser final
@@ -166,7 +168,7 @@ void Argument_Parser::parse_args(const std::vector<std::string>& params)
                throw CLI_Usage_Error("Unknown option --" + opt_name);
                }
 
-            if(m_user_args.contains(opt_name))
+            if(Botan::contains(m_user_args, opt_name))
                {
                throw CLI_Usage_Error("Duplicated option --" + opt_name);
                }

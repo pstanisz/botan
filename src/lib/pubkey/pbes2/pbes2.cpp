@@ -15,6 +15,7 @@
 #include <botan/internal/fmt.h>
 #include <botan/asn1_obj.h>
 #include <botan/rng.h>
+#include <botan/starts_with.h>
 
 namespace Botan {
 
@@ -52,7 +53,7 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
          key_length = default_key_size;
 
       const std::string prf = prf_algo.oid().human_name_or_empty();
-      if(prf.empty() || !prf.starts_with("HMAC"))
+      if(prf.empty() || !starts_with(prf, "HMAC"))
          {
          throw Decoding_Error(fmt("Unknown PBES2 PRF {}", prf_algo.oid()));
          }

@@ -12,6 +12,8 @@
 #include <limits>
 #include <array>
 
+#include <botan/type_traits.h>
+
 namespace Botan {
 
 // Non-member span constant
@@ -132,7 +134,7 @@ struct has_data<C, std::void_t<decltype(Botan::detail::data(std::declval<C>()))>
 template <typename C>
 inline constexpr bool has_data_v = has_data<C>::value;
 
-template <typename C, typename U = std::remove_cvref_t<C>>
+template <typename C, typename U = Botan::remove_cvref_t<C>>
 struct is_container {
     static constexpr bool value = !is_span_v<U> && !is_std_array_v<U> && !std::is_array_v<U> && 
         has_size_v<C> && has_data_v<C>;

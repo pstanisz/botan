@@ -67,7 +67,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
          }
 
       if(shared_group == Group_Params::NONE)
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                "Could not agree on a DH group with the client");
 
       BOTAN_ASSERT(group_param_is_dh(shared_group), "DH groups for the DH ciphersuites god");
@@ -76,7 +76,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       auto dh = dynamic_cast<DH_PrivateKey*>(m_kex_key.get());
       if(!dh)
          {
-         throw TLS_Exception(Alert::InternalError, "Application did not provide a Diffie-Hellman key");
+         throw TLS_Exception(AlertType::InternalError, "Application did not provide a Diffie-Hellman key");
          }
 
       append_tls_length_value(m_params, BigInt::encode(dh->get_int_field("p")), 2);
@@ -93,7 +93,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       Group_Params shared_group = policy.choose_key_exchange_group(ec_groups, {});
 
       if(shared_group == Group_Params::NONE)
-         throw TLS_Exception(Alert::HandshakeFailure, "No shared ECC group with client");
+         throw TLS_Exception(AlertType::HandshakeFailure, "No shared ECC group with client");
 
       std::vector<uint8_t> ecdh_public_val;
 
@@ -102,7 +102,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
          m_kex_key = state.callbacks().tls_generate_ephemeral_key(shared_group, rng);
          if(!m_kex_key)
             {
-            throw TLS_Exception(Alert::InternalError,
+            throw TLS_Exception(AlertType::InternalError,
                                 "Application did not provide a X25519 key");
             }
          ecdh_public_val = m_kex_key->public_value();
@@ -113,7 +113,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
          auto ecdh = dynamic_cast<ECDH_PrivateKey*>(m_kex_key.get());
          if(!ecdh)
             {
-            throw TLS_Exception(Alert::InternalError, "Application did not provide a EC-Diffie-Hellman key");
+            throw TLS_Exception(AlertType::InternalError, "Application did not provide a EC-Diffie-Hellman key");
             }
 
          // follow client's preference for point compression

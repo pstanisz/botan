@@ -8,6 +8,8 @@
 #include "tests.h"
 #include "test_rng.h"
 
+#include <botan/starts_with.h>
+
 #if defined(BOTAN_HAS_STATEFUL_RNG)
    #include <botan/stateful_rng.h>
 #endif
@@ -785,7 +787,7 @@ class AutoSeeded_RNG_Tests final : public Test
 
          Botan::AutoSeeded_RNG rng;
 
-         result.confirm("AutoSeeded_RNG::name", rng.name().starts_with("HMAC_DRBG(HMAC(SHA-"));
+         result.confirm("AutoSeeded_RNG::name", Botan::starts_with(rng.name(), "HMAC_DRBG(HMAC(SHA-"));
 
          result.confirm("AutoSeeded_RNG starts seeded", rng.is_seeded());
          rng.random_vec(16); // generate and discard output

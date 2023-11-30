@@ -17,6 +17,7 @@
 #include <botan/tls_session_manager.h>
 #include <botan/internal/tls_reader.h>
 #include <botan/mem_ops.h>
+#include <botan/contains.h>
 #include <botan/internal/tls_session_key.h>
 #include <botan/internal/tls_handshake_io.h>
 #include <botan/internal/tls_handshake_hash.h>
@@ -146,7 +147,7 @@ class Server_Hello_Internal
          // Note: Here we just take a message parsing decision, further validation of
          //       the extension's contents is done later.
          return (extensions().has<Supported_Versions>())
-                ? Protocol_Version::TLS_V13
+                ? Version_Code::TLS_V13
                 : m_legacy_version;
          }
 
@@ -284,7 +285,7 @@ Server_Hello_12::Server_Hello_12(Handshake_IO& io,
       m_data->extensions().add(new Encrypt_then_MAC);
       }
 
-   if(c && c->ecc_ciphersuite() && client_hello.extension_types().contains(Extension_Code::EcPointFormats))
+   if(c && c->ecc_ciphersuite() && contains(client_hello.extension_types(), Extension_Code::EcPointFormats))
       {
       m_data->extensions().add(new Supported_Point_Formats(policy.use_ecc_point_compression()));
       }
@@ -364,7 +365,7 @@ Server_Hello_12::Server_Hello_12(Handshake_IO& io,
          }
       }
 
-   if(resumed_session.ciphersuite().ecc_ciphersuite() && client_hello.extension_types().contains(Extension_Code::EcPointFormats))
+   if(resumed_session.ciphersuite().ecc_ciphersuite() && contains(client_hello.extension_types(), Extension_Code::EcPointFormats))
       {
       m_data->extensions().add(new Supported_Point_Formats(policy.use_ecc_point_compression()));
       }
@@ -394,7 +395,7 @@ Server_Hello_12::Server_Hello_12(std::unique_ptr<Server_Hello_Internal> data)
    {
    if(!m_data->version().is_pre_tls_13())
       {
-      throw TLS_Exception(Alert::ProtocolVersion, "Expected server hello of (D)TLS 1.2 or lower");
+      throw TLS_Exception(AlertType::ProtocolVersion, "Expected server hello of (D)TLS 1.2 or lower");
       }
    }
 
@@ -470,9 +471,9 @@ std::optional<Protocol_Version> Server_Hello_12::random_signals_downgrade() cons
    {
    const uint64_t last8 = load_be<uint64_t>(m_data->random().data(), 3);
    if(last8 == DOWNGRADE_TLS11)
-      { return Protocol_Version::TLS_V11; }
+      { return Version_Code::TLS_V11; }
    if(last8 == DOWNGRADE_TLS12)
-      { return Protocol_Version::TLS_V12; }
+      { return Version_Code::TLS_V12; }
 
    return std::nullopt;
    }
@@ -534,7 +535,7 @@ std::variant<Hello_Retry_Request, Server_Hello_13> Server_Hello_13::create(const
    //    handshake with a "handshake_failure" or an "insufficient_security" alert.
    if(selected_group == Named_Group::NONE)
       {
-      throw TLS_Exception(Alert::HandshakeFailure, "Client did not offer any acceptable group");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Client did not offer any acceptable group");
       }
 
    if(!value_exists(offered_by_client, selected_group))
@@ -564,7 +565,7 @@ Server_Hello_13::parse(const std::vector<uint8_t>& buf)
       { return Server_Hello_12(std::move(data)); }
 
    // ... the TLS 1.3 "special case" aka. Hello_Retry_Request
-   if(version == Protocol_Version::TLS_V13)
+   if(version == Version_Code::TLS_V13)
       {
       if(data->is_hello_retry_request())
          { return Hello_Retry_Request(std::move(data)); }
@@ -572,7 +573,7 @@ Server_Hello_13::parse(const std::vector<uint8_t>& buf)
       return Server_Hello_13(std::move(data));
       }
 
-   throw TLS_Exception(Alert::ProtocolVersion,
+   throw TLS_Exception(AlertType::ProtocolVersion,
                        "unexpected server hello version: " + version.to_string());
    }
 
@@ -581,7 +582,7 @@ Server_Hello_13::parse(const std::vector<uint8_t>& buf)
  */
 void Server_Hello_13::basic_validation() const
    {
-   BOTAN_ASSERT_NOMSG(m_data->version() == Protocol_Version::TLS_V13);
+   BOTAN_ASSERT_NOMSG(m_data->version() == Version_Code::TLS_V13);
 
    // Note: checks that cannot be performed without contextual information
    //       are done in the specific TLS client implementation.
@@ -599,9 +600,9 @@ void Server_Hello_13::basic_validation() const
 
    // RFC 8446 4.1.3
    //    In TLS 1.3, [...] the legacy_version field MUST be set to 0x0303
-   if(legacy_version() != Protocol_Version::TLS_V12)
+   if(legacy_version() != Version_Code::TLS_V12)
       {
-      throw TLS_Exception(Alert::ProtocolVersion,
+      throw TLS_Exception(AlertType::ProtocolVersion,
                           "legacy_version '" + legacy_version().to_string() + "' is not allowed");
       }
 
@@ -609,14 +610,14 @@ void Server_Hello_13::basic_validation() const
    //    legacy_compression_method:  A single byte which MUST have the value 0.
    if(compression_method() != 0x00)
       {
-      throw TLS_Exception(Alert::DecodeError, "compression is not supported in TLS 1.3");
+      throw TLS_Exception(AlertType::DecodeError, "compression is not supported in TLS 1.3");
       }
 
    // RFC 8446 4.1.3
    //    All TLS 1.3 ServerHello messages MUST contain the "supported_versions" extension.
    if(!extensions().has<Supported_Versions>())
       {
-      throw TLS_Exception(Alert::MissingExtension,
+      throw TLS_Exception(AlertType::MissingExtension,
                           "server hello did not contain 'supported version' extension");
       }
 
@@ -624,9 +625,9 @@ void Server_Hello_13::basic_validation() const
    //    A server which negotiates TLS 1.3 MUST respond by sending
    //    a "supported_versions" extension containing the selected version
    //    value (0x0304).
-   if(selected_version() != Protocol_Version::TLS_V13)
+   if(selected_version() != Version_Code::TLS_V13)
       {
-      throw TLS_Exception(Alert::IllegalParameter, "TLS 1.3 Server Hello selected a different version");
+      throw TLS_Exception(AlertType::IllegalParameter, "TLS 1.3 Server Hello selected a different version");
       }
    }
 
@@ -659,7 +660,7 @@ Server_Hello_13::Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data,
    // any slack for extensions not implemented by Botan here.
    if(exts.contains_other_than(allowed))
       {
-      throw TLS_Exception(Alert::UnsupportedExtension,
+      throw TLS_Exception(AlertType::UnsupportedExtension,
                           "Server Hello contained an extension that is not allowed");
       }
 
@@ -669,7 +670,7 @@ Server_Hello_13::Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data,
    //    extension, or both [...].
    if(!exts.has<Key_Share>() && !exts.has<PSK_Key_Exchange_Modes>())
       {
-      throw TLS_Exception(Alert::MissingExtension,
+      throw TLS_Exception(AlertType::MissingExtension,
                           "server hello must contain key exchange information");
       }
    }
@@ -698,7 +699,7 @@ Server_Hello_13::Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data, Se
    // don't give any slack for extensions not implemented by Botan here.
    if(exts.contains_other_than(allowed))
       {
-      throw TLS_Exception(Alert::UnsupportedExtension,
+      throw TLS_Exception(AlertType::UnsupportedExtension,
                           "Hello Retry Request contained an extension that is not allowed");
       }
 
@@ -707,7 +708,7 @@ Server_Hello_13::Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data, Se
    //    the HelloRetryRequest would not result in any change in the ClientHello.
    if(!exts.has<Key_Share>() && !exts.has<Cookie>())
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "Hello Retry Request does not request any changes to Client Hello");
       }
    }
@@ -721,7 +722,7 @@ uint16_t choose_ciphersuite(const Client_Hello_13& ch, const Policy& policy)
    {
    auto pref_list = ch.ciphersuites();
    // TODO: DTLS might need to make this version dynamic
-   auto other_list = policy.ciphersuite_list(Protocol_Version::TLS_V13);
+   auto other_list = policy.ciphersuite_list(Version_Code::TLS_V13);
 
    if(policy.server_uses_own_ciphersuite_preferences())
       {
@@ -759,7 +760,7 @@ uint16_t choose_ciphersuite(const Client_Hello_13& ch, const Policy& policy)
    //     If the server is unable to negotiate a supported set of parameters
    //     [...], it MUST abort the handshake with either a "handshake_failure"
    //     or "insufficient_security" fatal alert [...].
-   throw TLS_Exception(Alert::HandshakeFailure,
+   throw TLS_Exception(AlertType::HandshakeFailure,
                        "Can't agree on a ciphersuite with client");
    }
 }
@@ -771,9 +772,9 @@ Server_Hello_13::Server_Hello_13(const Client_Hello_13& ch,
                                  Callbacks& cb,
                                  const Policy& policy)
    : Server_Hello(std::make_unique<Server_Hello_Internal>(
-                     Protocol_Version::TLS_V12,
+                     Version_Code::TLS_V12,
                      ch.session_id(),
-                     make_server_hello_random(rng, Protocol_Version::TLS_V13, cb, policy),
+                     make_server_hello_random(rng, Version_Code::TLS_V13, cb, policy),
                      choose_ciphersuite(ch, policy),
                      uint8_t(0) /* compression method */
                   ))
@@ -786,7 +787,7 @@ Server_Hello_13::Server_Hello_13(const Client_Hello_13& ch,
    //
    // Note that the legacy version (TLS 1.2) is set in this constructor's
    // initializer list, accordingly.
-   m_data->extensions().add(new Supported_Versions(Protocol_Version::TLS_V13));
+   m_data->extensions().add(new Supported_Versions(Version_Code::TLS_V13));
 
    if(key_exchange_group.has_value())
       { m_data->extensions().add(new Key_Share(key_exchange_group.value(), cb, rng)); }
@@ -827,9 +828,9 @@ std::optional<Protocol_Version> Server_Hello_13::random_signals_downgrade() cons
    {
    const uint64_t last8 = load_be<uint64_t>(m_data->random().data(), 3);
    if(last8 == DOWNGRADE_TLS11)
-      { return Protocol_Version::TLS_V11; }
+      { return Version_Code::TLS_V11; }
    if(last8 == DOWNGRADE_TLS12)
-      { return Protocol_Version::TLS_V12; }
+      { return Version_Code::TLS_V12; }
 
    return std::nullopt;
    }
@@ -848,7 +849,7 @@ Hello_Retry_Request::Hello_Retry_Request(std::unique_ptr<Server_Hello_Internal> 
 
 Hello_Retry_Request::Hello_Retry_Request(const Client_Hello_13& ch, Named_Group selected_group, const Policy& policy, Callbacks& cb)
    : Server_Hello_13(std::make_unique<Server_Hello_Internal>(
-                        Protocol_Version::TLS_V12 /* legacy_version */,
+                        Version_Code::TLS_V12 /* legacy_version */,
                         ch.session_id(),
                         HELLO_RETRY_REQUEST_MARKER,
                         choose_ciphersuite(ch, policy),
@@ -877,7 +878,7 @@ Hello_Retry_Request::Hello_Retry_Request(const Client_Hello_13& ch, Named_Group 
    //
    // Note that the legacy version (TLS 1.2) is set in this constructor's
    // initializer list, accordingly.
-   m_data->extensions().add(new Supported_Versions(Protocol_Version::TLS_V13));
+   m_data->extensions().add(new Supported_Versions(Version_Code::TLS_V13));
 
    m_data->extensions().add(new Key_Share(selected_group));
 

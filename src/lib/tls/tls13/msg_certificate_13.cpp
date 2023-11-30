@@ -43,7 +43,7 @@ filter_signature_schemes(const std::vector<Signature_Scheme>& peer_scheme_prefer
    for(const auto& scheme : peer_scheme_preference)
       {
       if(scheme.is_available() &&
-         scheme.is_compatible_with(Protocol_Version::TLS_V13))
+         scheme.is_compatible_with(Version_Code::TLS_V13))
          {
          compatible_schemes.push_back(scheme.algorithm_name());
          }
@@ -51,7 +51,7 @@ filter_signature_schemes(const std::vector<Signature_Scheme>& peer_scheme_prefer
 
    if(compatible_schemes.empty())
       {
-      throw TLS_Exception(Alert::HandshakeFailure, "Failed to agree on any signature algorithm");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Failed to agree on any signature algorithm");
       }
 
    return compatible_schemes;
@@ -77,7 +77,7 @@ void Certificate_13::validate_extensions(const std::set<Extension_Code>& request
    for(const auto& entry : m_entries)
       {
       if(entry.extensions.contains_other_than(requested_extensions))
-         { throw TLS_Exception(Alert::IllegalParameter, "Certificate Entry contained an extension that was not offered"); }
+         { throw TLS_Exception(AlertType::IllegalParameter, "Certificate Entry contained an extension that was not offered"); }
 
       cb.tls_examine_extensions(entry.extensions, m_side, type());
       }
@@ -120,7 +120,7 @@ void Certificate_13::verify(Callbacks& callbacks,
    const auto& server_cert = m_entries.front().certificate;
    if(!certificate_allows_signing(server_cert))
       {
-      throw TLS_Exception(Alert::BadCertificate,
+      throw TLS_Exception(AlertType::BadCertificate,
                           "Certificate usage constraints do not allow signing");
       }
 
@@ -147,7 +147,7 @@ void Certificate_13::setup_entries(std::vector<X509_Certificate> cert_chain,
 
    if(ocsp_responses.size() != cert_chain.size())
       {
-      throw TLS_Exception(Alert::InternalError, "Application didn't provide the correct number of OCSP responses");
+      throw TLS_Exception(AlertType::InternalError, "Application didn't provide the correct number of OCSP responses");
       }
 
    for(size_t i = 0; i < cert_chain.size(); ++i)
@@ -228,7 +228,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
    //    [...] in the case of server authentication, this field SHALL be zero length.
    if(m_side == Connection_Side::Server && !m_request_context.empty())
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "Server Certificate message must not contain a request context");
       }
 
@@ -236,7 +236,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
 
    if(reader.remaining_bytes() != cert_entries_len)
       {
-      throw TLS_Exception(Alert::DecodeError, "Certificate: Message malformed");
+      throw TLS_Exception(AlertType::DecodeError, "Certificate: Message malformed");
       }
 
    const size_t max_size = policy.maximum_certificate_chain_size();
@@ -259,7 +259,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
       // But, require that the leaf certificate be v3.
       if(m_entries.empty() && entry.certificate.x509_version() != 3)
          {
-         throw TLS_Exception(Alert::BadCertificate, "The leaf certificate must be v3");
+         throw TLS_Exception(AlertType::BadCertificate, "The leaf certificate must be v3");
          }
 
       // Extensions are simply tacked at the end of the certificate entry. This
@@ -285,7 +285,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
             // Extension_Code::SignedCertificateTimestamp
          }))
          {
-         throw TLS_Exception(Alert::IllegalParameter, "Certificate Entry contained an extension that is not allowed");
+         throw TLS_Exception(AlertType::IllegalParameter, "Certificate Entry contained an extension that is not allowed");
          }
 
       m_entries.push_back(std::move(entry));
@@ -303,7 +303,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
       //    abort the handshake with a "decode_error" alert.
       if(m_side == Connection_Side::Server)
          {
-         throw TLS_Exception(Alert::DecodeError, "No certificates sent by server");
+         throw TLS_Exception(AlertType::DecodeError, "No certificates sent by server");
          }
       }
    else
@@ -315,7 +315,7 @@ Certificate_13::Certificate_13(const std::vector<uint8_t>& buf,
 
       if(!policy.allowed_signature_method(key->algo_name()))
          {
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Rejecting " + key->algo_name() + " signature");
          }
       }

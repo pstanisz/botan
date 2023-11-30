@@ -156,10 +156,9 @@ bool operator==(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
       return lhs.get() == rhs.get();
    }
 
-// template<typename T, typename... Tags>
-// requires(concepts::three_way_comparable<T>)
-// auto operator<=>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
-//    { return lhs.get() <=> rhs.get(); }
+template<typename T, typename... Tags, typename = concepts::equality_comparable<T>>
+bool operator!=(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)
+   { return !operator==(lhs, rhs); }
 
 template<typename T, typename... Tags, typename = concepts::less_comparable<T>>
 auto operator<(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs)

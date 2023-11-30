@@ -16,6 +16,7 @@
    #include <botan/hex.h>
    #include <botan/ffi.h>
    #include <botan/internal/loadstor.h>
+   #include <botan/contains.h>
    #include <set>
 #endif
 
@@ -1401,7 +1402,7 @@ class FFI_ErrorHandling_Test final : public FFI_Test
 
                if(s != "Unknown error")
                   {
-                  result.confirm("No duplicate messages", !errors.contains(s));
+                  result.confirm("No duplicate messages", !Botan::contains(errors, s));
                   errors.insert(s);
                   }
                }

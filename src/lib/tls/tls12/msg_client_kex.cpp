@@ -87,7 +87,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          DL_Group group(modulus, generator);
 
          if(!group.verify_group(rng, false))
-            { throw TLS_Exception(Alert::InsufficientSecurity, "DH group validation failed"); }
+            { throw TLS_Exception(AlertType::InsufficientSecurity, "DH group validation failed"); }
 
          const auto private_key = state.callbacks().tls_generate_ephemeral_key(group, rng);
          auto shared_secret =
@@ -120,7 +120,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
 
          if(policy.choose_key_exchange_group({curve_id}, {}) != curve_id)
             {
-            throw TLS_Exception(Alert::HandshakeFailure,
+            throw TLS_Exception(AlertType::HandshakeFailure,
                                 "Server sent ECC curve prohibited by policy");
             }
 
@@ -147,7 +147,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
             auto ecdh_key = dynamic_cast<ECDH_PublicKey*>(private_key.get());
             if(!ecdh_key)
                {
-               throw TLS_Exception(Alert::InternalError,
+               throw TLS_Exception(AlertType::InternalError,
                                  "Application did not provide a ECDH_PublicKey");
                }
             append_tls_length_value(m_key_material,
@@ -194,7 +194,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          append_tls_length_value(m_key_material, encrypted_key, 2);
          }
       else
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Expected a RSA key in server cert but got " +
                              server_public_key->algo_name());
       }
@@ -273,7 +273,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
             if(policy.hide_unknown_users())
                psk = SymmetricKey(rng, 16);
             else
-               throw TLS_Exception(Alert::UnknownPSKIdentity,
+               throw TLS_Exception(AlertType::UnknownPSKIdentity,
                                    "No PSK for identifier " + psk_identity);
             }
          }
@@ -327,7 +327,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
             }
          catch(Invalid_Argument& e)
             {
-            throw TLS_Exception(Alert::IllegalParameter, e.what());
+            throw TLS_Exception(AlertType::IllegalParameter, e.what());
             }
          catch(std::exception&)
             {
