@@ -33,13 +33,13 @@ inline size_t checked_add(size_t x, size_t y, const char* file, int line)
    {
 #if BOTAN_COMPILER_HAS_BUILTIN(__builtin_add_overflow)
    size_t z;
-   if(__builtin_add_overflow(x, y, &z)) [[unlikely]]
+   if(__builtin_add_overflow(x, y, &z))
 #elif defined(_MSC_VER)
    size_t z;
-   if(SizeTAdd(x, y, &z) != S_OK) [[unlikely]]
+   if(SizeTAdd(x, y, &z) != S_OK)
 #else
    size_t z = x + y;
-   if(z < x) [[unlikely]]
+   if(z < x)
 #endif
       {
       throw Integer_Overflow_Detected(file, line);
@@ -51,13 +51,13 @@ inline std::optional<size_t> checked_mul(size_t x, size_t y)
    {
 #if BOTAN_COMPILER_HAS_BUILTIN(__builtin_add_overflow)
    size_t z;
-   if(__builtin_mul_overflow(x, y, &z)) [[unlikely]]
+   if(__builtin_mul_overflow(x, y, &z))
 #elif defined(_MSC_VER)
    size_t z;
-   if(SizeTMult(x, y, &z) != S_OK) [[unlikely]]
+   if(SizeTMult(x, y, &z) != S_OK)
 #else
    size_t z = x * y;
-   if(y && z / y != x) [[unlikely]]
+   if(y && z / y != x)
 #endif
       {
       return std::nullopt;

@@ -163,7 +163,8 @@ class BOTAN_PUBLIC_API(3,0) Key_Constraints
       bool includes(Key_Constraints other) const { return (m_value & other.m_value) == other.m_value; }
 
       // Return true if any of the bits provided are set
-      bool includes_any(auto&& ...bits) const
+      template <typename... Ts>
+      bool includes_any(Ts&& ...bits) const
          {
          return (m_value & (bits | ...)) > 0;
          }
