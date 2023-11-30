@@ -12,7 +12,6 @@
 #include <limits>
 #include <array>
 #include <vector>
-#include <iostream>
 
 namespace Botan_Tests {
 
@@ -50,21 +49,21 @@ std::vector<Test::Result> test_ctors()
       {
       Botan_Tests::CHECK("default ctor", [](auto& result)
          {
-        Botan::span<int> s;
+         Botan::span<int> s;
          
          result.test_is_eq("size()", s.size(), size_t(0U));
          result.test_is_eq("data()", s.data(), static_cast<int*>(nullptr));
          }),
       Botan_Tests::CHECK("ctor with first and size", [](auto& result)
          {
-        Botan::span<int> s(std::begin(ARRAY), ARRAY.size());
+         Botan::span<int> s(std::begin(ARRAY), ARRAY.size());
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
          result.test_is_eq("data()", s.data(), ARRAY.begin());
          }),
       Botan_Tests::CHECK("ctor with first and last", [](auto& result)
          {
-        Botan::span<int> s(std::begin(ARRAY), std::end(ARRAY));
+         Botan::span<int> s(std::begin(ARRAY), std::end(ARRAY));
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
          result.test_is_eq("data()", s.data(), ARRAY.begin());
@@ -78,7 +77,7 @@ std::vector<Test::Result> test_ctors()
          }),
       Botan_Tests::CHECK("ctor with std::array", [](auto& result)
          {
-        Botan::span<int> s(ARRAY);
+         Botan::span<int> s(ARRAY);
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
          result.test_is_eq("data()", s.data(), ARRAY.begin());
@@ -394,16 +393,22 @@ std::vector<Test::Result> test_misc()
          {
          std::vector<int> vec {1, 2, 3};
          Botan::span s(vec);
+
+         result.test_is_eq("span from std::vector", s.size(), vec.size());
          }), 
       Botan_Tests::CHECK("implicit from secure_vector", [](auto& result)
          {
          Botan::secure_vector<uint8_t> vec {1, 2, 3};
          Botan::span s(vec);
+
+         result.test_is_eq("span from secure_vector", s.size(), vec.size());
          }),
       Botan_Tests::CHECK("implicit from std::string", [](auto& result)
          {
          std::string str = "abc";
          Botan::span s(str);
+
+         result.test_is_eq("span from std::string", s.size(), str.size());
          })
       };
    }
