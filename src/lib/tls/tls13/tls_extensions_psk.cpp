@@ -69,8 +69,8 @@ PSK::PSK(TLS_Data_Reader& reader,
          std::make_unique<PSK_Internal>(
             Server_PSK
                {
-               .selected_identity = reader.get_uint16_t(),
-               .session_to_resume = std::nullopt
+               reader.get_uint16_t(),  //selected_identity
+               std::nullopt            //session_to_resume
                });
       }
    else if(message_type == Handshake_Type::ClientHello)
@@ -87,9 +87,9 @@ PSK::PSK(TLS_Data_Reader& reader,
 
          psks.emplace_back(
             Client_PSK{
-               .ticket = Ticket(std::move(identity), obfuscated_ticket_age),
-               .binder = {},
-               .cipher_state = nullptr
+               Ticket(std::move(identity), obfuscated_ticket_age),   //ticket
+               {},         //binder
+               nullptr     //cipher_state
             });
          }
 
@@ -165,13 +165,13 @@ PSK::PSK(Session_with_Handle& session_to_resume, Callbacks& callbacks)
    std::vector<Client_PSK> cpsk;
    cpsk.emplace_back(Client_PSK
       {
-      .ticket = Ticket(session_to_resume.handle.opaque_handle(), age,
-                       session_to_resume.session.session_age_add()),
-      .binder = std::vector<uint8_t>(binder_length),
-      .cipher_state = Cipher_State::init_with_psk(Connection_Side::Client,
-                                                  Cipher_State::PSK_Type::Resumption,
-                                                  session_to_resume.session.extract_master_secret(),
-                                                  cipher)
+      Ticket(session_to_resume.handle.opaque_handle(), age,
+             session_to_resume.session.session_age_add()),  //ticket
+      std::vector<uint8_t>(binder_length),                  //binder
+      Cipher_State::init_with_psk(Connection_Side::Client,
+                                  Cipher_State::PSK_Type::Resumption,
+                                  session_to_resume.session.extract_master_secret(),
+                                  cipher)                   //cipher_state
       });
 
    m_impl = std::make_unique<PSK_Internal>(std::move(cpsk));
@@ -181,8 +181,8 @@ PSK::PSK(Session_with_Handle& session_to_resume, Callbacks& callbacks)
 PSK::PSK(Session session_to_resume, const uint16_t psk_index)
    : m_impl(std::make_unique<PSK_Internal>(
          Server_PSK{
-            .selected_identity = psk_index,
-            .session_to_resume = std::move(session_to_resume)
+            psk_index,                    //selected_identity
+            std::move(session_to_resume)  //session_to_resume
          })) {}
 
 

@@ -226,7 +226,8 @@ std::optional<std::pair<Session, uint16_t>>
    // Note that the TLS server currently does not ensure that tickets aren't
    // reused. As a result, no locking is required on this level.
 
-   for(uint16_t i = 0; const auto& ticket : tickets)
+   uint16_t i = 0;
+   for (const auto& ticket : tickets)
       {
       auto session = retrieve(ticket.identity(), callbacks, policy);
       if(session.has_value() &&

@@ -9,9 +9,10 @@
 
 namespace Botan {
 
+// Replaces C++20 member method contains available in key-value based containers
 template <typename C>
 inline bool contains(const C& container, const typename C::key_type& what)
-    { return container.find(what) != std::end(container); };
+    { return container.find(what) != std::end(container); }
 
 }
 

@@ -122,7 +122,7 @@ class Peer
       void reset_timeout(std::string message)
          {
          m_timeout_timer.expires_after(k_timeout);
-         m_timeout_timer.async_wait([=, this](const error_code &ec)
+         m_timeout_timer.async_wait([this](const error_code &ec) // TODO: pstanisz check
             {
             if(ec != net::error::operation_aborted)  // timer cancelled
                {
@@ -406,11 +406,11 @@ class TestBase
            m_server(std::make_shared<Server>(server_policy, ioc, m_name)),
            m_result(m_name)
          {
-         m_client->on_timeout([=, this](const std::string& msg)
+         m_client->on_timeout([this](const std::string& msg) // TODO: pstanisz check
             {
             m_result.test_failure("timeout in client during: " + msg);
             });
-         m_server->on_timeout([=, this](const std::string& msg)
+         m_server->on_timeout([this](const std::string& msg)  // TODO: pstanisz check
             {
             m_result.test_failure("timeout in server during: " + msg);
             });

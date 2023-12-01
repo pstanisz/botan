@@ -11,7 +11,8 @@
 
 namespace Botan {
 
-template< class Key, class T, class Compare, class Alloc, class Pred >
+// Replaces C++20 member method erase_if available in std::map
+template <typename Key, typename T, typename Compare, typename Alloc, typename Pred>
 typename std::map<Key, T, Compare, Alloc>::size_type erase_if(std::map<Key, T, Compare, Alloc>& c, Pred pred) {
     auto old_size = c.size();
     for (auto first = c.begin(), last = c.end(); first != last;)

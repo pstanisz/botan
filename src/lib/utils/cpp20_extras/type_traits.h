@@ -12,11 +12,13 @@
 
 namespace Botan {
 
+// Replaces C++20 std::remove_cvref
 template <typename T>
 struct remove_cvref {
     typedef std::remove_cv_t<std::remove_reference_t<T>> type;
 };
 
+// Replaces C++20 std::remove_cvref_t
 template <typename T>
 using remove_cvref_t = typename remove_cvref<T>::type;
 
