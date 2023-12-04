@@ -29,11 +29,11 @@ class TLS_Ciphersuites final : public Command
          {
          if(str == "tls1.2" || str == "TLS1.2" || str == "TLS-1.2")
             {
-            return Botan::TLS::Protocol_Version::TLS_V12;
+            return Botan::TLS::Version_Code::TLS_V12;
             }
          if(str == "dtls1.2" || str == "DTLS1.2" || str == "DTLS-1.2")
             {
-            return Botan::TLS::Protocol_Version::DTLS_V12;
+            return Botan::TLS::Version_Code::DTLS_V12;
             }
          else
             {

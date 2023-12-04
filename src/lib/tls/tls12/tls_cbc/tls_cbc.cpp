@@ -138,7 +138,7 @@ std::vector<uint8_t> TLS_CBC_HMAC_AEAD_Mode::assoc_data_with_len(uint16_t len)
    return ad;
    }
 
-void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    BOTAN_ARG_CHECK(idx == 0, "TLS 1.2 CBC/HMAC: cannot handle non-zero index in set_associated_data_n");
    if(ad.size() != 13)
@@ -146,7 +146,7 @@ void TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(size_t idx, std::span<const u
    m_ad.assign(ad.begin(), ad.end());
    }
 
-void TLS_CBC_HMAC_AEAD_Encryption::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void TLS_CBC_HMAC_AEAD_Encryption::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    TLS_CBC_HMAC_AEAD_Mode::set_associated_data_n(idx, ad);
 
@@ -390,7 +390,7 @@ void TLS_CBC_HMAC_AEAD_Decryption::finish_msg(secure_vector<uint8_t>& buffer, si
    if(record_len < tag_size() ||
       (record_len - (use_encrypt_then_mac() ? tag_size() : 0)) % block_size() != 0)
       {
-      throw TLS_Exception(Alert::BadRecordMac, "Message authentication failure");
+      throw TLS_Exception(AlertType::BadRecordMac, "Message authentication failure");
       }
 
    if(use_encrypt_then_mac())
@@ -416,7 +416,7 @@ void TLS_CBC_HMAC_AEAD_Decryption::finish_msg(secure_vector<uint8_t>& buffer, si
 
       if(!mac_ok)
          {
-         throw TLS_Exception(Alert::BadRecordMac, "Message authentication failure");
+         throw TLS_Exception(AlertType::BadRecordMac, "Message authentication failure");
          }
 
       cbc_decrypt_record(record_contents, enc_size);
@@ -427,7 +427,7 @@ void TLS_CBC_HMAC_AEAD_Decryption::finish_msg(secure_vector<uint8_t>& buffer, si
       // No oracle here, whoever sent us this had the key since MAC check passed
       if(pad_size == 0)
          {
-         throw TLS_Exception(Alert::BadRecordMac, "Message authentication failure");
+         throw TLS_Exception(AlertType::BadRecordMac, "Message authentication failure");
          }
 
       const uint8_t* plaintext_block = &record_contents[0];
@@ -499,7 +499,7 @@ void TLS_CBC_HMAC_AEAD_Decryption::finish_msg(secure_vector<uint8_t>& buffer, si
          */
          if(is_datagram_protocol())
             mac().final(mac_buf);
-         throw TLS_Exception(Alert::BadRecordMac, "Message authentication failure");
+         throw TLS_Exception(AlertType::BadRecordMac, "Message authentication failure");
          }
       }
    }

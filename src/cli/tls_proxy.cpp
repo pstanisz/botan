@@ -242,13 +242,13 @@ class tls_proxy_session final : public std::enable_shared_from_this<tls_proxy_se
          proxy_write_to_server({}); // initiate another write if needed
          }
 
-      void tls_record_received(uint64_t /*rec_no*/, std::span<const uint8_t> buf) override
+      void tls_record_received(uint64_t /*rec_no*/, Botan::span<const uint8_t> buf) override
          {
          // Immediately bounce message to server
          proxy_write_to_server(buf);
          }
 
-      void tls_emit_data(std::span<const uint8_t> buf) override
+      void tls_emit_data(Botan::span<const uint8_t> buf) override
          {
          if(!buf.empty())
             {
@@ -273,7 +273,7 @@ class tls_proxy_session final : public std::enable_shared_from_this<tls_proxy_se
             }
          }
 
-      void proxy_write_to_server(std::span<const uint8_t> buf)
+      void proxy_write_to_server(Botan::span<const uint8_t> buf)
          {
          if(!buf.empty())
             {
@@ -356,7 +356,7 @@ class tls_proxy_session final : public std::enable_shared_from_this<tls_proxy_se
 
       void tls_alert(Botan::TLS::Alert alert) override
          {
-         if(alert.type() == Botan::TLS::Alert::CloseNotify)
+         if(alert.type() == Botan::TLS::AlertType::CloseNotify)
             {
             m_tls->close();
             return;

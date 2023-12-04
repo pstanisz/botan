@@ -58,7 +58,7 @@ void ChaCha20Poly1305_Mode::key_schedule(const uint8_t key[], size_t length)
    m_chacha->set_key(key, length);
    }
 
-void ChaCha20Poly1305_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void ChaCha20Poly1305_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    BOTAN_ARG_CHECK(idx == 0, "ChaCha20Poly1305: cannot handle non-zero index in set_associated_data_n");
    if(m_ctext_len > 0 || m_nonce_len > 0)

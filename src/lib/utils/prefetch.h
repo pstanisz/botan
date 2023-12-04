@@ -32,8 +32,8 @@ uint64_t prefetch_array_raw(size_t bytes, const void* array) noexcept;
 */
 template<typename T, size_t... Ns>
 T prefetch_arrays(T (&...arr)[Ns]) noexcept
-   requires std::is_integral<T>::value
    {
+   static_assert(std::is_integral<T>::value, "prefetch_arrays must use integral type");
    return (static_cast<T>(prefetch_array_raw(sizeof(T)*Ns, arr)) & ...);
    }
 

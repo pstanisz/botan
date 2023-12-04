@@ -67,7 +67,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * @param out the byte array to hold the output, i.e. the ciphertext
       *            with at least the same size as @p in
       */
-      void cipher(std::span<const uint8_t> in, std::span<uint8_t> out)
+      void cipher(Botan::span<const uint8_t> in, Botan::span<uint8_t> out)
          {
          BOTAN_ARG_CHECK(in.size() <= out.size(),
                          "Output buffer of stream cipher must be at least as long as input buffer");
@@ -92,7 +92,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       *
       * @param out the byte array to hold the keystream
       */
-      void write_keystream(std::span<uint8_t> out)
+      void write_keystream(Botan::span<uint8_t> out)
          { generate_keystream(out.data(), out.size()); }
 
       /**
@@ -100,7 +100,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       *
       * @param bytes The number of bytes to be produced
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template<typename T = secure_vector<uint8_t>, typename = Botan::concepts::resizable_byte_buffer<T>>
       T keystream_bytes(size_t bytes)
          {
          T out(bytes);
@@ -122,7 +122,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * The message is encrypted/decrypted in place.
       * @param buf the plaintext / ciphertext
       */
-      void cipher1(std::span<uint8_t> buf)
+      void cipher1(Botan::span<uint8_t> buf)
          { cipher(buf, buf); }
 
       /**
@@ -130,7 +130,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * The message is encrypted/decrypted in place.
       * @param inout the plaintext / ciphertext
       */
-      void encipher(std::span<uint8_t> inout)
+      void encipher(Botan::span<uint8_t> inout)
          { cipher(inout.data(), inout.data(), inout.size()); }
 
       /**
@@ -138,7 +138,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * The message is encrypted in place.
       * @param inout the plaintext / ciphertext
       */
-      void encrypt(std::span<uint8_t> inout)
+      void encrypt(Botan::span<uint8_t> inout)
          { cipher(inout.data(), inout.data(), inout.size()); }
 
       /**
@@ -146,7 +146,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * The message is decrypted in place.
       * @param inout the plaintext / ciphertext
       */
-      void decrypt(std::span<uint8_t> inout)
+      void decrypt(Botan::span<uint8_t> inout)
          { cipher(inout.data(), inout.data(), inout.size()); }
 
       /**
@@ -176,7 +176,7 @@ class BOTAN_PUBLIC_API(2,0) StreamCipher : public SymmetricAlgorithm
       * Resync the cipher using the IV
       * @param iv the initialization vector
       */
-      void set_iv(std::span<const uint8_t> iv)
+      void set_iv(Botan::span<const uint8_t> iv)
          { set_iv_bytes(iv.data(), iv.size()); }
 
       /**

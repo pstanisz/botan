@@ -16,7 +16,7 @@
 #include <functional>
 #include <chrono>
 #include <memory>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -215,7 +215,7 @@ std::unique_ptr<Private_Key> load_key(DataSource& source);
 * @return loaded private key object
 */
 BOTAN_PUBLIC_API(3,0)
-std::unique_ptr<Private_Key> load_key(std::span<const uint8_t> source,
+std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
                                       const std::function<std::string ()>& get_passphrase);
 
 /** Load an encrypted key from memory.
@@ -224,7 +224,7 @@ std::unique_ptr<Private_Key> load_key(std::span<const uint8_t> source,
 * @return loaded private key object
 */
 BOTAN_PUBLIC_API(3,0)
-std::unique_ptr<Private_Key> load_key(std::span<const uint8_t> source,
+std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
                                       std::string_view pass);
 
 /** Load an unencrypted key from memory.
@@ -232,7 +232,7 @@ std::unique_ptr<Private_Key> load_key(std::span<const uint8_t> source,
 * @return loaded private key object
 */
 BOTAN_PUBLIC_API(3,0)
-std::unique_ptr<Private_Key> load_key(std::span<const uint8_t> source);
+std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source);
 
 /**
 * Copy an existing encoded key object.

@@ -14,7 +14,7 @@ PKCS11_RNG::PKCS11_RNG(Session& session)
    : m_session(session)
    {}
 
-void PKCS11_RNG::fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input)
+void PKCS11_RNG::fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
    {
    if(!input.empty())
       {

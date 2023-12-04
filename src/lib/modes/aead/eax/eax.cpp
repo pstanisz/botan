@@ -108,7 +108,7 @@ void EAX_Mode::key_schedule(const uint8_t key[], size_t length)
 /*
 * Set the EAX associated data
 */
-void EAX_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad)
+void EAX_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad)
    {
    BOTAN_ARG_CHECK(idx == 0, "EAX: cannot handle non-zero index in set_associated_data_n");
    if(m_nonce_mac.empty() == false)

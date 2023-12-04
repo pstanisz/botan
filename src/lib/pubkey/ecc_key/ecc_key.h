@@ -108,7 +108,7 @@ class BOTAN_PUBLIC_API(2,0) EC_PublicKey : public virtual Public_Key
       * @param key_bits DER encoded public key bits
       */
       EC_PublicKey(const AlgorithmIdentifier& alg_id,
-                   std::span<const uint8_t> key_bits);
+                   Botan::span<const uint8_t> key_bits);
 
       EC_PublicKey() : m_domain_params{}, m_public_key{}, m_domain_encoding(EC_Group_Encoding::Explicit)
       {}
@@ -170,7 +170,7 @@ class BOTAN_PUBLIC_API(2,0) EC_PrivateKey : public virtual EC_PublicKey,
       * multiplying directly with x (as in ECDSA).
       */
       EC_PrivateKey(const AlgorithmIdentifier& alg_id,
-                    std::span<const uint8_t> key_bits,
+                    Botan::span<const uint8_t> key_bits,
                     bool with_modular_inverse=false);
 
       EC_PrivateKey() = default;

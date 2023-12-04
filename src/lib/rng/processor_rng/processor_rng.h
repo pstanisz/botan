@@ -40,7 +40,7 @@ class BOTAN_PUBLIC_API(2,15) Processor_RNG final : public Hardware_RNG
       std::string name() const override;
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> out, std::span<const uint8_t> in) override;
+      void fill_bytes_with_input(Botan::span<uint8_t> out, Botan::span<const uint8_t> in) override;
    };
 
 }

@@ -11,6 +11,8 @@
 #include <botan/tls_messages.h>
 #include <botan/exceptn.h>
 #include <botan/internal/loadstor.h>
+#include <botan/contains.h>
+
 #include <chrono>
 
 namespace Botan::TLS {
@@ -42,7 +44,7 @@ uint64_t steady_clock_ms()
 
 Protocol_Version Stream_Handshake_IO::initial_record_version() const
    {
-   return Protocol_Version::TLS_V12;
+   return Version_Code::TLS_V12;
    }
 
 void Stream_Handshake_IO::add_record(const uint8_t record[],
@@ -138,7 +140,7 @@ std::vector<uint8_t> Stream_Handshake_IO::send(const Handshake_Message& msg)
 
 Protocol_Version Datagram_Handshake_IO::initial_record_version() const
    {
-   return Protocol_Version::DTLS_V12;
+   return Version_Code::DTLS_V12;
    }
 
 void Datagram_Handshake_IO::retransmit_last_flight()
@@ -265,7 +267,7 @@ Datagram_Handshake_IO::get_next_record(bool expecting_ccs)
          {
          const uint16_t current_epoch = m_messages.begin()->second.epoch();
 
-         if(m_ccs_epochs.contains(current_epoch))
+         if(contains(m_ccs_epochs, current_epoch))
             return std::make_pair(Handshake_Type::HandshakeCCS, std::vector<uint8_t>());
          }
       return std::make_pair(Handshake_Type::None, std::vector<uint8_t>());

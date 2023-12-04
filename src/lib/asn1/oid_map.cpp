@@ -5,6 +5,7 @@
 */
 
 #include <botan/internal/oid_map.h>
+#include <botan/contains.h>
 
 namespace Botan {
 
@@ -48,7 +49,7 @@ void OID_Map::add_oid(const OID& oid, std::string_view str)
 void OID_Map::add_str2oid(const OID& oid, std::string_view str)
    {
    lock_guard_type<mutex_type> lock(m_mutex);
-   if(!m_str2oid.contains(std::string(str)))
+   if(!contains(m_str2oid, std::string(str)))
       m_str2oid.insert(std::make_pair(str, oid));
    }
 
@@ -56,7 +57,7 @@ void OID_Map::add_oid2str(const OID& oid, std::string_view str)
    {
    const std::string oid_str = oid.to_string();
    lock_guard_type<mutex_type> lock(m_mutex);
-   if(!m_oid2str.contains(oid_str))
+   if(!contains(m_oid2str, oid_str))
       m_oid2str.insert(std::make_pair(oid_str, str));
    }
 

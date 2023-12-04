@@ -9,7 +9,7 @@
 #define BOTAN_HEX_CODEC_H_
 
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 
@@ -44,7 +44,7 @@ std::string BOTAN_PUBLIC_API(2,0) hex_encode(const uint8_t input[],
 * @param uppercase should output be upper or lower case?
 * @return hexadecimal representation of input
 */
-inline std::string hex_encode(std::span<const uint8_t> input,
+inline std::string hex_encode(Botan::span<const uint8_t> input,
                               bool uppercase = true)
    {
    return hex_encode(input.data(), input.size(), uppercase);
@@ -101,7 +101,7 @@ size_t BOTAN_PUBLIC_API(3,0) hex_decode(uint8_t output[],
 * @param input some hex input
 * @return number of bytes written to output
 */
-size_t BOTAN_PUBLIC_API(3,0) hex_decode(std::span<uint8_t> output,
+size_t BOTAN_PUBLIC_API(3,0) hex_decode(Botan::span<uint8_t> output,
                                         std::string_view input,
                                         bool ignore_ws = true);
 

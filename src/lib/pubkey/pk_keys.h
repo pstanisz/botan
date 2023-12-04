@@ -13,7 +13,7 @@
 #include <botan/pk_ops_fwd.h>
 #include <string_view>
 #include <string>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -384,7 +384,7 @@ std::string BOTAN_PUBLIC_API(2,4)
    create_hex_fingerprint(const uint8_t bits[], size_t len,
                           std::string_view hash_name);
 
-inline std::string create_hex_fingerprint(std::span<const uint8_t> vec,
+inline std::string create_hex_fingerprint(Botan::span<const uint8_t> vec,
                                           std::string_view hash_name)
    {
    return create_hex_fingerprint(vec.data(), vec.size(), hash_name);

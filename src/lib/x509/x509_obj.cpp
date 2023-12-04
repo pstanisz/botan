@@ -12,6 +12,7 @@
 #include <botan/pem.h>
 #include <botan/internal/emsa.h>
 #include <botan/internal/fmt.h>
+#include <botan/starts_with.h>
 #include <algorithm>
 #include <sstream>
 
@@ -204,7 +205,7 @@ std::string x509_signature_padding_for(
       {
       return user_specified_padding.empty() ? "Pure" : std::string(user_specified_padding);
       }
-   else if(algo_name.starts_with("Dilithium-"))
+   else if(starts_with(algo_name, "Dilithium-"))
       {
       return user_specified_padding.empty() ? "Randomized" : std::string(user_specified_padding);
       }

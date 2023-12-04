@@ -216,7 +216,7 @@ size_t base64_decode(uint8_t output[],
    }
 
 
-size_t base64_decode(std::span<uint8_t> output,
+size_t base64_decode(Botan::span<uint8_t> output,
                      std::string_view input,
                      bool ignore_ws)
    {

@@ -16,6 +16,7 @@
 #include <botan/internal/stl_util.h>
 #include <botan/internal/loadstor.h>
 #include <botan/x509cert.h>
+#include <botan/contains.h>
 
 namespace Botan::TLS {
 
@@ -113,7 +114,7 @@ Handshake_State& Channel_Impl_12::create_handshake_state(Protocol_Version versio
 
       if(active_version.is_datagram_protocol() != version.is_datagram_protocol())
          {
-         throw TLS_Exception(Alert::ProtocolVersion,
+         throw TLS_Exception(AlertType::ProtocolVersion,
                              "Active state using version " + active_version.to_string() +
                              " cannot change to " + version.to_string() + " in pending");
          }
@@ -197,7 +198,7 @@ void Channel_Impl_12::change_cipher_spec_reader(Connection_Side side)
 
    const uint16_t epoch = sequence_numbers().current_read_epoch();
 
-   BOTAN_ASSERT(!m_read_cipher_states.contains(epoch),
+   BOTAN_ASSERT(!contains(m_read_cipher_states, epoch),
                 "No read cipher state currently set for next epoch");
 
    // flip side as we are reading
@@ -226,7 +227,7 @@ void Channel_Impl_12::change_cipher_spec_writer(Connection_Side side)
 
    const uint16_t epoch = sequence_numbers().current_write_epoch();
 
-   BOTAN_ASSERT(!m_write_cipher_states.contains(epoch),
+   BOTAN_ASSERT(!contains(m_write_cipher_states, epoch),
                 "No write cipher state currently set for next epoch");
 
    std::shared_ptr<Connection_Cipher_State> write_state(
@@ -272,7 +273,7 @@ void Channel_Impl_12::activate_session()
    callbacks().tls_session_activated();
    }
 
-size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
+size_t Channel_Impl_12::from_peer(Botan::span<const uint8_t> data)
    {
    const bool allow_epoch0_restart = m_is_datagram && m_is_server && policy().allow_dtls_epoch0_restart();
 
@@ -321,7 +322,7 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
             }
 
          if(m_record_buf.size() > MAX_PLAINTEXT_SIZE)
-            throw TLS_Exception(Alert::RecordOverflow,
+            throw TLS_Exception(AlertType::RecordOverflow,
                                 "TLS plaintext record is larger than allowed maximum");
 
 
@@ -338,7 +339,7 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
                if(record.version().major_version() != 3 &&
                   record.version().major_version() != 0xFE)
                   {
-                  throw TLS_Exception(Alert::ProtocolVersion,
+                  throw TLS_Exception(AlertType::ProtocolVersion,
                                       "Received unexpected record version in initial record");
                   }
                }
@@ -346,7 +347,7 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
                {
                if(pending->server_hello() != nullptr && record.version() != pending->version())
                   {
-                  throw TLS_Exception(Alert::ProtocolVersion,
+                  throw TLS_Exception(AlertType::ProtocolVersion,
                                          "Received unexpected record version");
                   }
                }
@@ -354,7 +355,7 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
                {
                if(record.version() != active->version())
                   {
-                  throw TLS_Exception(Alert::ProtocolVersion,
+                  throw TLS_Exception(AlertType::ProtocolVersion,
                                       "Received unexpected record version");
                   }
                }
@@ -363,15 +364,15 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
          if(record.type() == Record_Type::Handshake || record.type() == Record_Type::ChangeCipherSpec)
             {
             if(m_has_been_closed)
-               throw TLS_Exception(Alert::UnexpectedMessage, "Received handshake data after connection closure");
+               throw TLS_Exception(AlertType::UnexpectedMessage, "Received handshake data after connection closure");
             process_handshake_ccs(m_record_buf, record.sequence(), record.type(), record.version(), epoch0_restart);
             }
          else if(record.type() == Record_Type::ApplicationData)
             {
             if(m_has_been_closed)
-               throw TLS_Exception(Alert::UnexpectedMessage, "Received application data after connection closure");
+               throw TLS_Exception(AlertType::UnexpectedMessage, "Received application data after connection closure");
             if(pending_state() != nullptr)
-               throw TLS_Exception(Alert::UnexpectedMessage, "Can't interleave application and handshake data");
+               throw TLS_Exception(AlertType::UnexpectedMessage, "Can't interleave application and handshake data");
             process_application_data(record.sequence(), m_record_buf);
             }
          else if(record.type() == Record_Type::Alert)
@@ -393,17 +394,17 @@ size_t Channel_Impl_12::from_peer(std::span<const uint8_t> data)
       }
    catch(Invalid_Authentication_Tag&)
       {
-      send_fatal_alert(Alert::BadRecordMac);
+      send_fatal_alert(AlertType::BadRecordMac);
       throw;
       }
    catch(Decoding_Error&)
       {
-      send_fatal_alert(Alert::DecodeError);
+      send_fatal_alert(AlertType::DecodeError);
       throw;
       }
    catch(...)
       {
-      send_fatal_alert(Alert::InternalError);
+      send_fatal_alert(AlertType::InternalError);
       throw;
       }
    }
@@ -489,7 +490,7 @@ void Channel_Impl_12::process_alert(const secure_vector<uint8_t>& record)
     {
     Alert alert_msg(record);
 
-    if(alert_msg.type() == Alert::NoRenegotiation)
+    if(alert_msg.type() == AlertType::NoRenegotiation)
        m_pending_state.reset();
 
     callbacks().tls_alert(alert_msg);
@@ -506,15 +507,15 @@ void Channel_Impl_12::process_alert(const secure_vector<uint8_t>& record)
           }
        }
 
-    if(alert_msg.type() == Alert::CloseNotify)
+    if(alert_msg.type() == AlertType::CloseNotify)
        {
        // TLS 1.2 requires us to immediately react with our "close_notify",
        // the return value of the application's callback has no effect on that.
        callbacks().tls_peer_closed_connection();
-       send_warning_alert(Alert::CloseNotify); // reply in kind
+       send_warning_alert(AlertType::CloseNotify); // reply in kind
        }
 
-    if(alert_msg.type() == Alert::CloseNotify || alert_msg.is_fatal())
+    if(alert_msg.type() == AlertType::CloseNotify || alert_msg.is_fatal())
        {
        m_has_been_closed = true;
        }
@@ -578,7 +579,7 @@ void Channel_Impl_12::send_record_under_epoch(uint16_t epoch, Record_Type record
    send_record_array(epoch, record_type, record.data(), record.size());
    }
 
-void Channel_Impl_12::to_peer(std::span<const uint8_t> data)
+void Channel_Impl_12::to_peer(Botan::span<const uint8_t> data)
    {
    if(!is_active())
       throw Invalid_State("Data cannot be sent on inactive TLS connection");
@@ -599,7 +600,7 @@ void Channel_Impl_12::send_alert(const Alert& alert)
       catch(...) { /* swallow it */ }
       }
 
-   if(alert.type() == Alert::NoRenegotiation)
+   if(alert.type() == AlertType::NoRenegotiation)
       m_pending_state.reset();
 
    if(alert.is_fatal())
@@ -615,7 +616,7 @@ void Channel_Impl_12::send_alert(const Alert& alert)
       reset_state();
    }
 
-   if(alert.type() == Alert::CloseNotify || alert.is_fatal())
+   if(alert.type() == AlertType::CloseNotify || alert.is_fatal())
       {
       m_has_been_closed = true;
       }
@@ -630,7 +631,7 @@ void Channel_Impl_12::secure_renegotiation_check(const Client_Hello_12* client_h
       const bool active_sr = active->client_hello()->secure_renegotiation();
 
       if(active_sr != secure_renegotiation)
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Client changed its mind about secure renegotiation");
       }
 
@@ -639,7 +640,7 @@ void Channel_Impl_12::secure_renegotiation_check(const Client_Hello_12* client_h
       const std::vector<uint8_t>& data = client_hello->renegotiation_info();
 
       if(data != secure_renegotiation_data_for_client_hello())
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Client sent bad values for secure renegotiation");
       }
    }
@@ -653,7 +654,7 @@ void Channel_Impl_12::secure_renegotiation_check(const Server_Hello_12* server_h
       const bool active_sr = active->server_hello()->secure_renegotiation();
 
       if(active_sr != secure_renegotiation)
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Server changed its mind about secure renegotiation");
       }
 
@@ -662,7 +663,7 @@ void Channel_Impl_12::secure_renegotiation_check(const Server_Hello_12* server_h
       const std::vector<uint8_t>& data = server_hello->renegotiation_info();
 
       if(data != secure_renegotiation_data_for_server_hello())
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Server sent bad values for secure renegotiation");
       }
    }

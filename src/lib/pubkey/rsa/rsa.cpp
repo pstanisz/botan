@@ -20,6 +20,7 @@
 #include <botan/internal/pss_params.h>
 #include <botan/internal/parsing.h>
 #include <botan/internal/fmt.h>
+#include <botan/starts_with.h>
 
 #if defined(BOTAN_HAS_THREAD_UTILS)
   #include <botan/internal/thread_pool.h>
@@ -135,7 +136,7 @@ void RSA_PublicKey::init(BigInt&& n, BigInt&& e)
    }
 
 RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/,
-                             std::span<const uint8_t> key_bits)
+                             Botan::span<const uint8_t> key_bits)
    {
    BigInt n, e;
    BER_Decoder(key_bits)
@@ -235,7 +236,7 @@ void RSA_PrivateKey::init(BigInt&& d, BigInt&& p, BigInt&& q,
    }
 
 RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/,
-                               std::span<const uint8_t> key_bits)
+                               Botan::span<const uint8_t> key_bits)
    {
    BigInt n, e, d, p, q, d1, d2, c;
 
@@ -578,7 +579,7 @@ AlgorithmIdentifier RSA_Signature_Operation::algorithm_identifier() const
       }
    catch(Lookup_Error&) {}
 
-   if(emsa_name.starts_with("EMSA4("))
+   if(starts_with(emsa_name, "EMSA4("))
       {
       auto parameters = PSS_Params::from_emsa_name(m_emsa->name()).serialize();
       return AlgorithmIdentifier("RSA/EMSA4", parameters);

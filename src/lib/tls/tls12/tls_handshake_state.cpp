@@ -85,7 +85,7 @@ const char* handshake_type_to_string(Handshake_Type type)
          return "invalid";
       }
 
-   throw TLS_Exception(Alert::UnexpectedMessage,
+   throw TLS_Exception(AlertType::UnexpectedMessage,
                        "Unknown TLS handshake message type " +
                        std::to_string(static_cast<size_t>(type)));
    }
@@ -308,7 +308,7 @@ Handshake_State::choose_sig_format(const Private_Key& key,
 
    if(!policy.allowed_signature_hash(hash))
       {
-      throw TLS_Exception(Alert::HandshakeFailure,
+      throw TLS_Exception(AlertType::HandshakeFailure,
                           "Policy refuses to accept signing with any hash supported by peer");
       }
 
@@ -351,13 +351,13 @@ Handshake_State::parse_sig_format(const Public_Key& key,
 
    if(!policy.allowed_signature_method(key_type))
       {
-      throw TLS_Exception(Alert::HandshakeFailure,
+      throw TLS_Exception(AlertType::HandshakeFailure,
                           "Rejecting " + key_type + " signature");
       }
 
    if(!scheme.is_available())
       {
-      throw TLS_Exception(Alert::HandshakeFailure,
+      throw TLS_Exception(AlertType::HandshakeFailure,
                           "Peer sent unknown signature scheme");
       }
 
@@ -366,7 +366,7 @@ Handshake_State::parse_sig_format(const Public_Key& key,
 
    if(for_client_auth && !cert_req())
       {
-      throw TLS_Exception(Alert::HandshakeFailure,
+      throw TLS_Exception(AlertType::HandshakeFailure,
                           "No certificate verify set");
       }
 
@@ -381,12 +381,12 @@ Handshake_State::parse_sig_format(const Public_Key& key,
 
    const std::string hash_algo = scheme.hash_function_name();
 
-   if(!scheme.is_compatible_with(Protocol_Version::TLS_V12))
-      { throw TLS_Exception(Alert::IllegalParameter, "Peer sent unexceptable signature scheme"); }
+   if(!scheme.is_compatible_with(Version_Code::TLS_V12))
+      { throw TLS_Exception(AlertType::IllegalParameter, "Peer sent unexceptable signature scheme"); }
 
    if(!supported_algos_include(supported_algos, key_type, hash_algo))
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "TLS signature extension did not allow for " +
                           key_type + "/" + hash_algo + " signature");
       }

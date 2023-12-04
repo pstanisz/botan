@@ -15,7 +15,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan::TLS {
 
@@ -50,7 +50,7 @@ class BOTAN_TEST_API Transcript_Hash_State
       Transcript_Hash_State(Transcript_Hash_State&&) = default;
       Transcript_Hash_State& operator=(Transcript_Hash_State&&) = default;
 
-      void update(std::span<const uint8_t> serialized_message_s);
+      void update(Botan::span<const uint8_t> serialized_message_s);
 
       /**
        * returns the latest transcript hash

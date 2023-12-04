@@ -47,7 +47,7 @@ class Key_Share_Entry
          {
          if(!m_private_key)
             {
-            throw TLS_Exception(Alert::InternalError,
+            throw TLS_Exception(AlertType::InternalError,
                                 "Application did not provide a suitable ephemeral key pair");
             }
 
@@ -56,7 +56,7 @@ class Key_Share_Entry
             auto pkey = dynamic_cast<ECDH_PublicKey*>(m_private_key.get());
             if(!pkey)
                {
-               throw TLS_Exception(Alert::InternalError,
+               throw TLS_Exception(AlertType::InternalError,
                                  "Application did not provide a ECDH_PublicKey");
                }
 
@@ -201,7 +201,7 @@ class Key_Share_ClientHello
             {
             if(remaining() < 4)
                {
-               throw TLS_Exception(Alert::DecodeError, "Not enough data to read another KeyShareEntry");
+               throw TLS_Exception(AlertType::DecodeError, "Not enough data to read another KeyShareEntry");
                }
 
             Key_Share_Entry new_entry(reader);
@@ -215,7 +215,7 @@ class Key_Share_ClientHello
                             [&](const auto& entry) { return entry.group() == new_entry.group(); } )
                != m_client_shares.end())
                {
-               throw TLS_Exception(Alert::IllegalParameter,
+               throw TLS_Exception(AlertType::IllegalParameter,
                                    "Received multiple key share entries for the same group");
                }
 
@@ -270,7 +270,7 @@ class Key_Share_ClientHello
          [&](const auto& kse) { return kse.group() == to_offer; }) !=
          m_client_shares.cend())
             {
-            throw TLS_Exception(Alert::IllegalParameter, "group was already offered");
+            throw TLS_Exception(AlertType::IllegalParameter, "group was already offered");
             }
 
          m_client_shares.clear();
@@ -346,7 +346,7 @@ class Key_Share_ClientHello
          //   "supported_groups" extension [...]
          if(!value_exists(policy.key_exchange_groups(), server_selected.group()) || !match.has_value())
             {
-            throw TLS_Exception(Alert::IllegalParameter, "Server selected an unexpected key exchange group.");
+            throw TLS_Exception(AlertType::IllegalParameter, "Server selected an unexpected key exchange group.");
             }
 
          return match->get().exchange(server_selected, policy, cb, rng);
@@ -540,7 +540,7 @@ void Key_Share::retry_offer(const Key_Share& retry_request_keyshare,
          //    [T]he selected_group field [MUST correspond] to a group which was provided in
          //    the "supported_groups" extension in the original ClientHello
          if(!value_exists(supported_groups, selected))
-            { throw TLS_Exception(Alert::IllegalParameter, "group was not advertised as supported"); }
+            { throw TLS_Exception(AlertType::IllegalParameter, "group was not advertised as supported"); }
 
          return ch.retry_offer(selected, cb, rng);
          },

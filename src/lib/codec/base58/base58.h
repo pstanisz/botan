@@ -9,7 +9,7 @@
 
 #include <botan/build.h>
 
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -53,12 +53,12 @@ BOTAN_PUBLIC_API(2,9) base58_check_decode(const char input[],
 
 // Some convenience wrappers:
 
-inline std::string base58_encode(std::span<const uint8_t> vec)
+inline std::string base58_encode(Botan::span<const uint8_t> vec)
    {
    return base58_encode(vec.data(), vec.size());
    }
 
-inline std::string base58_check_encode(std::span<const uint8_t> vec)
+inline std::string base58_check_encode(Botan::span<const uint8_t> vec)
    {
    return base58_check_encode(vec.data(), vec.size());
    }

@@ -10,7 +10,7 @@
 
 #include <botan/hash.h>
 
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -37,8 +37,8 @@ class XMSS_Hash final
    private:
       inline void calculate_hash(const uint8_t hash_id,
                                  secure_vector<uint8_t>& result,
-                                 std::span<const uint8_t> key,
-                                 std::span<const uint8_t> data)
+                                 Botan::span<const uint8_t> key,
+                                 Botan::span<const uint8_t> data)
          {
          m_hash->update(m_zero_padding);
          m_hash->update(hash_id);
@@ -57,8 +57,8 @@ class XMSS_Hash final
        * @param[in] data A 32-byte XMSS_Address data value
        **/
       inline void prf(secure_vector<uint8_t>& result,
-                      std::span<const uint8_t> key,
-                      std::span<const uint8_t> data)
+                      Botan::span<const uint8_t> key,
+                      Botan::span<const uint8_t> data)
          {
          calculate_hash(0x03, result, key, data);
          }
@@ -75,8 +75,8 @@ class XMSS_Hash final
        * @param[in] data A 32-byte XMSS_Address data value
        **/
       inline void prf_keygen(secure_vector<uint8_t>& result,
-                             std::span<const uint8_t> key,
-                             std::span<const uint8_t> data)
+                             Botan::span<const uint8_t> key,
+                             Botan::span<const uint8_t> data)
          {
          calculate_hash(0x04, result, key, data);
          }
@@ -89,8 +89,8 @@ class XMSS_Hash final
        * @param[in] data string of arbitrary length.
        **/
       void f(secure_vector<uint8_t>& result,
-             std::span<const uint8_t> key,
-             std::span<const uint8_t> data)
+             Botan::span<const uint8_t> key,
+             Botan::span<const uint8_t> data)
          {
          calculate_hash(0x00, result, key, data);
          }
@@ -104,8 +104,8 @@ class XMSS_Hash final
        * @param[in] data string of 2n bytes length.
        **/
       void h(secure_vector<uint8_t>& result,
-             std::span<const uint8_t> key,
-             std::span<const uint8_t> data)
+             Botan::span<const uint8_t> key,
+             Botan::span<const uint8_t> data)
          {
          calculate_hash(0x01, result, key, data);
          }
@@ -121,10 +121,10 @@ class XMSS_Hash final
        *
        * @return hash value of n-bytes length.
        **/
-      secure_vector<uint8_t> h_msg(std::span<const uint8_t> randomness,
-                                   std::span<const uint8_t> root,
-                                   std::span<const uint8_t> index_bytes,
-                                   std::span<const uint8_t> data)
+      secure_vector<uint8_t> h_msg(Botan::span<const uint8_t> randomness,
+                                   Botan::span<const uint8_t> root,
+                                   Botan::span<const uint8_t> index_bytes,
+                                   Botan::span<const uint8_t> data)
          {
          h_msg_init(randomness, root, index_bytes);
          h_msg_update(data);
@@ -138,16 +138,16 @@ class XMSS_Hash final
        * @param root n-byte root node.
        * @param index_bytes Index value padded with leading zeros.
        **/
-      void h_msg_init(std::span<const uint8_t> randomness,
-                      std::span<const uint8_t> root,
-                      std::span<const uint8_t> index_bytes);
+      void h_msg_init(Botan::span<const uint8_t> randomness,
+                      Botan::span<const uint8_t> root,
+                      Botan::span<const uint8_t> index_bytes);
 
       /**
        * Adds a message block to buffered h_msg computation.
        *
        * @param data A message block
        **/
-      void h_msg_update(std::span<const uint8_t> data);
+      void h_msg_update(Botan::span<const uint8_t> data);
 
       /**
        * Finalizes buffered h_msg computation and retrieves the result.

@@ -292,7 +292,7 @@ Session::Session(secure_vector<uint8_t>&& session_psk,
 Session::Session(std::string_view pem)
    : Session(PEM_Code::decode_check_label(pem, "TLS SESSION")) {}
 
-Session::Session(std::span<const uint8_t> ber_data)
+Session::Session(Botan::span<const uint8_t> ber_data)
    {
    uint8_t side_code = 0;
 
@@ -461,7 +461,7 @@ Session::encrypt(const SymmetricKey& key, RandomNumberGenerator& rng) const
    return buf;
    }
 
-Session Session::decrypt(std::span<const uint8_t> in, const SymmetricKey& key)
+Session Session::decrypt(Botan::span<const uint8_t> in, const SymmetricKey& key)
    {
    try
       {

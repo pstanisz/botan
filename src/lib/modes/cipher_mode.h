@@ -14,7 +14,7 @@
 #include <botan/exceptn.h>
 #include <string_view>
 #include <string>
-#include <span>
+#include <botan/span.h>
 #include <vector>
 
 namespace Botan {
@@ -87,7 +87,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * Begin processing a message with a fresh nonce.
       * @param nonce the per message nonce
       */
-      void start(std::span<const uint8_t> nonce)
+      void start(Botan::span<const uint8_t> nonce)
          {
          start_msg(nonce.data(), nonce.size());
          }
@@ -130,7 +130,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param msg the message to be processed
       * @return bytes written in-place
       */
-      size_t process(std::span<uint8_t> msg)
+      size_t process(Botan::span<uint8_t> msg)
          { return this->process_msg(msg.data(), msg.size()); }
       size_t process(uint8_t msg[], size_t msg_len)
          { return this->process_msg(msg, msg_len); }
@@ -140,11 +140,11 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param buffer in/out parameter which will possibly be resized
       * @param offset an offset into blocks to begin processing
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void update(T& buffer, size_t offset = 0)
          {
          BOTAN_ASSERT(buffer.size() >= offset, "Offset ok");
-         const size_t written = process(std::span(buffer).subspan(offset));
+         const size_t written = process(Botan::span(buffer).subspan(offset));
          buffer.resize(offset + written);
          }
 
@@ -170,7 +170,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       *        minimum_final_size() bytes, and will be set to any final output
       * @param offset an offset into final_block to begin processing
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void finish(T& final_block, size_t offset = 0)
          {
          Botan::secure_vector<uint8_t> tmp(final_block.begin(), final_block.end());

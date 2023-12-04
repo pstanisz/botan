@@ -15,6 +15,7 @@
 #include <botan/internal/fmt.h>
 #include <botan/asn1_obj.h>
 #include <botan/rng.h>
+#include <botan/starts_with.h>
 
 namespace Botan {
 
@@ -52,7 +53,7 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
          key_length = default_key_size;
 
       const std::string prf = prf_algo.oid().human_name_or_empty();
-      if(prf.empty() || !prf.starts_with("HMAC"))
+      if(prf.empty() || !starts_with(prf, "HMAC"))
          {
          throw Decoding_Error(fmt("Unknown PBES2 PRF {}", prf_algo.oid()));
          }
@@ -197,7 +198,7 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
 * PKCS#5 v2.0 PBE Encryption
 */
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
-pbes2_encrypt_shared(std::span<const uint8_t> key_bits,
+pbes2_encrypt_shared(Botan::span<const uint8_t> key_bits,
                      std::string_view passphrase,
                      size_t* msec_in_iterations_out,
                      size_t iterations_if_msec_null,
@@ -248,7 +249,7 @@ pbes2_encrypt_shared(std::span<const uint8_t> key_bits,
 }
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
-pbes2_encrypt(std::span<const uint8_t> key_bits,
+pbes2_encrypt(Botan::span<const uint8_t> key_bits,
               std::string_view passphrase,
               std::chrono::milliseconds msec,
               std::string_view cipher,
@@ -261,7 +262,7 @@ pbes2_encrypt(std::span<const uint8_t> key_bits,
    }
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
-pbes2_encrypt_msec(std::span<const uint8_t> key_bits,
+pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
                    std::string_view passphrase,
                    std::chrono::milliseconds msec,
                    size_t* out_iterations_if_nonnull,
@@ -280,7 +281,7 @@ pbes2_encrypt_msec(std::span<const uint8_t> key_bits,
    }
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
-pbes2_encrypt_iter(std::span<const uint8_t> key_bits,
+pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
                    std::string_view passphrase,
                    size_t pbkdf_iter,
                    std::string_view cipher,
@@ -291,7 +292,7 @@ pbes2_encrypt_iter(std::span<const uint8_t> key_bits,
    }
 
 secure_vector<uint8_t>
-pbes2_decrypt(std::span<const uint8_t> key_bits,
+pbes2_decrypt(Botan::span<const uint8_t> key_bits,
               std::string_view passphrase,
               const std::vector<uint8_t>& params)
    {

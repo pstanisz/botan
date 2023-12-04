@@ -36,14 +36,14 @@ BOTAN_MALLOC_FN void* allocate_memory(size_t elems, size_t elem_size)
 #else
    void* ptr = std::calloc(elems, elem_size); // NOLINT(*-no-malloc)
 #endif
-   if(!ptr) [[unlikely]]
+   if(!ptr)
       throw std::bad_alloc();
    return ptr;
    }
 
 void deallocate_memory(void* p, size_t elems, size_t elem_size)
    {
-   if(p == nullptr) [[unlikely]]
+   if(p == nullptr)
       return;
 
    secure_scrub_memory(p, elems * elem_size);

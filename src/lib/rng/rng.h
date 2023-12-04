@@ -17,7 +17,7 @@
 #include <type_traits>
 #include <chrono>
 #include <string>
-#include <span>
+#include <botan/span.h>
 #include <concepts>
 
 namespace Botan {
@@ -50,10 +50,10 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws PRNG_Unseeded if the RNG fails because it has not enough entropy
       * @throws Exception if the RNG fails
       */
-      void randomize(std::span<uint8_t> output)
+      void randomize(Botan::span<uint8_t> output)
          { this->fill_bytes_with_input(output, {}); }
       void randomize(uint8_t output[], size_t length)
-         { this->randomize(std::span(output, length)); }
+         { this->randomize(Botan::span(output, length)); }
 
       /**
       * Returns false if it is known that this RNG object is not able to accept
@@ -74,16 +74,16 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param input a byte array containing the entropy to be added
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void add_entropy(std::span<const uint8_t> input) { this->fill_bytes_with_input({}, input); }
+      void add_entropy(Botan::span<const uint8_t> input) { this->fill_bytes_with_input({}, input); }
       void add_entropy(const uint8_t input[], size_t length)
-         { this->add_entropy(std::span(input, length)); }
+         { this->add_entropy(Botan::span(input, length)); }
 
       /**
       * Incorporate some additional data into the RNG state.
       */
       template<typename T> void add_entropy_T(const T& t)
-         requires std::is_standard_layout<T>::value && std::is_trivial<T>::value
          {
+         static_assert(std::is_standard_layout<T>::value && std::is_trivial<T>::value, "add_entropy_T data must be POD");
          this->add_entropy(reinterpret_cast<const uint8_t*>(&t), sizeof(T));
          }
 
@@ -103,11 +103,11 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws Exception if the RNG fails
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void randomize_with_input(std::span<uint8_t> output, std::span<const uint8_t> input)
+      void randomize_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input)
          { this->fill_bytes_with_input(output, input); }
       void randomize_with_input(uint8_t output[], size_t output_len,
                                 const uint8_t input[], size_t input_len)
-         { this->randomize_with_input(std::span(output, output_len), std::span(input, input_len)); }
+         { this->randomize_with_input(Botan::span(output, output_len), Botan::span(input, input_len)); }
 
       /**
       * This calls `randomize_with_input` using some timestamps as extra input.
@@ -123,9 +123,9 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @throws Exception if the RNG fails
       * @throws Exception may throw if the RNG accepts input, but adding the entropy failed.
       */
-      void randomize_with_ts_input(std::span<uint8_t> output);
+      void randomize_with_ts_input(Botan::span<uint8_t> output);
       void randomize_with_ts_input(uint8_t output[], size_t output_len)
-         { this->randomize_with_ts_input(std::span(output, output_len)); }
+         { this->randomize_with_ts_input(Botan::span(output, output_len)); }
 
       /**
       * @return the name of this RNG type
@@ -175,7 +175,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param  v     the container to be filled with @p bytes random bytes
       * @throws Exception if RNG fails
       */
-      void random_vec(std::span<uint8_t> v)
+      void random_vec(Botan::span<uint8_t> v)
          { this->randomize(v); }
 
       /**
@@ -186,7 +186,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @param  bytes number of random bytes to initialize the container with
       * @throws Exception if RNG or memory allocation fails
       */
-      template<concepts::resizable_byte_buffer T>
+      template<typename T, typename = concepts::resizable_byte_buffer<T>>
       void random_vec(T& v, size_t bytes)
          {
          v.resize(bytes);
@@ -201,8 +201,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       * @return       a container of type T with @p bytes random bytes
       * @throws Exception if RNG or memory allocation fails
       */
-      template<concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
-      requires concepts::default_initializable<T>
+      template<typename T = secure_vector<uint8_t>, typename = std::enable_if_t<concepts::is_resizable_byte_buffer_v<T> && concepts::is_default_initializable_v<T>>>
       T random_vec(size_t bytes)
          {
          T result;
@@ -219,7 +218,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       uint8_t next_byte()
          {
          uint8_t b;
-         this->fill_bytes_with_input(std::span(&b, 1), {});
+         this->fill_bytes_with_input(Botan::span(&b, 1), {});
          return b;
          }
 
@@ -252,7 +251,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       *                the RNG's internal state. Implementations may choose to
       *                ignore the bytes in this buffer.
       */
-      virtual void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) = 0;
+      virtual void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) = 0;
    };
 
 /**
@@ -285,7 +284,7 @@ class BOTAN_PUBLIC_API(2,0) Null_RNG final : public RandomNumberGenerator
       std::string name() const override { return "Null_RNG"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override
          {
          // throw if caller tries to obtain random bytes
          if(output.size() > 0)

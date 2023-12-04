@@ -129,7 +129,7 @@ std::string Processor_RNG::name() const
 #endif
    }
 
-void Processor_RNG::fill_bytes_with_input(std::span<uint8_t> out, std::span<const uint8_t> in)
+void Processor_RNG::fill_bytes_with_input(Botan::span<uint8_t> out, Botan::span<const uint8_t> in)
    {
    // No way to provide entropy to processor-specific generator, ignore...
    BOTAN_UNUSED(in);

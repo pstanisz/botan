@@ -34,7 +34,7 @@ class TLS_Session_Tests final : public Test
          Test::Result result("TLS::Session");
 
          Botan::TLS::Session session(Botan::secure_vector<uint8_t>{0xCC, 0xDD},
-                                     Botan::TLS::Protocol_Version::TLS_V12,
+                                     Botan::TLS::Version_Code::TLS_V12,
                                      0xC02F,
                                      Botan::TLS::Connection_Side::Client,
                                      true,
@@ -77,7 +77,7 @@ class TLS_Session_Tests final : public Test
          result.test_eq("Only randomness comes from RNG", ctextf1, ctextf2);
 
          Botan::TLS::Session session2(Botan::secure_vector<uint8_t>{0xCC, 0xEE},
-                                     Botan::TLS::Protocol_Version::TLS_V12,
+                                     Botan::TLS::Version_Code::TLS_V12,
                                      0xBAAD, // cipher suite does not exist
                                      Botan::TLS::Connection_Side::Client,
                                      true,
@@ -213,7 +213,7 @@ class TLS_CBC_Tests final : public Text_Based_Test
          Botan::TLS::TLS_CBC_HMAC_AEAD_Decryption tls_cbc(
             std::make_unique<Noop_Block_Cipher>(block_size),
             std::make_unique<ZeroMac>(mac_len),
-            0, 0, Botan::TLS::Protocol_Version::TLS_V12, encrypt_then_mac);
+            0, 0, Botan::TLS::Version_Code::TLS_V12, encrypt_then_mac);
 
          tls_cbc.set_key(std::vector<uint8_t>(0));
          std::vector<uint8_t> ad(13);
@@ -254,39 +254,39 @@ class Test_TLS_Alert_Strings : public Test
 
          const std::vector<Botan::TLS::Alert::Type> alert_types =
             {
-               Botan::TLS::Alert::CloseNotify,
-               Botan::TLS::Alert::UnexpectedMessage,
-               Botan::TLS::Alert::BadRecordMac,
-               Botan::TLS::Alert::DecryptionFailed,
-               Botan::TLS::Alert::RecordOverflow,
-               Botan::TLS::Alert::DecompressionFailure,
-               Botan::TLS::Alert::HandshakeFailure,
-               Botan::TLS::Alert::NoCertificate,
-               Botan::TLS::Alert::BadCertificate,
-               Botan::TLS::Alert::UnsupportedCertificate,
-               Botan::TLS::Alert::CertificateRevoked,
-               Botan::TLS::Alert::CertificateExpired,
-               Botan::TLS::Alert::CertificateUnknown,
-               Botan::TLS::Alert::IllegalParameter,
-               Botan::TLS::Alert::UnknownCA,
-               Botan::TLS::Alert::AccessDenied,
-               Botan::TLS::Alert::DecodeError,
-               Botan::TLS::Alert::DecryptError,
-               Botan::TLS::Alert::ExportRestriction,
-               Botan::TLS::Alert::ProtocolVersion,
-               Botan::TLS::Alert::InsufficientSecurity,
-               Botan::TLS::Alert::InternalError,
-               Botan::TLS::Alert::InappropriateFallback,
-               Botan::TLS::Alert::UserCanceled,
-               Botan::TLS::Alert::NoRenegotiation,
-               Botan::TLS::Alert::MissingExtension,
-               Botan::TLS::Alert::UnsupportedExtension,
-               Botan::TLS::Alert::CertificateUnobtainable,
-               Botan::TLS::Alert::UnrecognizedName,
-               Botan::TLS::Alert::BadCertificateStatusResponse,
-               Botan::TLS::Alert::BadCertificateHashValue,
-               Botan::TLS::Alert::UnknownPSKIdentity,
-               Botan::TLS::Alert::NoApplicationProtocol,
+               Botan::TLS::AlertType::CloseNotify,
+               Botan::TLS::AlertType::UnexpectedMessage,
+               Botan::TLS::AlertType::BadRecordMac,
+               Botan::TLS::AlertType::DecryptionFailed,
+               Botan::TLS::AlertType::RecordOverflow,
+               Botan::TLS::AlertType::DecompressionFailure,
+               Botan::TLS::AlertType::HandshakeFailure,
+               Botan::TLS::AlertType::NoCertificate,
+               Botan::TLS::AlertType::BadCertificate,
+               Botan::TLS::AlertType::UnsupportedCertificate,
+               Botan::TLS::AlertType::CertificateRevoked,
+               Botan::TLS::AlertType::CertificateExpired,
+               Botan::TLS::AlertType::CertificateUnknown,
+               Botan::TLS::AlertType::IllegalParameter,
+               Botan::TLS::AlertType::UnknownCA,
+               Botan::TLS::AlertType::AccessDenied,
+               Botan::TLS::AlertType::DecodeError,
+               Botan::TLS::AlertType::DecryptError,
+               Botan::TLS::AlertType::ExportRestriction,
+               Botan::TLS::AlertType::ProtocolVersion,
+               Botan::TLS::AlertType::InsufficientSecurity,
+               Botan::TLS::AlertType::InternalError,
+               Botan::TLS::AlertType::InappropriateFallback,
+               Botan::TLS::AlertType::UserCanceled,
+               Botan::TLS::AlertType::NoRenegotiation,
+               Botan::TLS::AlertType::MissingExtension,
+               Botan::TLS::AlertType::UnsupportedExtension,
+               Botan::TLS::AlertType::CertificateUnobtainable,
+               Botan::TLS::AlertType::UnrecognizedName,
+               Botan::TLS::AlertType::BadCertificateStatusResponse,
+               Botan::TLS::AlertType::BadCertificateHashValue,
+               Botan::TLS::AlertType::UnknownPSKIdentity,
+               Botan::TLS::AlertType::NoApplicationProtocol,
             };
 
          std::set<std::string> seen;

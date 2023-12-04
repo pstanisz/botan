@@ -54,7 +54,7 @@ class Callbacks : public Botan::TLS::Callbacks
          : m_server_command(server_command) {}
 
       std::ostream& output();
-      void send(std::span<const uint8_t> buffer);
+      void send(Botan::span<const uint8_t> buffer);
       void push_pending_output(std::string line);
 
       void tls_session_established(const Botan::TLS::Session_Summary& session) override
@@ -73,7 +73,7 @@ class Callbacks : public Botan::TLS::Callbacks
             }
          }
 
-      void tls_record_received(uint64_t /*seq_no*/, std::span<const uint8_t> input) override
+      void tls_record_received(uint64_t /*seq_no*/, Botan::span<const uint8_t> input) override
          {
          for(size_t i = 0; i != input.size(); ++i)
             {
@@ -86,7 +86,7 @@ class Callbacks : public Botan::TLS::Callbacks
             }
          }
 
-      void tls_emit_data(std::span<const uint8_t> buf) override
+      void tls_emit_data(Botan::span<const uint8_t> buf) override
          {
          send(buf);
          }
@@ -304,7 +304,7 @@ class TLS_Server final : public Command
       using Command::output;
       using Command::flag_set;
 
-      void send(std::span<const uint8_t> buf)
+      void send(Botan::span<const uint8_t> buf)
          {
          if(m_is_tcp)
             {
@@ -408,7 +408,7 @@ std::ostream& Callbacks::output()
    return m_server_command.output();
    }
 
-void Callbacks::send(std::span<const uint8_t> buffer)
+void Callbacks::send(Botan::span<const uint8_t> buffer)
    {
    m_server_command.send(buffer);
    }

@@ -148,7 +148,7 @@ void Server_Impl_13::process_dummy_change_cipher_spec()
    //    treated as an unexpected record type [("unexpected_message" alert)].
    if(!m_handshake_state.has_client_hello() || m_handshake_state.has_client_finished())
       {
-      throw TLS_Exception(Alert::UnexpectedMessage, "Received an unexpected dummy Change Cipher Spec");
+      throw TLS_Exception(AlertType::UnexpectedMessage, "Received an unexpected dummy Change Cipher Spec");
       }
 
    // RFC 8446 5.
@@ -248,7 +248,7 @@ void Server_Impl_13::handle_reply_to_client_hello(Server_Hello_13 server_hello)
       //       of this extension in the first place.
       if(!exts.get<PSK>()->validate_binder(*psk, psk_cipher_state->psk_binder_mac(m_transcript_hash.truncated())))
          {
-         throw TLS_Exception(Alert::DecryptError, "PSK binder does not check out");
+         throw TLS_Exception(AlertType::DecryptError, "PSK binder does not check out");
          }
 
       // RFC 8446 4.2.10
@@ -395,7 +395,7 @@ void Server_Impl_13::handle(const Client_Hello_12& ch)
    // After we sent a Hello Retry Request we must not accept a downgrade.
    if(m_handshake_state.has_hello_retry_request())
       {
-      throw TLS_Exception(Alert::UnexpectedMessage,
+      throw TLS_Exception(AlertType::UnexpectedMessage,
                           "Received a TLS 1.2 Client Hello after Hello Retry Request");
       }
 
@@ -407,7 +407,7 @@ void Server_Impl_13::handle(const Client_Hello_12& ch)
    // If we're not expecting a downgrade, we only support TLS 1.3.
    if(!expects_downgrade())
       {
-      throw TLS_Exception(Alert::ProtocolVersion, "Received a legacy Client Hello");
+      throw TLS_Exception(AlertType::ProtocolVersion, "Received a legacy Client Hello");
       }
 
    downgrade();
@@ -424,7 +424,7 @@ void Server_Impl_13::handle(const Client_Hello_13& client_hello)
       const auto preferred_version = client_hello.highest_supported_version(policy());
       if(!preferred_version)
          {
-         throw TLS_Exception(Alert::ProtocolVersion, "No shared TLS version");
+         throw TLS_Exception(AlertType::ProtocolVersion, "No shared TLS version");
          }
 
       // RFC 8446 4.2.2
@@ -432,7 +432,7 @@ void Server_Impl_13::handle(const Client_Hello_13& client_hello)
       //   connections.
       if(exts.has<Cookie>())
          {
-         throw TLS_Exception(Alert::IllegalParameter,
+         throw TLS_Exception(AlertType::IllegalParameter,
                            "Received a Cookie in the initial client hello");
          }
       }
@@ -458,7 +458,7 @@ void Server_Impl_13::handle(const Client_Hello_13& client_hello)
       const auto selected_group = hrr_exts.get<Key_Share>()->selected_group();
       if(offered_groups.size() != 1 || offered_groups.at(0) != selected_group)
          {
-         throw TLS_Exception(Alert::IllegalParameter,
+         throw TLS_Exception(AlertType::IllegalParameter,
                              "Client did not comply with the requested key exchange group");
          }
       }
@@ -481,7 +481,7 @@ void Server_Impl_13::handle(const Certificate_13& certificate_msg)
    //    unless used for the post-handshake authentication exchanges [...].
    if(!handshake_finished() && !certificate_msg.request_context().empty())
       {
-      throw TLS_Exception(Alert::DecodeError, "Received a client certificate message with non-empty request context");
+      throw TLS_Exception(AlertType::DecodeError, "Received a client certificate message with non-empty request context");
       }
 
    // RFC 8446 4.4.2
@@ -498,7 +498,7 @@ void Server_Impl_13::handle(const Certificate_13& certificate_msg)
       {
       if(policy().require_client_certificate_authentication())
          {
-         throw TLS_Exception(Alert::CertificateRequired, "Policy requires client send a certificate, but it did not");
+         throw TLS_Exception(AlertType::CertificateRequired, "Policy requires client send a certificate, but it did not");
          }
 
       // RFC 8446 4.4.2
@@ -542,7 +542,7 @@ void Server_Impl_13::handle(const Certificate_Verify_13& certificate_verify_msg)
    const auto offered = m_handshake_state.certificate_request().signature_schemes();
    if(!value_exists(offered, certificate_verify_msg.signature_scheme()))
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "We did not offer the usage of " +
                           certificate_verify_msg.signature_scheme().to_string() +
                           " as a signature scheme");
@@ -559,7 +559,7 @@ void Server_Impl_13::handle(const Certificate_Verify_13& certificate_verify_msg)
    //   If the verification fails, the receiver MUST terminate the handshake
    //   with a "decrypt_error" alert.
    if(!sig_valid)
-      { throw TLS_Exception(Alert::DecryptError, "Client certificate verification failed"); }
+      { throw TLS_Exception(AlertType::DecryptError, "Client certificate verification failed"); }
 
    m_transitions.set_expected_next(Handshake_Type::Finished);
    }
@@ -572,7 +572,7 @@ void Server_Impl_13::handle(const Finished_13& finished_msg)
    //    "decrypt_error" alert.
    if(!finished_msg.verify(m_cipher_state.get(),
                            m_transcript_hash.previous()))
-      { throw TLS_Exception(Alert::DecryptError, "Finished message didn't verify"); }
+      { throw TLS_Exception(AlertType::DecryptError, "Finished message didn't verify"); }
 
    // Give the application a chance for a final veto before fully
    // establishing the connection.

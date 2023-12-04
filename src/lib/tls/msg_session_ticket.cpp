@@ -17,7 +17,7 @@
 
 #include <botan/tls_exceptn.h>
 
-#include <span>
+#include <botan/span.h>
 
 namespace Botan::TLS {
 
@@ -52,7 +52,7 @@ New_Session_Ticket_12::New_Session_Ticket_12(const std::vector<uint8_t>& buf)
 namespace {
 
 template <typename lifetime_t = uint32_t>
-void store_lifetime(std::span<uint8_t> sink, std::chrono::seconds lifetime)
+void store_lifetime(Botan::span<uint8_t> sink, std::chrono::seconds lifetime)
    {
    BOTAN_ARG_CHECK(lifetime.count() >= 0 && lifetime.count() <= std::numeric_limits<lifetime_t>::max(),
                    "Ticket lifetime is out of range");
@@ -93,9 +93,9 @@ New_Session_Ticket_13::New_Session_Ticket_13(const std::vector<uint8_t>& buf,
    // RFC 8446 4.6.1
    //    Servers MUST NOT use any value [of ticket_lifetime] greater than 604800
    //    seconds (7 days).
-   if(m_ticket_lifetime_hint > std::chrono::days(7))
+   if(m_ticket_lifetime_hint > std::chrono::seconds(604800))
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "Received a session ticket with lifetime longer than one week.");
       }
 
@@ -111,7 +111,7 @@ New_Session_Ticket_13::New_Session_Ticket_13(const std::vector<uint8_t>& buf,
    //    data [...]. Clients MUST ignore unrecognized extensions.
    if(m_extensions.contains_implemented_extensions_other_than({Extension_Code::EarlyData}))
       {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "NewSessionTicket message contained unexpected extension");
       }
 
@@ -132,7 +132,7 @@ std::vector<uint8_t> New_Session_Ticket_13::serialize() const
    {
    std::vector<uint8_t> result(8);
 
-   store_lifetime(std::span(result.data(), 4), m_ticket_lifetime_hint);
+   store_lifetime(Botan::span(result.data(), 4), m_ticket_lifetime_hint);
    store_be(m_ticket_age_add, result.data() + 4);
    append_tls_length_value(result, m_ticket_nonce.get(), 1);
    append_tls_length_value(result, m_handle.get(), 2);

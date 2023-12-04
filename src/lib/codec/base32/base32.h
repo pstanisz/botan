@@ -9,7 +9,7 @@
 #define BOTAN_BASE32_CODEC_H_
 
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 
@@ -48,7 +48,7 @@ std::string BOTAN_PUBLIC_API(2, 7) base32_encode(const uint8_t input[],
 * @param input some input
 * @return base32 representation of input
 */
-inline std::string base32_encode(std::span<const uint8_t> input)
+inline std::string base32_encode(Botan::span<const uint8_t> input)
    {
    return base32_encode(input.data(), input.size());
    }

@@ -33,7 +33,7 @@
 
 // This file contains a number of `Botan::TLS::Version_Code::TLS_V**` protocol
 // version specifications. This is to work around a compiler bug in GCC 11.3
-// where `Botan::TLS::Protocol_Version::TLS_V12` would lead to an "Internal
+// where `Botan::TLS::Version_Code::TLS_V12` would lead to an "Internal
 // Compiler Error" when used in the affected context.
 //
 // TODO: remove the workaround once GCC 11 is not supported anymore.
@@ -67,9 +67,9 @@ class Empty_Credentials_Manager : public Botan::Credentials_Manager {};
 class Session_Manager_Callbacks : public Botan::TLS::Callbacks
    {
    public:
-      void tls_emit_data(std::span<const uint8_t>) override
+      void tls_emit_data(Botan::span<const uint8_t>) override
          { BOTAN_ASSERT_NOMSG(false); }
-      void tls_record_received(uint64_t, std::span<const uint8_t>) override
+      void tls_record_received(uint64_t, Botan::span<const uint8_t>) override
          { BOTAN_ASSERT_NOMSG(false); }
       void tls_alert(Botan::TLS::Alert) override
          { BOTAN_ASSERT_NOMSG(false); }
@@ -118,7 +118,7 @@ const Botan::TLS::Server_Information server_info("botan.randombit.net");
 
 decltype(auto) default_session(Botan::TLS::Connection_Side side,
                                Botan::TLS::Callbacks& cbs,
-                               Botan::TLS::Protocol_Version version = Botan::TLS::Protocol_Version::TLS_V12)
+                               Botan::TLS::Protocol_Version version = Botan::TLS::Version_Code::TLS_V12)
    {
    if(version.is_pre_tls_13())
       {
@@ -136,7 +136,7 @@ decltype(auto) default_session(Botan::TLS::Connection_Side side,
 #if defined(BOTAN_HAS_TLS_13)
       return Botan::TLS::Session(
             {}, std::nullopt, 0, std::chrono::seconds(1024),
-            Botan::TLS::Protocol_Version::TLS_V13,
+            Botan::TLS::Version_Code::TLS_V13,
             Botan::TLS::Ciphersuite::from_name("AES_128_GCM_SHA256")->ciphersuite_code(),
             side,
             {}, server_info,
@@ -389,7 +389,7 @@ std::vector<Test::Result> test_session_manager_choose_ticket()
    Session_Manager_Callbacks cbs;
    Session_Manager_Policy plcy;
 
-   auto default_session = [&](const std::string& suite, Botan::TLS::Callbacks& mycbs, Botan::TLS::Protocol_Version version = Botan::TLS::Protocol_Version::TLS_V13)
+   auto default_session = [&](const std::string& suite, Botan::TLS::Callbacks& mycbs, Botan::TLS::Protocol_Version version = Botan::TLS::Version_Code::TLS_V13)
       {
       return (version.is_pre_tls_13())
          ? Botan::TLS::Session(
@@ -409,7 +409,7 @@ std::vector<Test::Result> test_session_manager_choose_ticket()
          );
       };
 
-   auto ticket = [&](std::span<const uint8_t> identity)
+   auto ticket = [&](Botan::span<const uint8_t> identity)
       {
       return Botan::TLS::Ticket(Botan::TLS::Opaque_Session_Handle(identity), 0);
       };

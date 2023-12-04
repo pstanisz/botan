@@ -51,7 +51,7 @@ class MockChannel
          , m_active(false) {}
 
    public:
-      std::size_t received_data(std::span<const uint8_t> data)
+      std::size_t received_data(Botan::span<const uint8_t> data)
          {
          if(m_bytes_till_complete_record <= data.size())
             {
@@ -63,7 +63,7 @@ class MockChannel
          return m_bytes_till_complete_record;
          }
 
-      void send(std::span<const uint8_t> buf) { m_callbacks->tls_emit_data(buf); }
+      void send(Botan::span<const uint8_t> buf) { m_callbacks->tls_emit_data(buf); }
 
       bool is_active() { return m_active; }
 
@@ -78,19 +78,19 @@ class ThrowingMockChannel : public MockChannel
    public:
       static boost::system::error_code expected_ec()
          {
-         return Botan::TLS::Alert::UnexpectedMessage;
+         return Botan::TLS::AlertType::UnexpectedMessage;
          }
 
       ThrowingMockChannel(std::shared_ptr<Botan::TLS::Callbacks> core) : MockChannel(core)
          {
          }
 
-      std::size_t received_data(std::span<const uint8_t>)
+      std::size_t received_data(Botan::span<const uint8_t>)
          {
          throw Botan::TLS::Unexpected_Message("test_error");
          }
 
-      void send(std::span<const uint8_t>)
+      void send(Botan::span<const uint8_t>)
          {
          throw Botan::TLS::Unexpected_Message("test_error");
          }

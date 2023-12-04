@@ -360,12 +360,12 @@ class TLS_Handshake_Test final
                   }
                }
 
-            void tls_emit_data(std::span<const uint8_t> bits) override
+            void tls_emit_data(Botan::span<const uint8_t> bits) override
                {
                m_outbound.insert(m_outbound.end(), bits.begin(), bits.end());
                }
 
-            void tls_record_received(uint64_t /*seq*/, std::span<const uint8_t> bits) override
+            void tls_record_received(uint64_t /*seq*/, Botan::span<const uint8_t> bits) override
                {
                m_recv.insert(m_recv.end(), bits.begin(), bits.end());
                }
@@ -598,7 +598,7 @@ void TLS_Handshake_Test::go()
             client->send(&client_msg[sent_so_far], sending);
             sent_so_far += sending;
             }
-         client->send_warning_alert(Botan::TLS::Alert::NoRenegotiation);
+         client->send_warning_alert(Botan::TLS::AlertType::NoRenegotiation);
          client_has_written = true;
          }
 
@@ -617,7 +617,7 @@ void TLS_Handshake_Test::go()
             sent_so_far += sending;
             }
 
-         m_server->send_warning_alert(Botan::TLS::Alert::NoRenegotiation);
+         m_server->send_warning_alert(Botan::TLS::AlertType::NoRenegotiation);
          server_has_written = true;
          }
 
@@ -809,8 +809,8 @@ class TLS_Unit_Tests final : public Test
 
          std::vector<Botan::TLS::Protocol_Version> versions =
             {
-            Botan::TLS::Protocol_Version::TLS_V12,
-            Botan::TLS::Protocol_Version::DTLS_V12
+            Botan::TLS::Version_Code::TLS_V12,
+            Botan::TLS::Version_Code::DTLS_V12
             };
 
          return test_with_policy(test_descr, results, client_ses, server_ses, creds, versions, policy, client_auth);
@@ -863,8 +863,8 @@ class TLS_Unit_Tests final : public Test
 
          std::vector<Botan::TLS::Protocol_Version> versions =
             {
-            Botan::TLS::Protocol_Version::TLS_V12,
-            Botan::TLS::Protocol_Version::DTLS_V12
+            Botan::TLS::Version_Code::TLS_V12,
+            Botan::TLS::Version_Code::DTLS_V12
             };
 
          return test_with_policy(test_descr, results, client_ses, server_ses, creds, versions, policy, client_auth);
@@ -876,8 +876,8 @@ class TLS_Unit_Tests final : public Test
          {
          std::vector<Botan::TLS::Protocol_Version> versions =
             {
-            Botan::TLS::Protocol_Version::TLS_V12,
-            Botan::TLS::Protocol_Version::DTLS_V12
+            Botan::TLS::Version_Code::TLS_V12,
+            Botan::TLS::Version_Code::DTLS_V12
             };
 
          auto policy = std::make_shared<Test_Policy>();
@@ -922,26 +922,26 @@ class TLS_Unit_Tests final : public Test
             };
 
          client_aborts(std::make_exception_ptr(
-                           Botan::TLS::TLS_Exception(Botan::TLS::Alert::AccessDenied,
+                           Botan::TLS::TLS_Exception(Botan::TLS::AlertType::AccessDenied,
                                                      "some test TLS exception")),
-                       Botan::TLS::Alert::AccessDenied);
+                       Botan::TLS::AlertType::AccessDenied);
          client_aborts(std::make_exception_ptr(
                            Botan::Invalid_Authentication_Tag("some symmetric crypto failed :o)")),
-                       Botan::TLS::Alert::BadRecordMac);
+                       Botan::TLS::AlertType::BadRecordMac);
          client_aborts(std::make_exception_ptr(
                            std::runtime_error("something strange happened")),
-                       Botan::TLS::Alert::InternalError);
+                       Botan::TLS::AlertType::InternalError);
 
          server_aborts(std::make_exception_ptr(
-                           Botan::TLS::TLS_Exception(Botan::TLS::Alert::AccessDenied,
+                           Botan::TLS::TLS_Exception(Botan::TLS::AlertType::AccessDenied,
                                                      "some server test TLS exception")),
-                       Botan::TLS::Alert::AccessDenied);
+                       Botan::TLS::AlertType::AccessDenied);
          server_aborts(std::make_exception_ptr(
                            Botan::Invalid_Authentication_Tag("some symmetric crypto failed in the server :o)")),
-                       Botan::TLS::Alert::BadRecordMac);
+                       Botan::TLS::AlertType::BadRecordMac);
          server_aborts(std::make_exception_ptr(
                            std::runtime_error("something strange happened in the server")),
-                       Botan::TLS::Alert::InternalError);
+                       Botan::TLS::AlertType::InternalError);
          }
 
    public:
@@ -988,11 +988,11 @@ class TLS_Unit_Tests final : public Test
 
          auto strict_policy = std::make_shared<Botan::TLS::Strict_Policy_Without_TLS13>();
          test_with_policy("Strict policy", results, client_ses, server_ses, creds,
-            {Botan::TLS::Protocol_Version::TLS_V12}, strict_policy);
+            {Botan::TLS::Version_Code::TLS_V12}, strict_policy);
 
          auto suiteb_128 = std::make_shared<Botan::TLS::NSA_Suite_B_128>();
          test_with_policy("Suite B", results, client_ses, server_ses, creds,
-            {Botan::TLS::Protocol_Version::TLS_V12}, suiteb_128);
+            {Botan::TLS::Version_Code::TLS_V12}, suiteb_128);
 
          // Remove server sessions before client, so clients retry with session server doesn't know
          server_ses->remove_all();
@@ -1114,12 +1114,12 @@ class DTLS_Reconnection_Test : public Test
                   m_recv(recv_buf)
                   {}
 
-               void tls_emit_data(std::span<const uint8_t> bits) override
+               void tls_emit_data(Botan::span<const uint8_t> bits) override
                   {
                   m_outbound.insert(m_outbound.end(), bits.begin(), bits.end());
                   }
 
-               void tls_record_received(uint64_t /*seq*/, std::span<const uint8_t> bits) override
+               void tls_record_received(uint64_t /*seq*/, Botan::span<const uint8_t> bits) override
                   {
                   m_recv.insert(m_recv.end(), bits.begin(), bits.end());
                   }

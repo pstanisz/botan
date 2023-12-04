@@ -13,7 +13,7 @@
 
 namespace {
 
-Botan::TLS::Handshake_Layer prepare(std::span<const uint8_t> data)
+Botan::TLS::Handshake_Layer prepare(Botan::span<const uint8_t> data)
    {
    Botan::TLS::Handshake_Layer hl(Botan::TLS::Connection_Side::Client);
    hl.copy_data(data);
@@ -29,11 +29,11 @@ void fuzz(const uint8_t in[], size_t len)
 
    try
       {
-      auto hl1 = prepare(std::span(in, len));
+      auto hl1 = prepare(Botan::span(in, len));
       Botan::TLS::Transcript_Hash_State ths("SHA-256");
       while (hl1.next_message(policy, ths).has_value()) {};
 
-      auto hl2 = prepare(std::span(in, len));
+      auto hl2 = prepare(Botan::span(in, len));
       while (hl2.next_post_handshake_message(policy).has_value()) {};
       }
    catch(Botan::Exception& e) {}

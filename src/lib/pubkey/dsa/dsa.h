@@ -35,7 +35,7 @@ class BOTAN_PUBLIC_API(2,0) DSA_PublicKey : public virtual Public_Key
       * @param key_bits DER encoded public key bits
       */
       DSA_PublicKey(const AlgorithmIdentifier& alg_id,
-                    std::span<const uint8_t> key_bits);
+                    Botan::span<const uint8_t> key_bits);
 
       /**
       * Load a public key from the integer value
@@ -95,7 +95,7 @@ class BOTAN_PUBLIC_API(2,0) DSA_PrivateKey final :
       * @param key_bits DER encoded key bits in ANSI X9.57 format
       */
       DSA_PrivateKey(const AlgorithmIdentifier& alg_id,
-                     std::span<const uint8_t> key_bits);
+                     Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a new private key.

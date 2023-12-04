@@ -20,7 +20,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
-#include <span>
+#include <botan/span.h>
 
 namespace Botan::TLS {
 
@@ -35,8 +35,8 @@ class BOTAN_PUBLIC_API(2,0) Channel
       virtual ~Channel() = default;
 
    protected:
-      virtual size_t from_peer(std::span<const uint8_t> data) = 0;
-      virtual void to_peer(std::span<const uint8_t> data) = 0;
+      virtual size_t from_peer(Botan::span<const uint8_t> data) = 0;
+      virtual void to_peer(Botan::span<const uint8_t> data) = 0;
 
    public:
       /**
@@ -44,26 +44,26 @@ class BOTAN_PUBLIC_API(2,0) Channel
       * @return a hint as to how many more bytes we need to process the
       *         current record (this may be 0 if on a record boundary)
       */
-      size_t received_data(std::span<const uint8_t> data)
+      size_t received_data(Botan::span<const uint8_t> data)
          { return this->from_peer(data); }
       size_t received_data(const uint8_t buf[], size_t buf_size)
-         { return this->from_peer(std::span(buf, buf_size)); }
+         { return this->from_peer(Botan::span(buf, buf_size)); }
       
       /**
       * Inject plaintext intended for counterparty
       * Throws an exception if is_active() is false
       */
-      void send(std::span<const uint8_t> data)
+      void send(Botan::span<const uint8_t> data)
          { this->to_peer(data); }
       void send(const uint8_t buf[], size_t buf_size)
-         { this->to_peer(std::span(buf, buf_size)); }
+         { this->to_peer(Botan::span(buf, buf_size)); }
 
       /**
       * Inject plaintext intended for counterparty
       * Throws an exception if is_active() is false
       */
       void send(std::string_view val)
-         { this->send(std::span(cast_char_ptr_to_uint8(val.data()), val.size())); }
+         { this->send(Botan::span(cast_char_ptr_to_uint8(val.data()), val.size())); }
 
       /**
       * Inject plaintext intended for counterparty
