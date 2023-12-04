@@ -56,17 +56,33 @@ std::vector<Test::Result> test_ctors()
          }),
       Botan_Tests::CHECK("ctor with first and size", [](auto& result)
          {
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         Botan::span<int> s(&(*std::begin(ARRAY)), ARRAY.size());
+#else
          Botan::span<int> s(std::begin(ARRAY), ARRAY.size());
+#endif
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         result.test_is_eq("data()", s.data(), &(*ARRAY.begin()));
+#else
          result.test_is_eq("data()", s.data(), ARRAY.begin());
+#endif
          }),
       Botan_Tests::CHECK("ctor with first and last", [](auto& result)
          {
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         Botan::span<int> s(&(*std::begin(ARRAY)), &(*std::end(ARRAY)));
+#else
          Botan::span<int> s(std::begin(ARRAY), std::end(ARRAY));
+#endif
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         result.test_is_eq("data()", s.data(), &(*ARRAY.begin()));
+#else
          result.test_is_eq("data()", s.data(), ARRAY.begin());
+#endif
          }),
       Botan_Tests::CHECK("ctor with C array", [](auto& result)
          {
@@ -80,14 +96,22 @@ std::vector<Test::Result> test_ctors()
          Botan::span<int> s(ARRAY);
 
          result.test_is_eq("size()", s.size(), ARRAY.size());
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         result.test_is_eq("data()", s.data(), &(*ARRAY.begin()));
+#else
          result.test_is_eq("data()", s.data(), ARRAY.begin());
+#endif
          }),
       Botan_Tests::CHECK("ctor with const std::array", [](auto& result)
          {
          const Botan::span<const int> s(CONST_ARRAY);
 
          result.test_is_eq("size()", s.size(), CONST_ARRAY.size());
+#if defined(BOTAN_BUILD_COMPILER_IS_MSVC)
+         result.test_is_eq("data()", s.data(), &(*CONST_ARRAY.begin()));
+#else
          result.test_is_eq("data()", s.data(), CONST_ARRAY.begin());
+#endif
          }),
       Botan_Tests::CHECK("ctor with std::vector", [](auto& result)
          {
