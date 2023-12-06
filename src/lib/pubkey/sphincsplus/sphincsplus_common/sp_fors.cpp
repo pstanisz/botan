@@ -25,7 +25,7 @@ namespace Botan {
 
 namespace {
 
-std::vector<TreeNodeIndex> fors_message_to_indices(std::span<const uint8_t> message, const Sphincs_Parameters& params) {
+std::vector<TreeNodeIndex> fors_message_to_indices(Botan::span<const uint8_t> message, const Sphincs_Parameters& params) {
    BOTAN_ASSERT_NOMSG((message.size() * 8) >= (params.k() * params.a()));
 
    std::vector<TreeNodeIndex> indices(params.k());
@@ -55,7 +55,7 @@ SphincsTreeNode fors_sign_and_pkgen(StrongSpan<ForsSignature> sig_out,
 
    auto fors_tree_addr = Sphincs_Address::as_keypair_from(address);
 
-   auto fors_pk_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address::ForsTreeRootsCompression);
+   auto fors_pk_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address_Type::ForsTreeRootsCompression);
 
    std::vector<uint8_t> roots_buffer(params.k() * params.n());
    BufferStuffer roots(roots_buffer);
@@ -116,9 +116,9 @@ SphincsTreeNode fors_public_key_from_signature(const SphincsHashedMessage& hashe
                                                Sphincs_Hash_Functions& hashes) {
    const auto indices = fors_message_to_indices(hashed_message, params);
 
-   auto fors_tree_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address::ForsTree);
+   auto fors_tree_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address_Type::ForsTree);
 
-   auto fors_pk_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address::ForsTreeRootsCompression);
+   auto fors_pk_addr = Sphincs_Address::as_keypair_from(address).set_type(Sphincs_Address_Type::ForsTreeRootsCompression);
 
    BufferSlicer s(signature);
    std::vector<uint8_t> roots_buffer(params.k() * params.n());

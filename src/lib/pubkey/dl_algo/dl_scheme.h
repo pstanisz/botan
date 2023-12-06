@@ -9,8 +9,8 @@
 
 #include <botan/bigint.h>
 #include <botan/dl_group.h>
+#include <botan/span.h>
 #include <memory>
-#include <span>
 #include <string_view>
 
 namespace Botan {
@@ -22,7 +22,7 @@ class DL_PublicKey final {
    public:
       DL_PublicKey(const DL_Group& group, const BigInt& public_key);
 
-      DL_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits, DL_Group_Format format);
+      DL_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits, DL_Group_Format format);
 
       bool check_key(RandomNumberGenerator& rng, bool strong) const;
 
@@ -52,7 +52,7 @@ class DL_PrivateKey final {
 
       DL_PrivateKey(const DL_Group& group, RandomNumberGenerator& rng);
 
-      DL_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits, DL_Group_Format format);
+      DL_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits, DL_Group_Format format);
 
       bool check_key(RandomNumberGenerator& rng, bool strong) const;
 

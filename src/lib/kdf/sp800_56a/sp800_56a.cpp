@@ -9,6 +9,7 @@
 #include <botan/internal/sp800_56a.h>
 
 #include <botan/exceptn.h>
+#include <botan/starts_with.h>
 #include <botan/internal/fmt.h>
 
 namespace Botan {
@@ -77,7 +78,7 @@ std::unique_ptr<KDF> SP800_56A_Hash::new_object() const {
 
 SP800_56A_HMAC::SP800_56A_HMAC(std::unique_ptr<MessageAuthenticationCode> mac) : m_mac(std::move(mac)) {
    // TODO: we need a MessageAuthenticationCode::is_hmac
-   if(!m_mac->name().starts_with("HMAC(")) {
+   if(!starts_with(m_mac->name(), "HMAC(")) {
       throw Algorithm_Not_Found("Only HMAC can be used with KDF SP800-56A");
    }
 }

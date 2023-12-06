@@ -59,7 +59,7 @@ class Fixed_Output_RNG : public Botan::RandomNumberGenerator {
       Fixed_Output_RNG() = default;
 
    protected:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override {
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override {
          m_buf.insert(m_buf.end(), input.begin(), input.end());
 
          for(auto& o : output) {
@@ -104,7 +104,7 @@ class Fixed_Output_Position_RNG final : public Fixed_Output_RNG {
             Fixed_Output_RNG(in_str), m_pos(pos) {}
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override {
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override {
          if(!input.empty()) {
             throw Test_Error("add_entropy() not supported by this RNG, test bug?");
          }
@@ -140,7 +140,7 @@ class SeedCapturing_RNG final : public Botan::RandomNumberGenerator {
       const std::vector<uint8_t>& seed_material() const { return m_seed; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override {
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override {
          if(!output.empty()) {
             throw Test_Error("SeedCapturing_RNG has no output");
          }
@@ -173,7 +173,7 @@ class Request_Counting_RNG final : public Botan::RandomNumberGenerator {
       std::string name() const override { return "Request_Counting_RNG"; }
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> /* ignored */) override {
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> /* ignored */) override {
          /*
          The HMAC_DRBG and ChaCha reseed KATs assume this RNG type
          outputs all 0x80
@@ -203,14 +203,14 @@ class CTR_DRBG_AES256 final : public Botan::RandomNumberGenerator {
 
       bool is_seeded() const override { return true; }
 
-      CTR_DRBG_AES256(std::span<const uint8_t> seed);
+      CTR_DRBG_AES256(Botan::span<const uint8_t> seed);
 
    private:
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override;
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override;
 
-      void incr_V_into(std::span<uint8_t> output);
+      void incr_V_into(Botan::span<uint8_t> output);
 
-      void update(std::span<const uint8_t> provided_data);
+      void update(Botan::span<const uint8_t> provided_data);
 
       uint64_t m_V0, m_V1;
       std::unique_ptr<Botan::BlockCipher> m_cipher;

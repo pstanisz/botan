@@ -189,7 +189,7 @@ class Lucky13_Timing_Test final : public Timing_Test {
                   Botan::MessageAuthenticationCode::create_or_throw("HMAC(" + m_mac_algo + ")"),
                   16,
                   m_mac_keylen,
-                  Botan::TLS::Protocol_Version::TLS_V12,
+                  Botan::TLS::Version_Code::TLS_V12,
                   false) {}
 
       std::vector<uint8_t> prepare_input(const std::string& input) override;

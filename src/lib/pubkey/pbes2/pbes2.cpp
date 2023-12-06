@@ -16,6 +16,7 @@
 #include <botan/rng.h>
 #include <botan/internal/fmt.h>
 #include <botan/internal/parsing.h>
+#include <botan/starts_with.h>
 
 namespace Botan {
 
@@ -53,7 +54,7 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
       }
 
       const std::string prf = prf_algo.oid().human_name_or_empty();
-      if(prf.empty() || !prf.starts_with("HMAC")) {
+      if(prf.empty() || !starts_with(prf, "HMAC")) {
          throw Decoding_Error(fmt("Unknown PBES2 PRF {}", prf_algo.oid()));
       }
 
@@ -183,7 +184,7 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
 /*
 * PKCS#5 v2.0 PBE Encryption
 */
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_shared(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_shared(Botan::span<const uint8_t> key_bits,
                                                                           std::string_view passphrase,
                                                                           size_t* msec_in_iterations_out,
                                                                           size_t iterations_if_msec_null,
@@ -229,7 +230,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_shared(std::s
 
 }  // namespace
 
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(Botan::span<const uint8_t> key_bits,
                                                                    std::string_view passphrase,
                                                                    std::chrono::milliseconds msec,
                                                                    std::string_view cipher,
@@ -240,7 +241,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(std::span<con
    // return value msec_in_iterations_out discarded
 }
 
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
                                                                         std::string_view passphrase,
                                                                         std::chrono::milliseconds msec,
                                                                         size_t* out_iterations_if_nonnull,
@@ -258,7 +259,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(std::spa
    return ret;
 }
 
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
                                                                         std::string_view passphrase,
                                                                         size_t pbkdf_iter,
                                                                         std::string_view cipher,
@@ -267,7 +268,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(std::spa
    return pbes2_encrypt_shared(key_bits, passphrase, nullptr, pbkdf_iter, cipher, digest, rng);
 }
 
-secure_vector<uint8_t> pbes2_decrypt(std::span<const uint8_t> key_bits,
+secure_vector<uint8_t> pbes2_decrypt(Botan::span<const uint8_t> key_bits,
                                      std::string_view passphrase,
                                      const std::vector<uint8_t>& params) {
    AlgorithmIdentifier kdf_algo, enc_algo;

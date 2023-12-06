@@ -12,9 +12,9 @@
 #include <botan/hash.h>
 #include <botan/secmem.h>
 #include <botan/stream_cipher.h>
+#include <botan/span.h>
 
 #include <memory>
-#include <span>
 #include <tuple>
 #include <vector>
 
@@ -26,7 +26,7 @@ class Kyber_XOF {
 
       virtual void set_position(const std::tuple<uint8_t, uint8_t>& matrix_position) = 0;
 
-      virtual void write_output(std::span<uint8_t> out) = 0;
+      virtual void write_output(Botan::span<uint8_t> out) = 0;
 };
 
 /**
@@ -41,9 +41,9 @@ class Kyber_Symmetric_Primitives {
       virtual std::unique_ptr<HashFunction> H() const = 0;
       virtual std::unique_ptr<HashFunction> KDF() const = 0;
 
-      virtual std::unique_ptr<Kyber_XOF> XOF(std::span<const uint8_t> seed) const = 0;
+      virtual std::unique_ptr<Kyber_XOF> XOF(Botan::span<const uint8_t> seed) const = 0;
 
-      virtual secure_vector<uint8_t> PRF(std::span<const uint8_t> seed,
+      virtual secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
                                          const uint8_t nonce,
                                          const size_t outlen) const = 0;
 };

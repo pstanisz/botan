@@ -61,7 +61,7 @@ class BOTAN_PUBLIC_API(2, 3) ChaCha_RNG final : public Stateful_RNG {
       *
       * @param seed the seed material, should be at least 256 bits
       */
-      ChaCha_RNG(std::span<const uint8_t> seed);
+      ChaCha_RNG(Botan::span<const uint8_t> seed);
 
       /**
       * Automatic reseeding from @p underlying_rng will take place after
@@ -106,9 +106,9 @@ class BOTAN_PUBLIC_API(2, 3) ChaCha_RNG final : public Stateful_RNG {
       size_t max_number_of_bytes_per_request() const override { return 0; }
 
    private:
-      void update(std::span<const uint8_t> input) override;
+      void update(Botan::span<const uint8_t> input) override;
 
-      void generate_output(std::span<uint8_t> output, std::span<const uint8_t> input) override;
+      void generate_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override;
 
       void clear_state() override;
 

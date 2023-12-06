@@ -11,6 +11,7 @@
 #include <botan/ocsp.h>
 #include <botan/pk_keys.h>
 #include <botan/x509_ext.h>
+#include <botan/contains.h>
 #include <botan/internal/stl_util.h>
 #include <algorithm>
 #include <chrono>
@@ -131,7 +132,7 @@ CertificatePathStatusCodes PKIX::check_chain(const std::vector<X509_Certificate>
 
                // Ignore untrusted hashes on self-signed roots
                if(!trusted_hashes.empty() && !at_self_signed_root) {
-                  if(!trusted_hashes.contains(hash_used_for_signature)) {
+                  if(!contains(trusted_hashes, hash_used_for_signature)) {
                      status.insert(Certificate_Status_Code::UNTRUSTED_HASH);
                   }
                }
@@ -538,7 +539,7 @@ CertificatePathStatusCodes PKIX::check_crl_online(const std::vector<X509_Certifi
 
    if(crl_store) {
       for(size_t i = 0; i != crl_status.size(); ++i) {
-         if(crl_status[i].contains(Certificate_Status_Code::VALID_CRL_CHECKED)) {
+         if(contains(crl_status[i], Certificate_Status_Code::VALID_CRL_CHECKED)) {
             // better be non-null, we supposedly validated it
             BOTAN_ASSERT_NOMSG(crls[i].has_value());
             crl_store->add_crl(*crls[i]);
@@ -603,7 +604,7 @@ Certificate_Status_Code PKIX::build_certificate_path(std::vector<X509_Certificat
 
       const std::string fprint = issuer->fingerprint("SHA-256");
 
-      if(certs_seen.contains(fprint))  // already seen?
+      if(contains(certs_seen, fprint)) // already seen?
       {
          return Certificate_Status_Code::CERT_CHAIN_LOOP;
       }

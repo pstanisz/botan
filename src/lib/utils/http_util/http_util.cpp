@@ -14,6 +14,10 @@
 #include <botan/internal/parsing.h>
 #include <botan/internal/socket.h>
 #include <botan/internal/stl_util.h>
+#include <botan/internal/fmt.h>
+#include <botan/hex.h>
+#include <botan/contains.h>
+
 #include <sstream>
 
 namespace Botan::HTTP {
@@ -198,7 +202,7 @@ Response http_sync(const http_exch_fn& http_transact,
       }
    }
 
-   if(status_code == 301 && headers.contains("Location")) {
+   if(status_code == 301 && contains(headers, "Location")) {
       if(allowable_redirects == 0) {
          throw HTTP_Error("HTTP redirection count exceeded");
       }

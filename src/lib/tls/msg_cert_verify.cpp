@@ -19,7 +19,9 @@
 #include <botan/internal/tls_handshake_state.h>
 #include <botan/internal/tls_reader.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /*
 * Create a new Certificate Verify message for TLS 1.2
@@ -128,8 +130,8 @@ Signature_Scheme choose_signature_scheme(const Private_Key& key,
       }
    }
 
-   throw TLS_Exception(Alert::HandshakeFailure, "Failed to agree on a signature algorithm");
-}
+   throw TLS_Exception(AlertType::HandshakeFailure, "Failed to agree on a signature algorithm");
+   }
 
 }  // namespace
 
@@ -152,12 +154,12 @@ Certificate_Verify_13::Certificate_Verify_13(const Certificate_13& certificate_m
       certificate_msg.leaf(), m_side == Connection_Side::Client ? "tls-client" : "tls-server", std::string(hostname));
 
    if(!private_key) {
-      throw TLS_Exception(Alert::InternalError, "Application did not provide a private key for its certificate");
+      throw TLS_Exception(AlertType::InternalError, "Application did not provide a private key for its certificate");
    }
 
    m_scheme = choose_signature_scheme(*private_key, policy.allowed_signature_schemes(), peer_allowed_schemes);
    BOTAN_ASSERT_NOMSG(m_scheme.is_available());
-   BOTAN_ASSERT_NOMSG(m_scheme.is_compatible_with(Protocol_Version::TLS_V13));
+   BOTAN_ASSERT_NOMSG(m_scheme.is_compatible_with(Version_Code::TLS_V13));
 
    m_signature = callbacks.tls_sign_message(
       *private_key, rng, m_scheme.padding_string(), m_scheme.format().value(), message(m_side, hash));
@@ -166,11 +168,11 @@ Certificate_Verify_13::Certificate_Verify_13(const Certificate_13& certificate_m
 Certificate_Verify_13::Certificate_Verify_13(const std::vector<uint8_t>& buf, const Connection_Side side) :
       Certificate_Verify(buf), m_side(side) {
    if(!m_scheme.is_available()) {
-      throw TLS_Exception(Alert::HandshakeFailure, "Peer sent unknown signature scheme");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Peer sent unknown signature scheme");
    }
 
-   if(!m_scheme.is_compatible_with(Protocol_Version::TLS_V13)) {
-      throw TLS_Exception(Alert::IllegalParameter, "Peer sent signature algorithm that is not suitable for TLS 1.3");
+   if(!m_scheme.is_compatible_with(Version_Code::TLS_V13)) {
+      throw TLS_Exception(AlertType::IllegalParameter, "Peer sent signature algorithm that is not suitable for TLS 1.3");
    }
 }
 
@@ -186,7 +188,7 @@ bool Certificate_Verify_13::verify(const X509_Certificate& cert,
    //    The keys found in certificates MUST [...] be of appropriate type for
    //    the signature algorithms they are used with.
    if(m_scheme.key_algorithm_identifier() != cert.subject_public_key_algo()) {
-      throw TLS_Exception(Alert::IllegalParameter, "Signature algorithm does not match certificate's public key");
+      throw TLS_Exception(AlertType::IllegalParameter, "Signature algorithm does not match certificate's public key");
    }
 
    const auto key = cert.subject_public_key();
@@ -203,4 +205,6 @@ bool Certificate_Verify_13::verify(const X509_Certificate& cert,
 
 #endif  // BOTAN_HAS_TLS_13
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+}  // namespace Botan

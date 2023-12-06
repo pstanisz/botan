@@ -44,7 +44,7 @@ bool Curve25519_PublicKey::check_key(RandomNumberGenerator& /*rng*/, bool /*stro
    return true;  // no tests possible?
 }
 
-Curve25519_PublicKey::Curve25519_PublicKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+Curve25519_PublicKey::Curve25519_PublicKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    m_public.assign(key_bits.begin(), key_bits.end());
 
    size_check(m_public.size(), "public key");
@@ -70,7 +70,7 @@ Curve25519_PrivateKey::Curve25519_PrivateKey(RandomNumberGenerator& rng) {
    curve25519_basepoint(m_public.data(), m_private.data());
 }
 
-Curve25519_PrivateKey::Curve25519_PrivateKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+Curve25519_PrivateKey::Curve25519_PrivateKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    BER_Decoder(key_bits).decode(m_private, ASN1_Type::OctetString).discard_remaining();
 
    size_check(m_private.size(), "private key");

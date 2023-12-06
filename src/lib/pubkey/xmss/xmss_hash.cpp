@@ -31,9 +31,9 @@ XMSS_Hash::XMSS_Hash(const XMSS_Parameters& params) :
    BOTAN_ASSERT(m_hash->output_length() > 0, "Hash output length of zero is invalid.");
 }
 
-void XMSS_Hash::h_msg_init(std::span<const uint8_t> randomness,
-                           std::span<const uint8_t> root,
-                           std::span<const uint8_t> index_bytes) {
+void XMSS_Hash::h_msg_init(Botan::span<const uint8_t> randomness,
+                           Botan::span<const uint8_t> root,
+                           Botan::span<const uint8_t> index_bytes) {
    m_msg_hash->clear();
    m_msg_hash->update(m_zero_padding);
    m_msg_hash->update(0x02);
@@ -42,7 +42,7 @@ void XMSS_Hash::h_msg_init(std::span<const uint8_t> randomness,
    m_msg_hash->update(index_bytes.data(), index_bytes.size());
 }
 
-void XMSS_Hash::h_msg_update(std::span<const uint8_t> data) {
+void XMSS_Hash::h_msg_update(Botan::span<const uint8_t> data) {
    m_msg_hash->update(data.data(), data.size());
 }
 

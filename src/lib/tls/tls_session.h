@@ -17,10 +17,10 @@
 #include <botan/tls_server_info.h>
 #include <botan/tls_version.h>
 #include <botan/x509cert.h>
+#include <botan/span.h>
 
 #include <algorithm>
 #include <chrono>
-#include <span>
 #include <variant>
 
 namespace Botan {
@@ -345,7 +345,7 @@ class BOTAN_PUBLIC_API(3, 0) Session final : public Session_Base {
       * Load a session from DER representation (created by DER_encode)
       * @param ber_data DER representation buffer
       */
-      Session(std::span<const uint8_t> ber_data);
+      Session(Botan::span<const uint8_t> ber_data);
 
       /**
       * Load a session from PEM representation (created by PEM_encode)
@@ -372,7 +372,7 @@ class BOTAN_PUBLIC_API(3, 0) Session final : public Session_Base {
       * @param key the same key used by the encrypting side
       */
       static inline Session decrypt(const uint8_t ctext[], size_t ctext_size, const SymmetricKey& key) {
-         return Session::decrypt(std::span(ctext, ctext_size), key);
+         return Session::decrypt(Botan::span(ctext, ctext_size), key);
       }
 
       /**
@@ -380,7 +380,7 @@ class BOTAN_PUBLIC_API(3, 0) Session final : public Session_Base {
       * @param ctext the ciphertext returned by encrypt
       * @param key the same key used by the encrypting side
       */
-      static Session decrypt(std::span<const uint8_t> ctext, const SymmetricKey& key);
+      static Session decrypt(Botan::span<const uint8_t> ctext, const SymmetricKey& key);
 
       /**
       * Encode this session data for storage

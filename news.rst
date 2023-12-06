@@ -1,6 +1,12 @@
 Release Notes
 ========================================
 
+Version 3.1.1 for C++17, 2023-12-06
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Version 3.1.1 backported to C++17 to be used with older compilers.
+  Compiler requirements have been decreased to GCC 9, Clang 5, or MSVC 2017.
+
 Version 3.1.1, 2023-07-13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

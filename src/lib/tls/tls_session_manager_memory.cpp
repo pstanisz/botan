@@ -10,6 +10,7 @@
 
 #include <botan/rng.h>
 #include <botan/internal/stl_util.h>
+#include <botan/erase_if.h>
 
 #include <algorithm>
 
@@ -97,7 +98,7 @@ size_t Session_Manager_In_Memory::remove_internal(const Session_Handle& handle) 
                            // Unfortunately, at the time of this writing Android NDK shipped with
                            // a std::erase_if that returns void. Hence, the workaround.
                            const auto before = m_sessions.size();
-                           std::erase_if(m_sessions, [&](const auto& item) {
+                           Botan::erase_if(m_sessions, [&](const auto& item) {
                               const auto& [_unused1, session_and_handle] = item;
                               const auto& [_unused2, this_handle] = session_and_handle;
                               return this_handle.is_ticket() && this_handle.ticket().value() == ticket;

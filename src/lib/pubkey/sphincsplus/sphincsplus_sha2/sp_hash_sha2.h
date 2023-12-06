@@ -44,7 +44,7 @@ class Sphincs_Hash_Functions_Sha2 : public Sphincs_Hash_Functions {
 
       std::vector<uint8_t> H_msg_digest(StrongSpan<const SphincsMessageRandomness> r,
                                         const SphincsTreeNode& root,
-                                        std::span<const uint8_t> message) override {
+                                        Botan::span<const uint8_t> message) override {
          m_sha_x_full->update(r);
          m_sha_x_full->update(m_pub_seed);
          m_sha_x_full->update(root);
@@ -90,7 +90,7 @@ class Sphincs_Hash_Functions_Sha2 : public Sphincs_Hash_Functions {
       void PRF_msg(StrongSpan<SphincsMessageRandomness> out,
                    const SphincsSecretPRF& sk_prf,
                    const SphincsOptionalRandomness& opt_rand,
-                   std::span<const uint8_t> in) override {
+                   Botan::span<const uint8_t> in) override {
          HMAC hmac_sha_x(m_sha_x_full->new_object());
          hmac_sha_x.set_key(sk_prf);
          hmac_sha_x.update(opt_rand);

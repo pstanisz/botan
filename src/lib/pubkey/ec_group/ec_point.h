@@ -32,7 +32,7 @@ enum class EC_Point_Format {
 class BOTAN_PUBLIC_API(2, 0) EC_Point final {
    public:
       typedef EC_Point_Format Compression_Type;
-      using enum EC_Point_Format;
+      //using enum EC_Point_Format;
 
       enum { WORKSPACE_SIZE = 8 };
 

@@ -80,7 +80,7 @@ uint32_t bitmask_for_handshake_type(Handshake_Type type) {
          return 0;
    }
 
-   throw TLS_Exception(Alert::UnexpectedMessage,
+   throw TLS_Exception(AlertType::UnexpectedMessage,
                        "Unknown TLS handshake message type " + std::to_string(static_cast<size_t>(type)));
 }
 

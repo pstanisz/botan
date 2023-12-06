@@ -71,7 +71,7 @@ class BOTAN_PUBLIC_API(2, 0) Client final : public Channel {
       */
       std::string application_protocol() const override;
 
-      size_t from_peer(std::span<const uint8_t> data) override;
+      size_t from_peer(Botan::span<const uint8_t> data) override;
       bool is_active() const override;
 
       bool is_closed() const override;
@@ -89,7 +89,7 @@ class BOTAN_PUBLIC_API(2, 0) Client final : public Channel {
 
       bool secure_renegotiation_supported() const override;
 
-      void to_peer(std::span<const uint8_t> data) override;
+      void to_peer(Botan::span<const uint8_t> data) override;
 
       void send_alert(const Alert& alert) override;
 

@@ -22,7 +22,7 @@ class polyn_gf2m;
 
 class BOTAN_PUBLIC_API(2, 0) McEliece_PublicKey : public virtual Public_Key {
    public:
-      explicit McEliece_PublicKey(std::span<const uint8_t> key_bits);
+      explicit McEliece_PublicKey(Botan::span<const uint8_t> key_bits);
 
       McEliece_PublicKey(const std::vector<uint8_t>& pub_matrix, size_t t, size_t the_code_length) :
             m_public_matrix(pub_matrix), m_t(t), m_code_length(the_code_length) {}
@@ -91,7 +91,7 @@ class BOTAN_PUBLIC_API(2, 0) McEliece_PrivateKey final : public virtual McEliece
       */
       McEliece_PrivateKey(RandomNumberGenerator& rng, size_t code_length, size_t t);
 
-      explicit McEliece_PrivateKey(std::span<const uint8_t> key_bits);
+      explicit McEliece_PrivateKey(Botan::span<const uint8_t> key_bits);
 
       McEliece_PrivateKey(const polyn_gf2m& goppa_polyn,
                           const std::vector<uint32_t>& parity_check_matrix_coeffs,

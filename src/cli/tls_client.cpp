@@ -12,6 +12,7 @@
 
 #if defined(BOTAN_HAS_TLS) && defined(BOTAN_TARGET_OS_HAS_FILESYSTEM) && defined(BOTAN_TARGET_OS_HAS_SOCKETS)
 
+   #include <botan/contains.h>
    #include <botan/hex.h>
    #include <botan/ocsp.h>
    #include <botan/tls_callbacks.h>
@@ -42,7 +43,7 @@ class Callbacks : public Botan::TLS::Callbacks {
 
       std::ostream& output();
       bool flag_set(const std::string& flag_name) const;
-      void send(std::span<const uint8_t> buffer);
+      void send(Botan::span<const uint8_t> buffer);
 
       void tls_verify_cert_chain(const std::vector<Botan::X509_Certificate>& cert_chain,
                                  const std::vector<std::optional<Botan::OCSP::Response>>& ocsp,
@@ -66,7 +67,7 @@ class Callbacks : public Botan::TLS::Callbacks {
          if(result.successful_validation()) {
             auto status = result.all_statuses();
 
-            if(!status.empty() && status[0].contains(Botan::Certificate_Status_Code::OCSP_RESPONSE_GOOD)) {
+            if(!status.empty() && contains(status[0], Botan::Certificate_Status_Code::OCSP_RESPONSE_GOOD)) {
                output() << "Valid OCSP response for this server\n";
             }
          }
@@ -97,7 +98,7 @@ class Callbacks : public Botan::TLS::Callbacks {
          }
       }
 
-      void tls_emit_data(std::span<const uint8_t> buf) override {
+      void tls_emit_data(Botan::span<const uint8_t> buf) override {
          if(flag_set("debug")) {
             output() << "<< " << Botan::hex_encode(buf) << "\n";
          }
@@ -107,7 +108,7 @@ class Callbacks : public Botan::TLS::Callbacks {
 
       void tls_alert(Botan::TLS::Alert alert) override { output() << "Alert: " << alert.type_string() << "\n"; }
 
-      void tls_record_received(uint64_t /*seq_no*/, std::span<const uint8_t> buf) override {
+      void tls_record_received(uint64_t /*seq_no*/, Botan::span<const uint8_t> buf) override {
          for(const auto c : buf) {
             output() << c;
          }
@@ -195,9 +196,9 @@ class TLS_Client final : public Command {
 
          if(tls_version != "default") {
             if(tls_version == "1.2") {
-               version = use_tcp ? Botan::TLS::Protocol_Version::TLS_V12 : Botan::TLS::Protocol_Version::DTLS_V12;
+               version = use_tcp ? Botan::TLS::Version_Code::TLS_V12 : Botan::TLS::Version_Code::DTLS_V12;
             } else if(tls_version == "1.3") {
-               version = use_tcp ? Botan::TLS::Protocol_Version::TLS_V13 : Botan::TLS::Protocol_Version::DTLS_V13;
+               version = use_tcp ? Botan::TLS::Version_Code::TLS_V13 : Botan::TLS::Version_Code::DTLS_V13;
             } else {
                error_output() << "Unknown TLS protocol version " << tls_version << '\n';
             }
@@ -319,7 +320,7 @@ class TLS_Client final : public Command {
       using Command::flag_set;
       using Command::output;
 
-      void send(std::span<const uint8_t> buf) const {
+      void send(Botan::span<const uint8_t> buf) const {
          while(!buf.empty()) {
             ssize_t sent = ::send(m_sockfd, buf.data(), buf.size(), MSG_NOSIGNAL);
 
@@ -395,7 +396,7 @@ bool Callbacks::flag_set(const std::string& flag_name) const {
    return m_client_command.flag_set(flag_name);
 }
 
-void Callbacks::send(std::span<const uint8_t> buffer) {
+void Callbacks::send(Botan::span<const uint8_t> buffer) {
    m_client_command.send(buffer);
 }
 

@@ -8,6 +8,8 @@
 #include "test_rng.h"
 #include "tests.h"
 
+#include <botan/starts_with.h>
+
 #if defined(BOTAN_HAS_STATEFUL_RNG)
    #include <botan/stateful_rng.h>
 #endif
@@ -583,7 +585,7 @@ std::vector<Test::Result> hmac_drbg_multiple_requests() {
               rng1->randomize_with_input(bulk, seed);
 
               std::vector<uint8_t> split(3 * rng_max_output);
-              std::span<uint8_t> split_span(split);
+              Botan::span<uint8_t> split_span(split);
               rng2->randomize_with_input(split_span.subspan(0, rng_max_output), seed);
               rng2->randomize_with_input(split_span.subspan(rng_max_output, rng_max_output), {});
               rng2->randomize_with_input(split_span.subspan(2 * rng_max_output), {});
@@ -704,7 +706,7 @@ class AutoSeeded_RNG_Tests final : public Test {
 
          Botan::AutoSeeded_RNG rng;
 
-         result.confirm("AutoSeeded_RNG::name", rng.name().starts_with("HMAC_DRBG(HMAC(SHA-"));
+         result.confirm("AutoSeeded_RNG::name", Botan::starts_with(rng.name(), "HMAC_DRBG(HMAC(SHA-"));
 
          result.confirm("AutoSeeded_RNG starts seeded", rng.is_seeded());
          rng.random_vec(16);  // generate and discard output

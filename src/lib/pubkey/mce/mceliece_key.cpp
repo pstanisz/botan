@@ -97,7 +97,7 @@ size_t McEliece_PublicKey::estimated_strength() const {
    return mceliece_work_factor(m_code_length, m_t);
 }
 
-McEliece_PublicKey::McEliece_PublicKey(std::span<const uint8_t> key_bits) {
+McEliece_PublicKey::McEliece_PublicKey(Botan::span<const uint8_t> key_bits) {
    BER_Decoder dec(key_bits);
    size_t n;
    size_t t;
@@ -163,7 +163,7 @@ bool McEliece_PrivateKey::check_key(RandomNumberGenerator& rng, bool /*unused*/)
    return true;
 }
 
-McEliece_PrivateKey::McEliece_PrivateKey(std::span<const uint8_t> key_bits) {
+McEliece_PrivateKey::McEliece_PrivateKey(Botan::span<const uint8_t> key_bits) {
    size_t n, t;
    secure_vector<uint8_t> enc_g;
    BER_Decoder dec_base(key_bits);

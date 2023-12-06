@@ -44,7 +44,7 @@ class BOTAN_PUBLIC_API(2, 0) PKCS11_RNG final : public Hardware_RNG {
    private:
       /// Calls `C_GenerateRandom` to generate random data
       /// Calls `C_SeedRandom` to add entropy to the random generation function of the token/middleware
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override;
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override;
 
    private:
       const std::reference_wrapper<Session> m_session;

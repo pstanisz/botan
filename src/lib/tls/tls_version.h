@@ -30,23 +30,23 @@ enum class Version_Code : uint16_t {
 */
 class BOTAN_PUBLIC_API(2, 0) Protocol_Version final {
    public:
-      using enum Version_Code;
+      //using enum Version_Code;
 
       /**
       * @return latest known TLS version
       */
       static Protocol_Version latest_tls_version() {
 #if defined(BOTAN_HAS_TLS_13)
-         return Protocol_Version(TLS_V13);
+         return Protocol_Version(Version_Code::TLS_V13);
 #else
-         return Protocol_Version(TLS_V12);
+         return Protocol_Version(Version_Code::TLS_V12);
 #endif
       }
 
       /**
       * @return latest known DTLS version
       */
-      static Protocol_Version latest_dtls_version() { return Protocol_Version(DTLS_V12); }
+      static Protocol_Version latest_dtls_version() { return Protocol_Version(Version_Code::DTLS_V12); }
 
       Protocol_Version() : m_version(0) {}
 

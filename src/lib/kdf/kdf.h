@@ -11,7 +11,7 @@
 #include <botan/concepts.h>
 #include <botan/exceptn.h>
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 
@@ -81,7 +81,7 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param label_len size of label in bytes
       * @return the derived key
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    const uint8_t secret[],
                    size_t secret_len,
@@ -102,9 +102,9 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
-                   std::span<const uint8_t> secret,
+                   Botan::span<const uint8_t> secret,
                    std::string_view salt = "",
                    std::string_view label = "") const {
          return derive_key<T>(key_len,
@@ -124,11 +124,11 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
-                   std::span<const uint8_t> secret,
-                   std::span<const uint8_t> salt,
-                   std::span<const uint8_t> label) const {
+                   Botan::span<const uint8_t> secret,
+                   Botan::span<const uint8_t> salt,
+                   Botan::span<const uint8_t> label) const {
          return derive_key<T>(
             key_len, secret.data(), secret.size(), salt.data(), salt.size(), label.data(), label.size());
       }
@@ -142,9 +142,9 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
-                   std::span<const uint8_t> secret,
+                   Botan::span<const uint8_t> secret,
                    const uint8_t salt[],
                    size_t salt_len,
                    std::string_view label = "") const {
@@ -161,7 +161,7 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param label purpose for the derived keying material
       * @return the derived key
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    const uint8_t secret[],
                    size_t secret_len,

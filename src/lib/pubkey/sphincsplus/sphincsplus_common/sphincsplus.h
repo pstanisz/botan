@@ -32,9 +32,9 @@ class SphincsPlus_PrivateKeyInternal;
  */
 class BOTAN_PUBLIC_API(3, 1) SphincsPlus_PublicKey : public virtual Public_Key {
    public:
-      SphincsPlus_PublicKey(std::span<const uint8_t> pub_key, Sphincs_Parameter_Set type, Sphincs_Hash_Type hash);
-      SphincsPlus_PublicKey(std::span<const uint8_t> pub_key, Sphincs_Parameters params);
-      SphincsPlus_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      SphincsPlus_PublicKey(Botan::span<const uint8_t> pub_key, Sphincs_Parameter_Set type, Sphincs_Hash_Type hash);
+      SphincsPlus_PublicKey(Botan::span<const uint8_t> pub_key, Sphincs_Parameters params);
+      SphincsPlus_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       ~SphincsPlus_PublicKey() override;
 
@@ -68,9 +68,9 @@ BOTAN_DIAGNOSTIC_IGNORE_INHERITED_VIA_DOMINANCE
 class BOTAN_PUBLIC_API(3, 1) SphincsPlus_PrivateKey final : public virtual SphincsPlus_PublicKey,
                                                             public virtual Private_Key {
    public:
-      SphincsPlus_PrivateKey(std::span<const uint8_t> private_key, Sphincs_Parameter_Set type, Sphincs_Hash_Type hash);
-      SphincsPlus_PrivateKey(std::span<const uint8_t> private_key, Sphincs_Parameters params);
-      SphincsPlus_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      SphincsPlus_PrivateKey(Botan::span<const uint8_t> private_key, Sphincs_Parameter_Set type, Sphincs_Hash_Type hash);
+      SphincsPlus_PrivateKey(Botan::span<const uint8_t> private_key, Sphincs_Parameters params);
+      SphincsPlus_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
       SphincsPlus_PrivateKey(RandomNumberGenerator& rng, Sphincs_Parameter_Set type, Sphincs_Hash_Type hash);
       SphincsPlus_PrivateKey(RandomNumberGenerator& rng, Sphincs_Parameters params);
 

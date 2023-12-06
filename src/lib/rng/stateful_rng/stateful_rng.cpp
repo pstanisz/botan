@@ -28,14 +28,14 @@ bool Stateful_RNG::is_seeded() const {
    return m_reseed_counter > 0;
 }
 
-void Stateful_RNG::initialize_with(std::span<const uint8_t> input) {
+void Stateful_RNG::initialize_with(Botan::span<const uint8_t> input) {
    lock_guard_type<recursive_mutex_type> lock(m_mutex);
 
    clear();
    add_entropy(input);
 }
 
-void Stateful_RNG::generate_batched_output(std::span<uint8_t> output, std::span<const uint8_t> input) {
+void Stateful_RNG::generate_batched_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) {
    BOTAN_ASSERT_NOMSG(!output.empty());
 
    const size_t max_per_request = max_number_of_bytes_per_request();
@@ -59,7 +59,7 @@ void Stateful_RNG::generate_batched_output(std::span<uint8_t> output, std::span<
    }
 }
 
-void Stateful_RNG::fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) {
+void Stateful_RNG::fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) {
    lock_guard_type<recursive_mutex_type> lock(m_mutex);
 
    if(output.empty()) {

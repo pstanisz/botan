@@ -12,7 +12,7 @@
 #include <botan/secmem.h>
 #include <botan/internal/fmt.h>
 #include <botan/internal/loadstor.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <vector>
 
@@ -25,7 +25,7 @@ namespace TLS {
 */
 class TLS_Data_Reader final {
    public:
-      TLS_Data_Reader(const char* type, std::span<const uint8_t> buf_in) :
+      TLS_Data_Reader(const char* type, Botan::span<const uint8_t> buf_in) :
             m_typename(type), m_buf(buf_in), m_offset(0) {}
 
       void assert_done() const {
@@ -165,7 +165,7 @@ class TLS_Data_Reader final {
       }
 
       const char* m_typename;
-      std::span<const uint8_t> m_buf;
+      Botan::span<const uint8_t> m_buf;
       size_t m_offset;
 };
 

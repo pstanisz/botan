@@ -24,7 +24,7 @@ namespace Botan_Tests {
 class SPHINCS_Plus_WOTS_Test final : public Text_Based_Test {
    private:
       static std::pair<Botan::Sphincs_Address, Botan::TreeNodeIndex> read_address_and_leaf_idx(
-         std::span<const uint8_t> address_buffer) {
+         Botan::span<const uint8_t> address_buffer) {
          BOTAN_ASSERT_NOMSG(address_buffer.size() == 32);
 
          std::array<uint32_t, 8> adrs;

@@ -11,7 +11,7 @@
 #include <botan/symkey.h>
 #include <botan/types.h>
 
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -116,7 +116,7 @@ class BOTAN_PUBLIC_API(2, 0) SymmetricAlgorithm {
       * Set the symmetric key of this object.
       * @param key the contiguous byte range to be set.
       */
-      void set_key(std::span<const uint8_t> key) { set_key(key.data(), key.size()); }
+      void set_key(Botan::span<const uint8_t> key) { set_key(key.data(), key.size()); }
 
       /**
       * Set the symmetric key of this object.

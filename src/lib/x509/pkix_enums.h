@@ -150,7 +150,7 @@ class BOTAN_PUBLIC_API(3, 0) Key_Constraints {
          return Key_Constraints(Key_Constraints::KeyCertSign | Key_Constraints::CrlSign);
       }
 
-      bool operator==(const Key_Constraints&) const = default;
+      bool operator==(const Key_Constraints& other) const { return m_value == other.m_value; }
 
       void operator|=(Key_Constraints::Bits other) { m_value |= other; }
 
@@ -160,7 +160,8 @@ class BOTAN_PUBLIC_API(3, 0) Key_Constraints {
       bool includes(Key_Constraints other) const { return (m_value & other.m_value) == other.m_value; }
 
       // Return true if any of the bits provided are set
-      bool includes_any(auto&&... bits) const { return (m_value & (bits | ...)) > 0; }
+      template <typename... Ts>
+      bool includes_any(Ts&& ...bits) const { return (m_value & (bits | ...)) > 0; }
 
       bool empty() const { return m_value == 0; }
 

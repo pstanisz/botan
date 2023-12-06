@@ -10,8 +10,8 @@
 #define BOTAN_DATA_SRC_H_
 
 #include <botan/secmem.h>
+#include <botan/span.h>
 #include <iosfwd>
-#include <span>
 #include <string>
 #include <string_view>
 
@@ -127,7 +127,7 @@ class BOTAN_PUBLIC_API(2, 0) DataSource_Memory final : public DataSource {
       * Construct a memory source that reads from an arbitrary byte buffer
       * @param in the MemoryRegion to read from
       */
-      explicit DataSource_Memory(std::span<const uint8_t> in) : m_source(in.begin(), in.end()), m_offset(0) {}
+      explicit DataSource_Memory(Botan::span<const uint8_t> in) : m_source(in.begin(), in.end()), m_offset(0) {}
 
       /**
       * Construct a memory source that reads from a std::vector

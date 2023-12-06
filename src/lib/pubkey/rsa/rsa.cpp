@@ -21,6 +21,7 @@
 #include <botan/internal/pk_ops_impl.h>
 #include <botan/internal/pss_params.h>
 #include <botan/internal/workfactor.h>
+#include <botan/starts_with.h>
 
 #if defined(BOTAN_HAS_THREAD_UTILS)
    #include <botan/internal/thread_pool.h>
@@ -144,7 +145,7 @@ void RSA_PublicKey::init(BigInt&& n, BigInt&& e) {
    m_public = std::make_shared<RSA_Public_Data>(std::move(n), std::move(e));
 }
 
-RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    BigInt n, e;
    BER_Decoder(key_bits).start_sequence().decode(n).decode(e).end_cons();
 
@@ -241,7 +242,7 @@ void RSA_PrivateKey::init(BigInt&& d, BigInt&& p, BigInt&& q, BigInt&& d1, BigIn
       std::move(d), std::move(p), std::move(q), std::move(d1), std::move(d2), std::move(c));
 }
 
-RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    BigInt n, e, d, p, q, d1, d2, c;
 
    BER_Decoder(key_bits)
@@ -569,7 +570,7 @@ AlgorithmIdentifier RSA_Signature_Operation::algorithm_identifier() const {
       return AlgorithmIdentifier(oid, AlgorithmIdentifier::USE_EMPTY_PARAM);
    } catch(Lookup_Error&) {}
 
-   if(emsa_name.starts_with("EMSA4(")) {
+   if(starts_with(emsa_name, "EMSA4(")) {
       auto parameters = PSS_Params::from_emsa_name(m_emsa->name()).serialize();
       return AlgorithmIdentifier("RSA/EMSA4", parameters);
    }

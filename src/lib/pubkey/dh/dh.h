@@ -28,7 +28,7 @@ class BOTAN_PUBLIC_API(2, 0) DH_PublicKey : public virtual Public_Key {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      DH_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      DH_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Construct a public key with the specified parameters.
@@ -79,7 +79,7 @@ class BOTAN_PUBLIC_API(2, 0) DH_PrivateKey final : public DH_PublicKey,
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits PKCS #8 structure
       */
-      DH_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      DH_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Load a private key from the integer encoding

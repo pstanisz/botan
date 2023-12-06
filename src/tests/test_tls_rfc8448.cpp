@@ -35,6 +35,7 @@
    #include <botan/tls_messages.h>
    #include <botan/internal/fmt.h>
    #include <botan/internal/stl_util.h>
+   #include <botan/contains.h>
 #endif
 
 namespace Botan_Tests {
@@ -135,12 +136,12 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks {
             m_mock_signatures(std::move(mock_signatures)),
             m_timestamp(from_milliseconds_since_epoch(timestamp)) {}
 
-      void tls_emit_data(std::span<const uint8_t> data) override {
+      void tls_emit_data(Botan::span<const uint8_t> data) override {
          count_callback_invocation("tls_emit_data");
          send_buffer.insert(send_buffer.end(), data.begin(), data.end());
       }
 
-      void tls_record_received(uint64_t seq_no, std::span<const uint8_t> data) override {
+      void tls_record_received(uint64_t seq_no, Botan::span<const uint8_t> data) override {
          count_callback_invocation("tls_record_received");
          received_seq_no = seq_no;
          receive_buffer.insert(receive_buffer.end(), data.begin(), data.end());
@@ -313,7 +314,7 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks {
 
    private:
       void count_callback_invocation(const std::string& callback_name) const {
-         if(!m_callback_invocations.contains(callback_name)) {
+         if(!Botan::contains(m_callback_invocations, callback_name)) {
             m_callback_invocations[callback_name] = 0;
          }
 
@@ -587,7 +588,7 @@ class TLS_Context {
          const auto& invokes = m_callbacks->callback_invocations();
          for(const auto& cbn : callback_names) {
             result.confirm(Botan::fmt("{} was invoked (Context: {})", cbn, context),
-                           invokes.contains(cbn) && invokes.at(cbn) > 0);
+                           Botan::contains(invokes, cbn) && invokes.at(cbn) > 0);
          }
 
          for(const auto& invoke : invokes) {
@@ -643,7 +644,7 @@ class Client_Context : public TLS_Context {
                    m_policy,
                    m_rng,
                    Botan::TLS::Server_Information("server"),
-                   Botan::TLS::Protocol_Version::TLS_V13) {}
+                   Botan::TLS::Version_Code::TLS_V13) {}
 
       void send(const std::vector<uint8_t>& data) override { client.send(data.data(), data.size()); }
 
