@@ -50,10 +50,9 @@ class SIMD_2x64 final {
 
       void operator^=(const SIMD_2x64& other) { m_simd = _mm_xor_si128(m_simd, other.m_simd); }
 
-      template <size_t ROT>
+      template <size_t ROT, typename = std::enable_if_t<(ROT > 0) && (ROT < 64)>>
       BOTAN_FUNC_ISA("ssse3")
       SIMD_2x64 rotr() const
-         requires(ROT > 0 && ROT < 64)
       {
          if constexpr(ROT == 16) {
             auto tab = _mm_setr_epi8(2, 3, 4, 5, 6, 7, 0, 1, 10, 11, 12, 13, 14, 15, 8, 9);
@@ -81,10 +80,9 @@ class SIMD_2x64 final {
          return SIMD_2x64(_mm_add_epi64(m, m));
       }
 
-      template <size_t T>
+      template <size_t T, typename = std::enable_if_t<(T > 0) && (T < 16)>>
       BOTAN_FUNC_ISA("ssse3")
       static SIMD_2x64 alignr(SIMD_2x64 a, SIMD_2x64 b)
-         requires(T > 0 && T < 16)
       {
          return SIMD_2x64(_mm_alignr_epi8(a.m_simd, b.m_simd, T));
       }

@@ -25,7 +25,7 @@ Certificate_Request_13::Certificate_Request_13(const std::vector<uint8_t>& buf, 
    //    A server which is authenticating with a certificate MAY optionally
    //    request a certificate from the client.
    if(side != Connection_Side::Server) {
-      throw TLS_Exception(Alert::UnexpectedMessage, "Received a Certificate_Request message from a client");
+      throw TLS_Exception(AlertType::UnexpectedMessage, "Received a Certificate_Request message from a client");
    }
 
    m_context = reader.get_tls_length_value(1);
@@ -37,7 +37,7 @@ Certificate_Request_13::Certificate_Request_13(const std::vector<uint8_t>& buf, 
    //    Clients MUST ignore unrecognized extensions.
 
    if(!m_extensions.has<Signature_Algorithms>()) {
-      throw TLS_Exception(Alert::MissingExtension,
+      throw TLS_Exception(AlertType::MissingExtension,
                           "Certificate_Request message did not provide a signature_algorithms extension");
    }
 
@@ -60,7 +60,7 @@ Certificate_Request_13::Certificate_Request_13(const std::vector<uint8_t>& buf, 
    };
 
    if(m_extensions.contains_implemented_extensions_other_than(allowed_extensions)) {
-      throw TLS_Exception(Alert::IllegalParameter, "Certificate Request contained an extension that is not allowed");
+      throw TLS_Exception(AlertType::IllegalParameter, "Certificate Request contained an extension that is not allowed");
    }
 }
 

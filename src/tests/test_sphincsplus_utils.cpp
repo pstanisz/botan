@@ -35,7 +35,7 @@ std::vector<Test::Result> test_sphincsplus_address() {
 
       Botan_Tests::CHECK("set up an address",
                          [&](Test::Result& result) {
-                            Botan::Sphincs_Address a(Botan::Sphincs_Address::ForsTree);
+                            Botan::Sphincs_Address a(Botan::Sphincs_Address_Type::ForsTree);
                             a.set_layer(Botan::HypertreeLayerIndex(1337))
                                .set_tree(Botan::XmssTreeIndexInLayer(4294967338) /* longer than 32bits */)
                                .set_keypair(Botan::TreeNodeIndex(131072))
@@ -50,7 +50,7 @@ std::vector<Test::Result> test_sphincsplus_address() {
 
       Botan_Tests::CHECK("set up another address",
                          [&](Test::Result& result) {
-                            Botan::Sphincs_Address a(Botan::Sphincs_Address::ForsTree);
+                            Botan::Sphincs_Address a(Botan::Sphincs_Address_Type::ForsTree);
                             a.set_layer(Botan::HypertreeLayerIndex(1337))
                                .set_tree(Botan::XmssTreeIndexInLayer(4294967338) /* longer than 32bits */)
                                .set_keypair(Botan::TreeNodeIndex(131072))
@@ -65,7 +65,7 @@ std::vector<Test::Result> test_sphincsplus_address() {
       Botan_Tests::CHECK(
          "copy subtree",
          [&](Test::Result& result) {
-            Botan::Sphincs_Address a(Botan::Sphincs_Address::ForsTree);
+            Botan::Sphincs_Address a(Botan::Sphincs_Address_Type::ForsTree);
             a.set_layer(Botan::HypertreeLayerIndex(1337))
                .set_tree(Botan::XmssTreeIndexInLayer(4294967338) /* longer than 32bits */)
                .set_keypair(Botan::TreeNodeIndex(131072))
@@ -87,7 +87,7 @@ std::vector<Test::Result> test_sphincsplus_address() {
       Botan_Tests::CHECK(
          "copy keypair",
          [&](Test::Result& result) {
-            Botan::Sphincs_Address a(Botan::Sphincs_Address::ForsTree);
+            Botan::Sphincs_Address a(Botan::Sphincs_Address_Type::ForsTree);
             a.set_layer(Botan::HypertreeLayerIndex(1337))
                .set_tree(Botan::XmssTreeIndexInLayer(4294967338) /* longer than 32bits */)
                .set_keypair(Botan::TreeNodeIndex(131072))

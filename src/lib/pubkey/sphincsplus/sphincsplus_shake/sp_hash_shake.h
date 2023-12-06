@@ -29,7 +29,7 @@ class Sphincs_Hash_Functions_Shake : public Sphincs_Hash_Functions {
 
       std::vector<uint8_t> H_msg_digest(StrongSpan<const SphincsMessageRandomness> r,
                                         const SphincsTreeNode& root,
-                                        std::span<const uint8_t> message) override {
+                                        Botan::span<const uint8_t> message) override {
          m_h_msg_hash.update(r);
          m_h_msg_hash.update(m_pub_seed);
          m_h_msg_hash.update(root);
@@ -50,7 +50,7 @@ class Sphincs_Hash_Functions_Shake : public Sphincs_Hash_Functions {
       void PRF_msg(StrongSpan<SphincsMessageRandomness> out,
                    const SphincsSecretPRF& sk_prf,
                    const SphincsOptionalRandomness& opt_rand,
-                   std::span<const uint8_t> in) override {
+                   Botan::span<const uint8_t> in) override {
          m_hash.update(sk_prf);
          m_hash.update(opt_rand);
          m_hash.update(in);

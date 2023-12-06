@@ -34,7 +34,7 @@ class SphincsPlus_PublicKeyInternal final {
                                     SphincsTreeNode sphincs_root) :
             m_params(params), m_public_seed(std::move(public_seed)), m_sphincs_root(std::move(sphincs_root)) {}
 
-      SphincsPlus_PublicKeyInternal(Sphincs_Parameters params, std::span<const uint8_t> key_bits) : m_params(params) {
+      SphincsPlus_PublicKeyInternal(Sphincs_Parameters params, Botan::span<const uint8_t> key_bits) : m_params(params) {
          if(key_bits.size() != m_params.public_key_bytes()) {
             throw Decoding_Error("Sphincs Public Key doesn't have the expected length");
          }
@@ -65,7 +65,7 @@ class SphincsPlus_PrivateKeyInternal final {
       SphincsPlus_PrivateKeyInternal(SphincsSecretSeed secret_seed, SphincsSecretPRF prf) :
             m_secret_seed(std::move(secret_seed)), m_prf(std::move(prf)) {}
 
-      SphincsPlus_PrivateKeyInternal(const Sphincs_Parameters& params, std::span<const uint8_t> key_bits) {
+      SphincsPlus_PrivateKeyInternal(const Sphincs_Parameters& params, Botan::span<const uint8_t> key_bits) {
          if(key_bits.size() != params.private_key_bytes() - params.public_key_bytes()) {
             throw Decoding_Error("Sphincs Private Key doesn't have the expected length");
          }
@@ -88,15 +88,15 @@ class SphincsPlus_PrivateKeyInternal final {
       SphincsSecretPRF m_prf;
 };
 
-SphincsPlus_PublicKey::SphincsPlus_PublicKey(std::span<const uint8_t> pub_key,
+SphincsPlus_PublicKey::SphincsPlus_PublicKey(Botan::span<const uint8_t> pub_key,
                                              Sphincs_Parameter_Set type,
                                              Sphincs_Hash_Type hash) :
       m_public(std::make_shared<SphincsPlus_PublicKeyInternal>(Sphincs_Parameters::create(type, hash), pub_key)) {}
 
-SphincsPlus_PublicKey::SphincsPlus_PublicKey(std::span<const uint8_t> pub_key, Sphincs_Parameters params) :
+SphincsPlus_PublicKey::SphincsPlus_PublicKey(Botan::span<const uint8_t> pub_key, Sphincs_Parameters params) :
       m_public(std::make_shared<SphincsPlus_PublicKeyInternal>(params, pub_key)) {}
 
-SphincsPlus_PublicKey::SphincsPlus_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+SphincsPlus_PublicKey::SphincsPlus_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
       m_public(std::make_shared<SphincsPlus_PublicKeyInternal>(Sphincs_Parameters::create(alg_id.oid()), key_bits)) {}
 
 SphincsPlus_PublicKey::~SphincsPlus_PublicKey() = default;
@@ -204,7 +204,7 @@ bool SphincsPlus_PublicKey::supports_operation(PublicKeyOperation op) const {
 
 namespace {
 
-std::span<const uint8_t> slice_off_public_key(const OID& oid, std::span<const uint8_t> key_bits) {
+Botan::span<const uint8_t> slice_off_public_key(const OID& oid, Botan::span<const uint8_t> key_bits) {
    const auto params = Sphincs_Parameters::create(oid);
    // Note: We need to transiently instantiate the `Sphincs_Parameters` object
    //       to know the size of the public/private key. That's slightly
@@ -220,15 +220,15 @@ std::span<const uint8_t> slice_off_public_key(const OID& oid, std::span<const ui
 
 }  // namespace
 
-SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(std::span<const uint8_t> private_key,
+SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(Botan::span<const uint8_t> private_key,
                                                Sphincs_Parameter_Set type,
                                                Sphincs_Hash_Type hash) :
       SphincsPlus_PrivateKey(private_key, Sphincs_Parameters::create(type, hash)) {}
 
-SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
       SphincsPlus_PrivateKey(key_bits, Sphincs_Parameters::create(alg_id.oid())) {}
 
-SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(std::span<const uint8_t> private_key, Sphincs_Parameters params) :
+SphincsPlus_PrivateKey::SphincsPlus_PrivateKey(Botan::span<const uint8_t> private_key, Sphincs_Parameters params) :
       SphincsPlus_PublicKey(slice_off_public_key(params.object_identifier(), private_key), params) {
    const auto private_portion_bytes = params.private_key_bytes() - params.public_key_bytes();
    BOTAN_ASSERT_NOMSG(private_key.size() >= private_portion_bytes);

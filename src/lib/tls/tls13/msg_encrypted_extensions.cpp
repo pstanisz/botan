@@ -40,7 +40,7 @@ Encrypted_Extensions::Encrypted_Extensions(const Client_Hello_13& client_hello, 
       //    Endpoints SHOULD advertise the "record_size_limit" extension, even if
       //    they have no need to limit the size of records. For clients, this
       //    allows servers to advertise a limit at their discretion.
-      throw TLS_Exception(Alert::MissingExtension,
+      throw TLS_Exception(AlertType::MissingExtension,
                           "Server cannot enforce record size limit without the client supporting it");
    }
 
@@ -73,7 +73,7 @@ Encrypted_Extensions::Encrypted_Extensions(const std::vector<uint8_t>& buf) {
    // be empty. However, in that case we should at least see a two-byte length
    // field that reads 0x00 0x00.
    if(buf.size() < 2) {
-      throw TLS_Exception(Alert::DecodeError, "Server sent an empty Encrypted Extensions message");
+      throw TLS_Exception(AlertType::DecodeError, "Server sent an empty Encrypted Extensions message");
    }
 
    m_extensions.deserialize(reader, Connection_Side::Server, type());
@@ -101,7 +101,7 @@ Encrypted_Extensions::Encrypted_Extensions(const std::vector<uint8_t>& buf) {
       Extension_Code::RecordSizeLimit,
    };
    if(m_extensions.contains_implemented_extensions_other_than(allowed_exts)) {
-      throw TLS_Exception(Alert::IllegalParameter, "Encrypted Extensions contained an extension that is not allowed");
+      throw TLS_Exception(AlertType::IllegalParameter, "Encrypted Extensions contained an extension that is not allowed");
    }
 }
 

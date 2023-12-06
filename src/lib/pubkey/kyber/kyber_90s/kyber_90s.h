@@ -32,10 +32,10 @@ class Kyber_90s_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
 
       std::unique_ptr<HashFunction> KDF() const override { return m_sha256->new_object(); }
 
-      std::unique_ptr<Kyber_XOF> XOF(std::span<const uint8_t> seed) const override {
+      std::unique_ptr<Kyber_XOF> XOF(Botan::span<const uint8_t> seed) const override {
          class Kyber_90s_XOF final : public Kyber_XOF {
             public:
-               Kyber_90s_XOF(std::unique_ptr<StreamCipher> cipher, std::span<const uint8_t> seed) :
+               Kyber_90s_XOF(std::unique_ptr<StreamCipher> cipher, Botan::span<const uint8_t> seed) :
                      m_cipher(std::move(cipher)) {
                   m_cipher->set_key(seed);
                }
@@ -45,7 +45,7 @@ class Kyber_90s_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
                   m_cipher->set_iv(iv.data(), iv.size());
                }
 
-               void write_output(std::span<uint8_t> out) override { m_cipher->write_keystream(out.data(), out.size()); }
+               void write_output(Botan::span<uint8_t> out) override { m_cipher->write_keystream(out.data(), out.size()); }
 
             private:
                std::unique_ptr<StreamCipher> m_cipher;
@@ -54,7 +54,7 @@ class Kyber_90s_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
          return std::make_unique<Kyber_90s_XOF>(m_aes256_ctr->new_object(), seed);
       }
 
-      secure_vector<uint8_t> PRF(std::span<const uint8_t> seed,
+      secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
                                  const uint8_t nonce,
                                  const size_t outlen) const override {
          m_aes256_ctr->set_key(seed);

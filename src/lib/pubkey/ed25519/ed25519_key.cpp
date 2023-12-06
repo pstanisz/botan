@@ -70,7 +70,7 @@ Ed25519_PublicKey::Ed25519_PublicKey(const uint8_t pub_key[], size_t pub_len) {
    m_public.assign(pub_key, pub_key + pub_len);
 }
 
-Ed25519_PublicKey::Ed25519_PublicKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+Ed25519_PublicKey::Ed25519_PublicKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    m_public.assign(key_bits.begin(), key_bits.end());
 
    if(m_public.size() != 32) {
@@ -102,7 +102,7 @@ Ed25519_PrivateKey::Ed25519_PrivateKey(RandomNumberGenerator& rng) {
    ed25519_gen_keypair(m_public.data(), m_private.data(), seed.data());
 }
 
-Ed25519_PrivateKey::Ed25519_PrivateKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+Ed25519_PrivateKey::Ed25519_PrivateKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    secure_vector<uint8_t> bits;
    BER_Decoder(key_bits).decode(bits, ASN1_Type::OctetString).discard_remaining();
 

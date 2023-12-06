@@ -66,7 +66,7 @@ class XMSS_WOTS_PublicKey : public XMSS_WOTS_Base {
        *                    thread executing at.
        **/
       XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
-                          std::span<const uint8_t> public_seed,
+                          Botan::span<const uint8_t> public_seed,
                           const XMSS_WOTS_PrivateKey& private_key,
                           XMSS_Address& adrs,
                           XMSS_Hash& hash);
@@ -85,7 +85,7 @@ class XMSS_WOTS_PublicKey : public XMSS_WOTS_Base {
        *                    thread executing at.
        */
       XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
-                          std::span<const uint8_t> public_seed,
+                          Botan::span<const uint8_t> public_seed,
                           wots_keysig_t signature,
                           const secure_vector<uint8_t>& msg,
                           XMSS_Address& adrs,
@@ -118,8 +118,8 @@ class XMSS_WOTS_PrivateKey : public XMSS_WOTS_Base {
        *                     thread executing at.
        **/
       XMSS_WOTS_PrivateKey(XMSS_WOTS_Parameters params,
-                           std::span<const uint8_t> public_seed,
-                           std::span<const uint8_t> private_seed,
+                           Botan::span<const uint8_t> public_seed,
+                           Botan::span<const uint8_t> private_seed,
                            XMSS_Address adrs,
                            XMSS_Hash& hash);
 
@@ -137,7 +137,7 @@ class XMSS_WOTS_PrivateKey : public XMSS_WOTS_Base {
        *                     thread executing it.
        **/
       XMSS_WOTS_PrivateKey(XMSS_WOTS_Parameters params,
-                           std::span<const uint8_t> private_seed,
+                           Botan::span<const uint8_t> private_seed,
                            XMSS_Address adrs,
                            XMSS_Hash& hash);
 
@@ -159,7 +159,7 @@ class XMSS_WOTS_PrivateKey : public XMSS_WOTS_Base {
        * @return signature for msg.
        **/
       wots_keysig_t sign(const secure_vector<uint8_t>& msg,
-                         std::span<const uint8_t> public_seed,
+                         Botan::span<const uint8_t> public_seed,
                          XMSS_Address& adrs,
                          XMSS_Hash& hash);
 };

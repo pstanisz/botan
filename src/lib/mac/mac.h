@@ -9,9 +9,9 @@
 #define BOTAN_MESSAGE_AUTH_CODE_BASE_H_
 
 #include <botan/buf_comp.h>
+#include <botan/span.h>
 #include <botan/sym_algo.h>
 #include <memory>
-#include <span>
 #include <string>
 
 namespace Botan {
@@ -62,7 +62,7 @@ class BOTAN_PUBLIC_API(2, 0) MessageAuthenticationCode : public Buffered_Computa
       *
       * @param nonce the message nonce bytes
       */
-      void start(std::span<const uint8_t> nonce) { start_msg(nonce.data(), nonce.size()); }
+      void start(Botan::span<const uint8_t> nonce) { start_msg(nonce.data(), nonce.size()); }
 
       /**
       * Begin processing a message.
@@ -89,7 +89,7 @@ class BOTAN_PUBLIC_API(2, 0) MessageAuthenticationCode : public Buffered_Computa
       * @param in the MAC to verify as a byte array
       * @return true if the MAC is valid, false otherwise
       */
-      bool verify_mac(std::span<const uint8_t> in) { return verify_mac_result(in.data(), in.size()); }
+      bool verify_mac(Botan::span<const uint8_t> in) { return verify_mac_result(in.data(), in.size()); }
 
       /**
       * @return new object representing the same algorithm as *this

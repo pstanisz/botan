@@ -30,7 +30,7 @@ Sqlite3_Database::Sqlite3_Database(std::string_view db_filename, std::optional<i
 }
 
 Sqlite3_Database::~Sqlite3_Database() {
-   if(m_db) [[likely]] {
+   if(m_db) {
       ::sqlite3_close(m_db);
    }
    m_db = nullptr;

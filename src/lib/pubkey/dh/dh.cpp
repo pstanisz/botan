@@ -13,7 +13,7 @@
 
 namespace Botan {
 
-DH_PublicKey::DH_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) {
+DH_PublicKey::DH_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) {
    m_public_key = std::make_shared<DL_PublicKey>(alg_id, key_bits, DL_Group_Format::ANSI_X9_42);
 }
 
@@ -59,7 +59,7 @@ DH_PrivateKey::DH_PrivateKey(const DL_Group& group, const BigInt& x) {
    m_public_key = m_private_key->public_key();
 }
 
-DH_PrivateKey::DH_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) {
+DH_PrivateKey::DH_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) {
    m_private_key = std::make_shared<DL_PrivateKey>(alg_id, key_bits, DL_Group_Format::ANSI_X9_42);
    m_public_key = m_private_key->public_key();
 }

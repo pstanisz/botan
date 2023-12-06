@@ -118,29 +118,29 @@ std::vector<Test::Result> test_container_strong_type() {
             using Test_Map = Botan::Strong<std::map<int, std::string>, struct Test_Map_>;
             using Test_Array = Botan::Strong<std::array<uint64_t, 32>, struct Test_Array_>;
 
-            result.confirm("Test_Nonce is container", Botan::concepts::container<Test_Nonce>);
-            result.confirm("Test_Array is container", Botan::concepts::container<Test_Array>);
-            result.confirm("Test_Map is container", Botan::concepts::container<Test_Map>);
-            result.confirm("Test_Size is not container", !Botan::concepts::container<Test_Size>);
+            result.confirm("Test_Nonce is container", Botan::concepts::is_container_v<Test_Nonce>);
+            result.confirm("Test_Array is container", Botan::concepts::is_container_v<Test_Array>);
+            result.confirm("Test_Map is container", Botan::concepts::is_container_v<Test_Map>);
+            result.confirm("Test_Size is not container", !Botan::concepts::is_container_v<Test_Size>);
 
-            result.confirm("Test_Nonce is contiguous_container", Botan::concepts::contiguous_container<Test_Nonce>);
-            result.confirm("Test_Array is contiguous_container", Botan::concepts::contiguous_container<Test_Array>);
-            result.confirm("Test_Map is not contiguous_container", !Botan::concepts::contiguous_container<Test_Map>);
-            result.confirm("Test_Size is not contiguous_container", !Botan::concepts::contiguous_container<Test_Size>);
+            result.confirm("Test_Nonce is contiguous_container", Botan::concepts::is_contiguous_container_v<Test_Nonce>);
+            result.confirm("Test_Array is contiguous_container", Botan::concepts::is_contiguous_container_v<Test_Array>);
+            result.confirm("Test_Map is not contiguous_container", !Botan::concepts::is_contiguous_container_v<Test_Map>);
+            result.confirm("Test_Size is not contiguous_container", !Botan::concepts::is_contiguous_container_v<Test_Size>);
 
-            result.confirm("Test_Nonce is resizable_container", Botan::concepts::resizable_container<Test_Nonce>);
-            result.confirm("Test_Array is not resizable_container", !Botan::concepts::resizable_container<Test_Array>);
-            result.confirm("Test_Map is not resizable_container", !Botan::concepts::resizable_container<Test_Map>);
-            result.confirm("Test_Size is not resizable_container", !Botan::concepts::resizable_container<Test_Size>);
+            result.confirm("Test_Nonce is resizable_container", Botan::concepts::is_resizable_container_v<Test_Nonce>);
+            result.confirm("Test_Array is not resizable_container", !Botan::concepts::is_resizable_container_v<Test_Array>);
+            result.confirm("Test_Map is not resizable_container", !Botan::concepts::is_resizable_container_v<Test_Map>);
+            result.confirm("Test_Size is not resizable_container", !Botan::concepts::is_resizable_container_v<Test_Size>);
          }),
 
-      Botan_Tests::CHECK("binds to a std::span<>",
+      Botan_Tests::CHECK("binds to a Botan::span<>",
                          [](auto& result) {
-                            auto get_size = [](std::span<const uint8_t> data) { return data.size(); };
+                            auto get_size = [](Botan::span<const uint8_t> data) { return data.size(); };
 
                             const auto nonce = Test_Nonce(Botan::hex_decode("DEADBEEF"));
 
-                            result.test_is_eq("can bind to std::span<>", get_size(nonce), nonce.size());
+                            result.test_is_eq("can bind to Botan::span<>", get_size(nonce), nonce.size());
                          }),
 
       Botan_Tests::CHECK("std::string container",
@@ -385,12 +385,12 @@ Test::Result test_strong_span() {
    Botan::StrongSpan<const Test_Foo> span(foo);
 
    result.confirm("underlying type is uint8_t", std::is_same_v<decltype(span)::value_type, uint8_t>);
-   result.confirm("strong type is a contiguous buffer", Botan::concepts::contiguous_container<decltype(foo)>);
+   result.confirm("strong type is a contiguous buffer", Botan::concepts::is_contiguous_container_v<decltype(foo)>);
    result.confirm("strong type is a contiguous strong type buffer",
-                  Botan::concepts::contiguous_strong_type<decltype(foo)>);
-   result.confirm("strong span is not a contiguous buffer", !Botan::concepts::contiguous_container<decltype(span)>);
+                  Botan::concepts::is_contiguous_strong_type_v<decltype(foo)>);
+   result.confirm("strong span is not a contiguous buffer", !Botan::concepts::is_contiguous_container_v<decltype(span)>);
    result.confirm("strong span is not a contiguous strong type buffer",
-                  !Botan::concepts::contiguous_strong_type<decltype(span)>);
+                  !Botan::concepts::is_contiguous_strong_type_v<decltype(span)>);
 
    return result;
 }

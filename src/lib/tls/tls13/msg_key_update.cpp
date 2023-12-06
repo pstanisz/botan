@@ -16,7 +16,7 @@ Key_Update::Key_Update(const bool request_peer_update) : m_update_requested(requ
 
 Key_Update::Key_Update(const std::vector<uint8_t>& buf) {
    if(buf.size() != 1) {
-      throw TLS_Exception(Alert::DecodeError, "malformed key_update");
+      throw TLS_Exception(AlertType::DecodeError, "malformed key_update");
    }
 
    // RFC 8446 4.6.3
@@ -24,7 +24,7 @@ Key_Update::Key_Update(const std::vector<uint8_t>& buf) {
    //    terminate the connection with an "illegal_parameter" alert.
    const uint8_t update_requested = buf.at(0);
    if(update_requested > 1) {
-      throw TLS_Exception(Alert::IllegalParameter, "unexpected key_update parameter");
+      throw TLS_Exception(AlertType::IllegalParameter, "unexpected key_update parameter");
    }
 
    m_update_requested = update_requested == 1;

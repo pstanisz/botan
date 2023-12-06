@@ -160,7 +160,7 @@ class BSD_SocketUDP final : public OS::SocketUDP {
 
             m_socket = ::socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 
-            if(m_socket == invalid_socket()) [[unlikely]] {
+            if(m_socket == invalid_socket()) {
                // unsupported socket type?
                continue;
             }

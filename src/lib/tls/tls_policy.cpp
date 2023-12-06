@@ -231,7 +231,7 @@ void Policy::check_peer_key_acceptable(const Public_Key& public_key) const {
    // else some other algo, so leave expected_keylength as zero and the check is a no-op
 
    if(keylength < expected_keylength) {
-      throw TLS_Exception(Alert::InsufficientSecurity,
+      throw TLS_Exception(AlertType::InsufficientSecurity,
                           "Peer sent " + std::to_string(keylength) + " bit " + algo_name +
                              " key"
                              ", policy requires at least " +
@@ -244,7 +244,7 @@ size_t Policy::maximum_session_tickets_per_client_hello() const {
 }
 
 std::chrono::seconds Policy::session_ticket_lifetime() const {
-   return std::chrono::days(1);
+   return std::chrono::seconds(86400);
 }
 
 bool Policy::reuse_session_tickets() const {
@@ -257,17 +257,17 @@ size_t Policy::new_session_tickets_upon_handshake_success() const {
 
 bool Policy::acceptable_protocol_version(Protocol_Version version) const {
 #if defined(BOTAN_HAS_TLS_13)
-   if(version == Protocol_Version::TLS_V13 && allow_tls13()) {
+   if(version == Version_Code::TLS_V13 && allow_tls13()) {
       return true;
    }
 #endif
 
 #if defined(BOTAN_HAS_TLS_12)
-   if(version == Protocol_Version::TLS_V12 && allow_tls12()) {
+   if(version == Version_Code::TLS_V12 && allow_tls12()) {
       return true;
    }
 
-   if(version == Protocol_Version::DTLS_V12 && allow_dtls12()) {
+   if(version == Version_Code::DTLS_V12 && allow_dtls12()) {
       return true;
    }
 #endif
@@ -277,18 +277,18 @@ bool Policy::acceptable_protocol_version(Protocol_Version version) const {
 
 Protocol_Version Policy::latest_supported_version(bool datagram) const {
    if(datagram) {
-      if(acceptable_protocol_version(Protocol_Version::DTLS_V12)) {
-         return Protocol_Version::DTLS_V12;
+      if(acceptable_protocol_version(Version_Code::DTLS_V12)) {
+         return Version_Code::DTLS_V12;
       }
       throw Invalid_State("Policy forbids all available DTLS version");
    } else {
 #if defined(BOTAN_HAS_TLS_13)
-      if(acceptable_protocol_version(Protocol_Version::TLS_V13)) {
-         return Protocol_Version::TLS_V13;
+      if(acceptable_protocol_version(Version_Code::TLS_V13)) {
+         return Version_Code::TLS_V13;
       }
 #endif
-      if(acceptable_protocol_version(Protocol_Version::TLS_V12)) {
-         return Protocol_Version::TLS_V12;
+      if(acceptable_protocol_version(Version_Code::TLS_V12)) {
+         return Version_Code::TLS_V12;
       }
       throw Invalid_State("Policy forbids all available TLS version");
    }

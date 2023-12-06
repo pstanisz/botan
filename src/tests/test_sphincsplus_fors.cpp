@@ -23,7 +23,7 @@ namespace Botan_Tests {
 
 class SPHINCS_Plus_FORS_Test final : public Text_Based_Test {
    private:
-      static Botan::Sphincs_Address read_address(std::span<const uint8_t> address_buffer) {
+      static Botan::Sphincs_Address read_address(Botan::span<const uint8_t> address_buffer) {
          BOTAN_ASSERT_NOMSG(address_buffer.size() == 32);
 
          std::array<uint32_t, 8> adrs;

@@ -17,6 +17,7 @@
 #include <botan/tls_callbacks.h>
 #include <botan/tls_exceptn.h>
 #include <botan/tls_version.h>
+#include <botan/contains.h>
 
 #include <botan/internal/stl_util.h>
 #include <botan/internal/tls_handshake_hash.h>
@@ -124,15 +125,15 @@ class Client_Hello_Internal {
          //    0x0303 and a supported_versions extension present with 0x0304 as
          //    the highest version indicated therein.
          if(!extensions().has<Supported_Versions>() ||
-            !extensions().get<Supported_Versions>()->supports(Protocol_Version::TLS_V13)) {
+            !extensions().get<Supported_Versions>()->supports(Version_Code::TLS_V13)) {
             // The exact legacy_version is ignored we just inspect it to
             // distinguish TLS and DTLS.
-            return (m_legacy_version.is_datagram_protocol()) ? Protocol_Version::DTLS_V12 : Protocol_Version::TLS_V12;
+            return (m_legacy_version.is_datagram_protocol()) ? Version_Code::DTLS_V12 : Version_Code::TLS_V12;
          }
 
          // Note: The Client_Hello_13 class will make sure that legacy_version
          //       is exactly 0x0303 (aka ossified TLS 1.2)
-         return Protocol_Version::TLS_V13;
+         return Version_Code::TLS_V13;
       }
 
       Protocol_Version legacy_version() const { return m_legacy_version; }
@@ -418,7 +419,7 @@ Client_Hello_12::Client_Hello_12(std::unique_ptr<Client_Hello_Internal> data) : 
    if(offered_suite(static_cast<uint16_t>(TLS_EMPTY_RENEGOTIATION_INFO_SCSV))) {
       if(Renegotiation_Extension* reneg = m_data->extensions().get<Renegotiation_Extension>()) {
          if(!reneg->renegotiation_info().empty()) {
-            throw TLS_Exception(Alert::HandshakeFailure, "Client sent renegotiation SCSV and non-empty extension");
+            throw TLS_Exception(AlertType::HandshakeFailure, "Client sent renegotiation SCSV and non-empty extension");
          }
       } else {
          // add fake extension
@@ -605,7 +606,7 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
    //    Servers MAY abort the handshake upon receiving a ClientHello with
    //    legacy_version 0x0304 or later.
    if(m_data->legacy_version().is_tls_13_or_later()) {
-      throw TLS_Exception(Alert::DecodeError, "TLS 1.3 Client Hello has invalid legacy_version");
+      throw TLS_Exception(AlertType::DecodeError, "TLS 1.3 Client Hello has invalid legacy_version");
    }
 
    // RFC 8446 4.1.2
@@ -614,7 +615,7 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
    //    received with any other value in this field, the server MUST abort the
    //    handshake with an "illegal_parameter" alert.
    if(m_data->comp_methods().size() != 1 || m_data->comp_methods().front() != 0) {
-      throw TLS_Exception(Alert::IllegalParameter, "Client did not offer NULL compression");
+      throw TLS_Exception(AlertType::IllegalParameter, "Client did not offer NULL compression");
    }
 
    // RFC 8446 4.2.9
@@ -624,7 +625,7 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
    //    the handshake.
    if(exts.has<PSK>()) {
       if(!exts.has<PSK_Key_Exchange_Modes>()) {
-         throw TLS_Exception(Alert::MissingExtension,
+         throw TLS_Exception(AlertType::MissingExtension,
                              "Client Hello offered a PSK without a psk_key_exchange_modes extension");
       }
 
@@ -633,7 +634,7 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
       //     ClientHello [...]. Servers MUST check that it is the last extension
       //     and otherwise fail the handshake with an "illegal_parameter" alert.
       if(exts.all().back()->type() != Extension_Code::PresharedKey) {
-         throw TLS_Exception(Alert::IllegalParameter, "PSK extension was not at the very end of the Client Hello");
+         throw TLS_Exception(AlertType::IllegalParameter, "PSK extension was not at the very end of the Client Hello");
       }
    }
 
@@ -654,12 +655,12 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
    if(!exts.has<PSK>()) {
       if(!exts.has<Supported_Groups>() || !exts.has<Signature_Algorithms>()) {
          throw TLS_Exception(
-            Alert::MissingExtension,
+            AlertType::MissingExtension,
             "Non-PSK Client Hello did not contain supported_groups and signature_algorithms extensions");
       }
    }
    if(exts.has<Supported_Groups>() != exts.has<Key_Share>()) {
-      throw TLS_Exception(Alert::MissingExtension,
+      throw TLS_Exception(AlertType::MissingExtension,
                           "Client Hello must either contain both key_share and supported_groups extensions or neither");
    }
 
@@ -699,7 +700,7 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data) : 
          //    Servers MAY check for violations of these rules and abort the
          //    handshake with an "illegal_parameter" alert if one is violated.
          if(!found_in_supported_groups(offered)) {
-            throw TLS_Exception(Alert::IllegalParameter,
+            throw TLS_Exception(AlertType::IllegalParameter,
                                 "Offered key exchange groups do not align with claimed supported groups");
          }
       }
@@ -725,13 +726,13 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
    //    "supported_versions" extension (Section 4.2.1) and the
    //    legacy_version field MUST be set to 0x0303, which is the version
    //    number for TLS 1.2.
-   m_data->m_legacy_version = Protocol_Version::TLS_V12;
+   m_data->m_legacy_version = Version_Code::TLS_V12;
    m_data->m_random = make_hello_random(rng, cb, policy);
-   m_data->m_suites = policy.ciphersuite_list(Protocol_Version::TLS_V13);
+   m_data->m_suites = policy.ciphersuite_list(Version_Code::TLS_V13);
 
    if(policy.allow_tls12())  // Note: DTLS 1.3 is NYI, hence dtls_12 is not checked
    {
-      const auto legacy_suites = policy.ciphersuite_list(Protocol_Version::TLS_V12);
+      const auto legacy_suites = policy.ciphersuite_list(Version_Code::TLS_V12);
       m_data->m_suites.insert(m_data->m_suites.end(), legacy_suites.cbegin(), legacy_suites.cend());
    }
 
@@ -754,7 +755,7 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
 
    m_data->extensions().add(new Key_Share(policy, cb, rng));
 
-   m_data->extensions().add(new Supported_Versions(Protocol_Version::TLS_V13, policy));
+   m_data->extensions().add(new Supported_Versions(Version_Code::TLS_V13, policy));
 
    m_data->extensions().add(new Signature_Algorithms(policy.acceptable_signature_schemes()));
    if(auto cert_signing_prefs = policy.acceptable_certificate_signature_schemes()) {
@@ -812,7 +813,7 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
       //    The "pre_shared_key" extension MUST be the last extension in the
       //    ClientHello (this facilitates implementation [...]).
       if(m_data->extensions().all().back()->type() != Extension_Code::PresharedKey) {
-         throw TLS_Exception(Alert::InternalError,
+         throw TLS_Exception(AlertType::InternalError,
                              "Application modified extensions of Client Hello, PSK is not last anymore");
       }
       calculate_psk_binders({});
@@ -891,7 +892,7 @@ void Client_Hello_13::validate_updates(const Client_Hello_13& new_ch) {
    if(m_data->session_id() != new_ch.m_data->session_id() || m_data->random() != new_ch.m_data->random() ||
       m_data->ciphersuites() != new_ch.m_data->ciphersuites() ||
       m_data->comp_methods() != new_ch.m_data->comp_methods()) {
-      throw TLS_Exception(Alert::IllegalParameter, "Client Hello core values changed after Hello Retry Request");
+      throw TLS_Exception(AlertType::IllegalParameter, "Client Hello core values changed after Hello Retry Request");
    }
 
    const auto oldexts = extension_types();
@@ -899,7 +900,7 @@ void Client_Hello_13::validate_updates(const Client_Hello_13& new_ch) {
 
    // Check that extension omissions are justified
    for(const auto oldext : oldexts) {
-      if(!newexts.contains(oldext)) {
+      if(!contains(newexts, (oldext))) {
          const auto ext = extensions().get(oldext);
 
          // We don't make any assumptions about unimplemented extensions.
@@ -922,13 +923,13 @@ void Client_Hello_13::validate_updates(const Client_Hello_13& new_ch) {
          // if(oldext == Padding::static_type())
          //    continue;
 
-         throw TLS_Exception(Alert::IllegalParameter, "Extension removed in updated Client Hello");
+         throw TLS_Exception(AlertType::IllegalParameter, "Extension removed in updated Client Hello");
       }
    }
 
    // Check that extension additions are justified
    for(const auto newext : newexts) {
-      if(!oldexts.contains(newext)) {
+      if(!contains(oldexts, newext)) {
          const auto ext = new_ch.extensions().get(newext);
 
          // We don't make any assumptions about unimplemented extensions.
@@ -951,7 +952,7 @@ void Client_Hello_13::validate_updates(const Client_Hello_13& new_ch) {
          // if(newext == Padding::static_type())
          //    continue;
 
-         throw TLS_Exception(Alert::UnsupportedExtension, "Added an extension in updated Client Hello");
+         throw TLS_Exception(AlertType::UnsupportedExtension, "Added an extension in updated Client Hello");
       }
    }
 
@@ -959,7 +960,7 @@ void Client_Hello_13::validate_updates(const Client_Hello_13& new_ch) {
    //    Removing the "early_data" extension (Section 4.2.10) if one was
    //    present.  Early data is not permitted after a HelloRetryRequest.
    if(new_ch.extensions().has<EarlyDataIndication>()) {
-      throw TLS_Exception(Alert::IllegalParameter, "Updated Client Hello indicates early data");
+      throw TLS_Exception(AlertType::IllegalParameter, "Updated Client Hello indicates early data");
    }
 
    // TODO: Contents of extensions are not checked for update compatibility, see:

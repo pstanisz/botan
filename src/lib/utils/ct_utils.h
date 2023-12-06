@@ -78,10 +78,12 @@ inline void unpoison(T& p) {
 * This must be verified with tooling (eg binary disassembly or using valgrind)
 * since you never know what a compiler might do.
 */
-template <typename T>
-   requires std::is_unsigned<T>::value
-class Mask final {
+template<typename T>
+class Mask final
+{
    public:
+      static_assert(std::is_unsigned<T>::value, "CT::Mask only defined for unsigned integer types");
+
       Mask(const Mask<T>& other) = default;
       Mask<T>& operator=(const Mask<T>& other) = default;
 

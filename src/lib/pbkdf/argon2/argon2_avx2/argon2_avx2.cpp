@@ -67,10 +67,9 @@ class SIMD_4x64 final {
          m_simd = _mm256_xor_si256(m_simd, other.m_simd);
       }
 
-      template <size_t ROT>
+      template <size_t ROT, typename = std::enable_if_t<(ROT > 0) && (ROT < 64)>>
       BOTAN_FUNC_ISA("avx2")
       SIMD_4x64 rotr() const
-         requires(ROT > 0 && ROT < 64)
       {
          if constexpr(ROT == 16) {
             auto tab = _mm256_setr_epi8(2,

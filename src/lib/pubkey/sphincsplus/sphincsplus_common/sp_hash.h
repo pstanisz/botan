@@ -36,7 +36,7 @@ class BOTAN_TEST_API Sphincs_Hash_Functions {
 
    public:
       std::tuple<SphincsHashedMessage, XmssTreeIndexInLayer, TreeNodeIndex> H_msg(
-         StrongSpan<const SphincsMessageRandomness> r, const SphincsTreeNode& root, std::span<const uint8_t> message);
+         StrongSpan<const SphincsMessageRandomness> r, const SphincsTreeNode& root, Botan::span<const uint8_t> message);
 
       /**
        * Using SK.PRF, the optional randomness, and a message, computes the message random R,
@@ -50,10 +50,10 @@ class BOTAN_TEST_API Sphincs_Hash_Functions {
       virtual void PRF_msg(StrongSpan<SphincsMessageRandomness> out,
                            const SphincsSecretPRF& sk_prf,
                            const SphincsOptionalRandomness& opt_rand,
-                           std::span<const uint8_t> msg) = 0;
+                           Botan::span<const uint8_t> msg) = 0;
 
       template <typename... BufferTs>
-      void T(std::span<uint8_t> out, const Sphincs_Address& address, BufferTs&&... in) {
+      void T(Botan::span<uint8_t> out, const Sphincs_Address& address, BufferTs&&... in) {
          auto& hash = tweak_hash(address, (std::forward<BufferTs>(in).size() + ...));
          (hash.update(std::forward<BufferTs>(in)), ...);
          hash.final(out);
@@ -96,7 +96,7 @@ class BOTAN_TEST_API Sphincs_Hash_Functions {
 
       virtual std::vector<uint8_t> H_msg_digest(StrongSpan<const SphincsMessageRandomness> r,
                                                 const SphincsTreeNode& root,
-                                                std::span<const uint8_t> message) = 0;
+                                                Botan::span<const uint8_t> message) = 0;
 
       const Sphincs_Parameters& m_sphincs_params;
       const SphincsPublicSeed& m_pub_seed;

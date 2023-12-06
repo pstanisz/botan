@@ -24,7 +24,7 @@ class Dilithium_AES_Symmetric_Primitives : public Dilithium_Symmetric_Primitives
    public:
       // AES mode always uses AES-256, regardless of the XofType
       std::unique_ptr<StreamCipher> XOF(const XofType /* type */,
-                                        std::span<const uint8_t> seed,
+                                        Botan::span<const uint8_t> seed,
                                         uint16_t nonce) const final {
          auto cipher = StreamCipher::create_or_throw("CTR(AES-256)");
 

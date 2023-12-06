@@ -30,7 +30,7 @@ class BOTAN_PUBLIC_API(2, 0) ElGamal_PublicKey : public virtual Public_Key {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      ElGamal_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      ElGamal_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a public key.
@@ -80,7 +80,7 @@ class BOTAN_PUBLIC_API(2, 0) ElGamal_PrivateKey final : public ElGamal_PublicKey
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded key bits in ANSI X9.42 format
       */
-      ElGamal_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      ElGamal_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a new random private key.
