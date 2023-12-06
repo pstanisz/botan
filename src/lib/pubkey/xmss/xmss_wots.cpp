@@ -46,7 +46,7 @@ void chain(const XMSS_WOTS_Parameters& params,
            size_t start_idx,
            size_t steps,
            XMSS_Address& adrs,
-           std::span<const uint8_t> seed,
+           Botan::span<const uint8_t> seed,
            XMSS_Hash& hash) {
    BOTAN_ASSERT_NOMSG(result.size() == hash.output_length());
    BOTAN_ASSERT_NOMSG(start_idx + steps < params.wots_parameter());
@@ -77,7 +77,7 @@ void chain(const XMSS_WOTS_Parameters& params,
 }  // namespace
 
 XMSS_WOTS_PublicKey::XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
-                                         std::span<const uint8_t> public_seed,
+                                         Botan::span<const uint8_t> public_seed,
                                          const XMSS_WOTS_PrivateKey& private_key,
                                          XMSS_Address& adrs,
                                          XMSS_Hash& hash) :
@@ -89,7 +89,7 @@ XMSS_WOTS_PublicKey::XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
 }
 
 XMSS_WOTS_PublicKey::XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
-                                         std::span<const uint8_t> public_seed,
+                                         Botan::span<const uint8_t> public_seed,
                                          wots_keysig_t signature,
                                          const secure_vector<uint8_t>& msg,
                                          XMSS_Address& adrs,
@@ -112,7 +112,7 @@ XMSS_WOTS_PublicKey::XMSS_WOTS_PublicKey(XMSS_WOTS_Parameters params,
 }
 
 wots_keysig_t XMSS_WOTS_PrivateKey::sign(const secure_vector<uint8_t>& msg,
-                                         std::span<const uint8_t> public_seed,
+                                         Botan::span<const uint8_t> public_seed,
                                          XMSS_Address& adrs,
                                          XMSS_Hash& hash) {
    secure_vector<uint8_t> msg_digest{m_params.base_w(msg, m_params.len_1())};
@@ -129,8 +129,8 @@ wots_keysig_t XMSS_WOTS_PrivateKey::sign(const secure_vector<uint8_t>& msg,
 }
 
 XMSS_WOTS_PrivateKey::XMSS_WOTS_PrivateKey(XMSS_WOTS_Parameters params,
-                                           std::span<const uint8_t> public_seed,
-                                           std::span<const uint8_t> private_seed,
+                                           Botan::span<const uint8_t> public_seed,
+                                           Botan::span<const uint8_t> private_seed,
                                            XMSS_Address adrs,
                                            XMSS_Hash& hash) :
       XMSS_WOTS_Base(std::move(params)) {
@@ -144,7 +144,7 @@ XMSS_WOTS_PrivateKey::XMSS_WOTS_PrivateKey(XMSS_WOTS_Parameters params,
 
 // Constructor for legacy XMSS_PrivateKeys
 XMSS_WOTS_PrivateKey::XMSS_WOTS_PrivateKey(XMSS_WOTS_Parameters params,
-                                           std::span<const uint8_t> private_seed,
+                                           Botan::span<const uint8_t> private_seed,
                                            XMSS_Address adrs,
                                            XMSS_Hash& hash) :
       XMSS_WOTS_Base(std::move(params)) {

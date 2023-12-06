@@ -40,7 +40,7 @@ void gen_chain(StrongSpan<WotsPublicKeyNode> out,
  * Interprets an array of bytes as integers in base w.
  * This only works when log_w is a divisor of 8.
  */
-void base_w(std::span<WotsHashIndex> output, std::span<const uint8_t> input, const Sphincs_Parameters& params) {
+void base_w(Botan::span<WotsHashIndex> output, Botan::span<const uint8_t> input, const Sphincs_Parameters& params) {
    BOTAN_ASSERT_NOMSG(output.size() <= 8 * input.size() / params.log_w());
 
    size_t input_offset = 0;
@@ -59,8 +59,8 @@ void base_w(std::span<WotsHashIndex> output, std::span<const uint8_t> input, con
 }
 
 /** Computes the WOTS+ checksum over a message (in base_w). */
-void wots_checksum(std::span<WotsHashIndex> output,
-                   std::span<const WotsHashIndex> msg_base_w,
+void wots_checksum(Botan::span<WotsHashIndex> output,
+                   Botan::span<const WotsHashIndex> msg_base_w,
                    const Sphincs_Parameters& params) {
    uint32_t csum = 0;
 
@@ -77,7 +77,7 @@ void wots_checksum(std::span<WotsHashIndex> output,
 
    const size_t csum_bytes_size = params.wots_checksum_bytes();
    BOTAN_ASSERT_NOMSG(csum_bytes.size() >= csum_bytes_size);
-   base_w(output, std::span(csum_bytes).last(csum_bytes_size), params);
+   base_w(output, Botan::span(csum_bytes).last(csum_bytes_size), params);
 }
 
 }  // namespace
@@ -85,8 +85,8 @@ void wots_checksum(std::span<WotsHashIndex> output,
 std::vector<WotsHashIndex> chain_lengths(const SphincsTreeNode& msg, const Sphincs_Parameters& params) {
    std::vector<WotsHashIndex> result(params.wots_len_1() + params.wots_len_2());
 
-   auto msg_base_w = std::span(result).first(params.wots_len_1());
-   auto checksum_base_w = std::span(result).last(params.wots_len_2());
+   auto msg_base_w = Botan::span(result).first(params.wots_len_1());
+   auto checksum_base_w = Botan::span(result).last(params.wots_len_2());
 
    base_w(msg_base_w, msg.get(), params);
    wots_checksum(checksum_base_w, msg_base_w, params);

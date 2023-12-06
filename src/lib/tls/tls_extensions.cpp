@@ -124,7 +124,7 @@ void Extensions::deserialize(TLS_Data_Reader& reader, const Connection_Side from
          const auto type = static_cast<Extension_Code>(extension_code);
 
          if(this->has(type)) {
-            throw TLS_Exception(TLS::Alert::DecodeError, "Peer sent duplicated extensions");
+            throw TLS_Exception(TLS::AlertType::DecodeError, "Peer sent duplicated extensions");
          }
 
          // TODO offer a function on reader that returns a byte range as a reference
@@ -328,7 +328,7 @@ Application_Layer_Protocol_Notification::Application_Layer_Protocol_Notification
    //    the "ProtocolNameList" MUST contain exactly one "ProtocolName".
    if(from == Connection_Side::Server && m_protocols.size() != 1) {
       throw TLS_Exception(
-         Alert::DecodeError,
+         AlertType::DecodeError,
          "Server sent " + std::to_string(m_protocols.size()) + " protocols in ALPN extension response");
    }
 }
@@ -343,7 +343,7 @@ std::vector<uint8_t> Application_Layer_Protocol_Notification::serialize(Connecti
 
    for(auto&& p : m_protocols) {
       if(p.length() >= 256) {
-         throw TLS_Exception(Alert::InternalError, "ALPN name too long");
+         throw TLS_Exception(AlertType::InternalError, "ALPN name too long");
       }
       if(!p.empty()) {
          append_tls_length_value(buf, cast_char_ptr_to_uint8(p.data()), p.size(), 1);
@@ -466,7 +466,7 @@ Supported_Point_Formats::Supported_Point_Formats(TLS_Data_Reader& reader, uint16
    //   RFC 8422 5.1.2. explicitly requires this check,
    //   but only if the Supported Groups extension was sent.
    if(!includes_uncompressed) {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "Supported Point Formats Extension must contain the uncompressed point format");
    }
 }
@@ -602,19 +602,19 @@ std::vector<uint8_t> Supported_Versions::serialize(Connection_Side whoami) const
 Supported_Versions::Supported_Versions(Protocol_Version offer, const Policy& policy) {
    if(offer.is_datagram_protocol()) {
 #if defined(BOTAN_HAS_TLS_12)
-      if(offer >= Protocol_Version::DTLS_V12 && policy.allow_dtls12()) {
-         m_versions.push_back(Protocol_Version::DTLS_V12);
+      if(offer >= Version_Code::DTLS_V12 && policy.allow_dtls12()) {
+         m_versions.push_back(Version_Code::DTLS_V12);
       }
 #endif
    } else {
 #if defined(BOTAN_HAS_TLS_13)
-      if(offer >= Protocol_Version::TLS_V13 && policy.allow_tls13()) {
-         m_versions.push_back(Protocol_Version::TLS_V13);
+      if(offer >= Version_Code::TLS_V13 && policy.allow_tls13()) {
+         m_versions.push_back(Version_Code::TLS_V13);
       }
 #endif
 #if defined(BOTAN_HAS_TLS_12)
-      if(offer >= Protocol_Version::TLS_V12 && policy.allow_tls12()) {
-         m_versions.push_back(Protocol_Version::TLS_V12);
+      if(offer >= Version_Code::TLS_V12 && policy.allow_tls12()) {
+         m_versions.push_back(Version_Code::TLS_V12);
       }
 #endif
    }
@@ -656,7 +656,7 @@ Record_Size_Limit::Record_Size_Limit(const uint16_t limit) : m_limit(limit) {
 
 Record_Size_Limit::Record_Size_Limit(TLS_Data_Reader& reader, uint16_t extension_size, Connection_Side from) {
    if(extension_size != 2) {
-      throw TLS_Exception(Alert::DecodeError, "invalid record_size_limit extension");
+      throw TLS_Exception(AlertType::DecodeError, "invalid record_size_limit extension");
    }
 
    m_limit = reader.get_uint16_t();
@@ -675,7 +675,7 @@ Record_Size_Limit::Record_Size_Limit(TLS_Data_Reader& reader, uint16_t extension
    //       we check for the TLS 1.3 limit. The TLS 1.2 limit would not include
    //       the "content type byte" and hence be one byte less!
    if(m_limit > MAX_PLAINTEXT_SIZE + 1 /* encrypted content type byte */ && from == Connection_Side::Server) {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "Server requested a record size limit larger than the protocol's maximum");
    }
 
@@ -684,7 +684,7 @@ Record_Size_Limit::Record_Size_Limit(TLS_Data_Reader& reader, uint16_t extension
    //    smaller than 64.  An endpoint MUST treat receipt of a smaller value
    //    as a fatal error and generate an "illegal_parameter" alert.
    if(m_limit < 64) {
-      throw TLS_Exception(Alert::IllegalParameter, "Received a record size limit smaller than 64 bytes");
+      throw TLS_Exception(AlertType::IllegalParameter, "Received a record size limit smaller than 64 bytes");
    }
 }
 
@@ -818,14 +818,14 @@ EarlyDataIndication::EarlyDataIndication(TLS_Data_Reader& reader,
                                          Handshake_Type message_type) {
    if(message_type == Handshake_Type::NewSessionTicket) {
       if(extension_size != 4) {
-         throw TLS_Exception(Alert::DecodeError,
+         throw TLS_Exception(AlertType::DecodeError,
                              "Received an early_data extension in a NewSessionTicket message "
                              "without maximum early data size indication");
       }
 
       m_max_early_data_size = reader.get_uint32_t();
    } else if(extension_size != 0) {
-      throw TLS_Exception(Alert::DecodeError,
+      throw TLS_Exception(AlertType::DecodeError,
                           "Received an early_data extension containing an unexpected data "
                           "size indication");
    }

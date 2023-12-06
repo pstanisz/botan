@@ -156,11 +156,11 @@ class Fuzzer_TLS_Policy : public Botan::TLS::Policy {
 
 class Fuzzer_TLS_Server_Callbacks : public Botan::TLS::Callbacks {
    public:
-      void tls_emit_data(std::span<const uint8_t>) override {
+      void tls_emit_data(Botan::span<const uint8_t>) override {
          // discard
       }
 
-      void tls_record_received(uint64_t, std::span<const uint8_t>) override {
+      void tls_record_received(uint64_t, Botan::span<const uint8_t>) override {
          // ignore peer data
       }
 

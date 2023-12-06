@@ -62,7 +62,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       }
 
       if(m_shared_group.value() == Group_Params::NONE) {
-         throw TLS_Exception(Alert::HandshakeFailure, "Could not agree on a DH group with the client");
+         throw TLS_Exception(AlertType::HandshakeFailure, "Could not agree on a DH group with the client");
       }
 
       BOTAN_ASSERT(m_shared_group.value().is_dh_named_group(), "DH ciphersuite is using a finite field group");
@@ -78,7 +78,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       m_kex_key = state.callbacks().tls_generate_ephemeral_key(m_shared_group.value(), rng);
       auto dh = dynamic_cast<DH_PrivateKey*>(m_kex_key.get());
       if(!dh) {
-         throw TLS_Exception(Alert::InternalError, "Application did not provide a Diffie-Hellman key");
+         throw TLS_Exception(AlertType::InternalError, "Application did not provide a Diffie-Hellman key");
       }
 
       append_tls_length_value(m_params, BigInt::encode(dh->get_int_field("p")), 2);
@@ -94,7 +94,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       m_shared_group = policy.choose_key_exchange_group(ec_groups, {});
 
       if(m_shared_group.value() == Group_Params::NONE) {
-         throw TLS_Exception(Alert::HandshakeFailure, "No shared ECC group with client");
+         throw TLS_Exception(AlertType::HandshakeFailure, "No shared ECC group with client");
       }
 
       std::vector<uint8_t> ecdh_public_val;
@@ -102,14 +102,14 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
       if(m_shared_group.value() == Group_Params::X25519) {
          m_kex_key = state.callbacks().tls_generate_ephemeral_key(m_shared_group.value(), rng);
          if(!m_kex_key) {
-            throw TLS_Exception(Alert::InternalError, "Application did not provide a X25519 key");
+            throw TLS_Exception(AlertType::InternalError, "Application did not provide a X25519 key");
          }
          ecdh_public_val = m_kex_key->public_value();
       } else {
          m_kex_key = state.callbacks().tls_generate_ephemeral_key(m_shared_group.value(), rng);
          auto ecdh = dynamic_cast<ECDH_PrivateKey*>(m_kex_key.get());
          if(!ecdh) {
-            throw TLS_Exception(Alert::InternalError, "Application did not provide a EC-Diffie-Hellman key");
+            throw TLS_Exception(AlertType::InternalError, "Application did not provide a EC-Diffie-Hellman key");
          }
 
          // follow client's preference for point compression

@@ -1,0 +1,16 @@
+<defines>
+CPP20_EXTRAS -> 20231120
+</defines>
+
+<module_info>
+name -> "C++20 extra features"
+brief -> "C++20 features which are provided by Botan to allow compilation with lower standards"
+</module_info>
+
+<header:public>
+span.h
+type_traits.h
+contains.h
+starts_with.h
+erase_if.h
+</header:public>

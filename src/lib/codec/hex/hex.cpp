@@ -137,7 +137,7 @@ size_t hex_decode(uint8_t output[], std::string_view input, bool ignore_ws) {
    return hex_decode(output, input.data(), input.length(), ignore_ws);
 }
 
-size_t hex_decode(std::span<uint8_t> output, std::string_view input, bool ignore_ws) {
+size_t hex_decode(Botan::span<uint8_t> output, std::string_view input, bool ignore_ws) {
    return hex_decode(output.data(), input.data(), input.length(), ignore_ws);
 }
 

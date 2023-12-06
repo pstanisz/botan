@@ -142,7 +142,7 @@ Certificate_Status_Request::Certificate_Status_Request(TLS_Data_Reader& reader,
 
    // all other contexts are not allowed for this extension
    else {
-      throw TLS_Exception(Alert::UnsupportedExtension,
+      throw TLS_Exception(AlertType::UnsupportedExtension,
                           "Server sent a Certificate_Status_Request extension in an unsupported context");
    }
 }

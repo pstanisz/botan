@@ -10,10 +10,10 @@
 #define BOTAN_TLS_RECORD_LAYER_13_H_
 
 #include <optional>
-#include <span>
 #include <variant>
 #include <vector>
 
+#include <botan/span.h>
 #include <botan/secmem.h>
 #include <botan/tls_magic.h>
 #include <botan/internal/tls_channel_impl.h>
@@ -56,7 +56,7 @@ class BOTAN_TEST_API Record_Layer {
        *
        * @param data_from_peer  The data to be parsed.
        */
-      void copy_data(std::span<const uint8_t> data_from_peer);
+      void copy_data(Botan::span<const uint8_t> data_from_peer);
 
       /**
        * Parses one record off the internal buffer that is being filled using `copy_data`.
@@ -71,8 +71,13 @@ class BOTAN_TEST_API Record_Layer {
        */
       ReadResult<Record> next_record(Cipher_State* cipher_state = nullptr);
 
+<<<<<<< HEAD
       std::vector<uint8_t> prepare_records(Record_Type type,
                                            std::span<const uint8_t> data,
+=======
+      std::vector<uint8_t> prepare_records(const Record_Type type,
+                                           Botan::span<const uint8_t> data,
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
                                            Cipher_State* cipher_state = nullptr) const;
 
       /**

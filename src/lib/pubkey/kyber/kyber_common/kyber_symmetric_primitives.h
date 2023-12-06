@@ -11,15 +11,30 @@
 
 #include <botan/hash.h>
 #include <botan/secmem.h>
+<<<<<<< HEAD
+=======
+#include <botan/stream_cipher.h>
+#include <botan/span.h>
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
 #include <memory>
-#include <span>
 #include <tuple>
 #include <vector>
 
 namespace Botan {
 
+<<<<<<< HEAD
 class XOF;
+=======
+class Kyber_XOF {
+   public:
+      virtual ~Kyber_XOF() {}
+
+      virtual void set_position(const std::tuple<uint8_t, uint8_t>& matrix_position) = 0;
+
+      virtual void write_output(Botan::span<uint8_t> out) = 0;
+};
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
 /**
  * Adapter class that uses polymorphy to distinguish
@@ -33,9 +48,17 @@ class Kyber_Symmetric_Primitives {
       virtual std::unique_ptr<HashFunction> H() const = 0;
       virtual std::unique_ptr<HashFunction> KDF() const = 0;
 
+<<<<<<< HEAD
       virtual Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const = 0;
 
       virtual secure_vector<uint8_t> PRF(std::span<const uint8_t> seed, uint8_t nonce, size_t outlen) const = 0;
+=======
+      virtual std::unique_ptr<Kyber_XOF> XOF(Botan::span<const uint8_t> seed) const = 0;
+
+      virtual secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
+                                         const uint8_t nonce,
+                                         const size_t outlen) const = 0;
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 };
 
 }  // namespace Botan

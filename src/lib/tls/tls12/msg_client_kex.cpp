@@ -81,7 +81,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          DL_Group group(modulus, generator);
 
          if(!group.verify_group(rng, false)) {
-            throw TLS_Exception(Alert::InsufficientSecurity, "DH group validation failed");
+            throw TLS_Exception(AlertType::InsufficientSecurity, "DH group validation failed");
          }
 
          const auto private_key = state.callbacks().tls_generate_ephemeral_key(group, rng);
@@ -111,7 +111,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          }
 
          if(policy.choose_key_exchange_group({curve_id}, {}) != curve_id) {
-            throw TLS_Exception(Alert::HandshakeFailure, "Server sent ECC curve prohibited by policy");
+            throw TLS_Exception(AlertType::HandshakeFailure, "Server sent ECC curve prohibited by policy");
          }
 
          const auto private_key = state.callbacks().tls_generate_ephemeral_key(curve_id, rng);
@@ -123,7 +123,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          //   computed premaster secret is the all-zero value and abort the
          //   handshake if so, as described in Section 6 of [RFC7748].
          if(curve_id == Group_Params::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
-            throw TLS_Exception(Alert::DecryptError, "Bad X25519 key exchange");
+            throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
          }
 
          if(kex_algo == Kex_Algo::ECDH) {
@@ -136,7 +136,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          if(curve_id.is_ecdh_named_curve()) {
             auto ecdh_key = dynamic_cast<ECDH_PublicKey*>(private_key.get());
             if(!ecdh_key) {
-               throw TLS_Exception(Alert::InternalError, "Application did not provide a ECDH_PublicKey");
+               throw TLS_Exception(AlertType::InternalError, "Application did not provide a ECDH_PublicKey");
             }
             append_tls_length_value(m_key_material,
                                     ecdh_key->public_value(state.server_hello()->prefers_compressed_ec_points()
@@ -175,7 +175,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
 
          append_tls_length_value(m_key_material, encrypted_key, 2);
       } else {
-         throw TLS_Exception(Alert::HandshakeFailure,
+         throw TLS_Exception(AlertType::HandshakeFailure,
                              "Expected a RSA key in server cert but got " + server_public_key->algo_name());
       }
    }
@@ -247,7 +247,11 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
             if(policy.hide_unknown_users()) {
                psk = SymmetricKey(rng, 16);
             } else {
+<<<<<<< HEAD
                throw TLS_Exception(Alert::UnknownPSKIdentity, "No PSK for identifier " + m_psk_identity.value());
+=======
+               throw TLS_Exception(AlertType::UnknownPSKIdentity, "No PSK for identifier " + psk_identity);
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
             }
          }
       }
@@ -282,7 +286,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
                BOTAN_ASSERT_NOMSG(state.server_kex()->params().size() >= 3);
                Group_Params group = static_cast<Group_Params>(state.server_kex()->params().at(2));
                if(group == Group_Params::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
-                  throw TLS_Exception(Alert::DecryptError, "Bad X25519 key exchange");
+                  throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
                }
             }
 
@@ -293,7 +297,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
                m_pre_master = shared_secret;
             }
          } catch(Invalid_Argument& e) {
-            throw TLS_Exception(Alert::IllegalParameter, e.what());
+            throw TLS_Exception(AlertType::IllegalParameter, e.what());
          } catch(TLS_Exception& e) {
             // NOLINTNEXTLINE(cert-err60-cpp)
             throw e;

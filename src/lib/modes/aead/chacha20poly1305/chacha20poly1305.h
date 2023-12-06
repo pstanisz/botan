@@ -24,7 +24,11 @@ namespace Botan {
 */
 class ChaCha20Poly1305_Mode : public AEAD_Mode {
    public:
+<<<<<<< HEAD
       void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) final;
+=======
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override final;
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
       bool associated_data_requires_key() const override { return false; }
 

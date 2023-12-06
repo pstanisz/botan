@@ -164,7 +164,7 @@ size_t base64_decode(uint8_t output[], std::string_view input, bool ignore_ws) {
    return base64_decode(output, input.data(), input.length(), ignore_ws);
 }
 
-size_t base64_decode(std::span<uint8_t> output, std::string_view input, bool ignore_ws) {
+size_t base64_decode(Botan::span<uint8_t> output, std::string_view input, bool ignore_ws) {
    if(output.size() < base64_decode_max_output(input.size())) {
       throw Invalid_Argument("base64_decode: output buffer is too short");
    }

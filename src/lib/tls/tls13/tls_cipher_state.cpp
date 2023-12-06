@@ -326,7 +326,7 @@ std::string Cipher_State::hash_algorithm() const {
 }
 
 bool Cipher_State::is_compatible_with(const Ciphersuite& cipher) const {
-   if(!cipher.usable_in_version(Protocol_Version::TLS_V13)) {
+   if(!cipher.usable_in_version(Version_Code::TLS_V13)) {
       return false;
    }
 

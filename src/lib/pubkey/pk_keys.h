@@ -11,7 +11,7 @@
 #include <botan/asn1_obj.h>
 #include <botan/pk_ops_fwd.h>
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string>
 #include <string_view>
 
@@ -364,7 +364,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Key_Agreement_Key : public virtual Private_Key {
 
 std::string BOTAN_PUBLIC_API(2, 4) create_hex_fingerprint(const uint8_t bits[], size_t len, std::string_view hash_name);
 
-inline std::string create_hex_fingerprint(std::span<const uint8_t> vec, std::string_view hash_name) {
+inline std::string create_hex_fingerprint(Botan::span<const uint8_t> vec, std::string_view hash_name) {
    return create_hex_fingerprint(vec.data(), vec.size(), hash_name);
 }
 

@@ -13,6 +13,7 @@
 #include <botan/der_enc.h>
 #include <botan/hash.h>
 #include <botan/x509cert.h>
+#include <botan/contains.h>
 #include <botan/internal/bit_ops.h>
 #include <botan/internal/loadstor.h>
 #include <algorithm>
@@ -123,7 +124,7 @@ void Certificate_Extension::validate(const X509_Certificate& /*unused*/,
 */
 void Extensions::add(std::unique_ptr<Certificate_Extension> extn, bool critical) {
    // sanity check: we don't want to have the same extension more than once
-   if(m_extension_info.contains(extn->oid_of())) {
+   if(contains(m_extension_info, extn->oid_of())) {
       const std::string name = extn->oid_name();
       throw Invalid_Argument("Extension " + name + " already present in Extensions::add");
    }
@@ -134,9 +135,10 @@ void Extensions::add(std::unique_ptr<Certificate_Extension> extn, bool critical)
    m_extension_info.emplace(oid, info);
 }
 
-bool Extensions::add_new(std::unique_ptr<Certificate_Extension> extn, bool critical) {
-   if(m_extension_info.contains(extn->oid_of())) {
-      return false;  // already exists
+bool Extensions::add_new(std::unique_ptr<Certificate_Extension> extn, bool critical)
+   {
+   if(contains(m_extension_info, extn->oid_of())) {
+      return false; // already exists
    }
 
    const OID oid = extn->oid_of();

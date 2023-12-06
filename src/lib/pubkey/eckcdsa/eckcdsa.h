@@ -29,7 +29,7 @@ class BOTAN_PUBLIC_API(2, 0) ECKCDSA_PublicKey : public virtual EC_PublicKey {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      ECKCDSA_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+      ECKCDSA_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
             EC_PublicKey(alg_id, key_bits) {}
 
       /**
@@ -68,7 +68,7 @@ class BOTAN_PUBLIC_API(2, 0) ECKCDSA_PrivateKey final : public ECKCDSA_PublicKey
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits ECPrivateKey bits
       */
-      ECKCDSA_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+      ECKCDSA_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
             EC_PrivateKey(alg_id, key_bits, true) {}
 
       /**

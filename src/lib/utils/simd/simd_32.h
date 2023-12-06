@@ -276,9 +276,9 @@ class SIMD_4x32 final {
       * Left rotation by a compile time constant
       */
       template <size_t ROT>
-      SIMD_4x32 rotl() const noexcept
-         requires(ROT > 0 && ROT < 32)
-      {
+      SIMD_4x32 rotl() const noexcept {
+         static_assert(ROT > 0 && ROT < 32, "Invalid rotation constant");
+
 #if defined(BOTAN_SIMD_USE_SSE2)
 
          return SIMD_4x32(_mm_or_si128(_mm_slli_epi32(m_simd, static_cast<int>(ROT)),
@@ -412,10 +412,11 @@ class SIMD_4x32 final {
 #endif
       }
 
-      template <int SHIFT>
-      SIMD_4x32 shl() const noexcept
-         requires(SHIFT > 0 && SHIFT < 32)
+
+      template<int SHIFT> SIMD_4x32 shl() const noexcept
       {
+         static_assert(SHIFT > 0 && SHIFT < 32, "Invalid shift count");
+
 #if defined(BOTAN_SIMD_USE_SSE2)
          return SIMD_4x32(_mm_slli_epi32(m_simd, SHIFT));
 
@@ -489,8 +490,9 @@ class SIMD_4x32 final {
 
       template <size_t I>
       SIMD_4x32 shift_elems_left() const noexcept
-         requires(I <= 3)
       {
+         static_assert(I <= 3, "Invalid shift count");
+
 #if defined(BOTAN_SIMD_USE_SSE2)
          return SIMD_4x32(_mm_slli_si128(raw(), 4 * I));
 #elif defined(BOTAN_SIMD_USE_NEON)
@@ -510,8 +512,9 @@ class SIMD_4x32 final {
 
       template <size_t I>
       SIMD_4x32 shift_elems_right() const noexcept
-         requires(I <= 3)
       {
+         static_assert(I <= 3, "Invalid shift count");
+
 #if defined(BOTAN_SIMD_USE_SSE2)
          return SIMD_4x32(_mm_srli_si128(raw(), 4 * I));
 #elif defined(BOTAN_SIMD_USE_NEON)

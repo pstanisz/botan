@@ -29,7 +29,7 @@ class BOTAN_PUBLIC_API(2, 0) RSA_PublicKey : public virtual Public_Key {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      RSA_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      RSA_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a public key.
@@ -102,7 +102,7 @@ class BOTAN_PUBLIC_API(2, 0) RSA_PrivateKey final : public Private_Key,
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits PKCS#1 RSAPrivateKey bits
       */
-      RSA_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      RSA_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Construct a private key from the specified parameters.

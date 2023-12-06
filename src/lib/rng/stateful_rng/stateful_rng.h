@@ -62,9 +62,9 @@ class BOTAN_PUBLIC_API(2, 0) Stateful_RNG : public RandomNumberGenerator {
       * of the length of the input or the current seeded state of
       * the RNG.
       */
-      void initialize_with(std::span<const uint8_t> input);
+      void initialize_with(Botan::span<const uint8_t> input);
 
-      void initialize_with(const uint8_t input[], size_t length) { this->initialize_with(std::span(input, length)); }
+      void initialize_with(const uint8_t input[], size_t length) { this->initialize_with(Botan::span(input, length)); }
 
       bool is_seeded() const final;
 
@@ -110,16 +110,20 @@ class BOTAN_PUBLIC_API(2, 0) Stateful_RNG : public RandomNumberGenerator {
    protected:
       void reseed_check();
 
-      virtual void generate_output(std::span<uint8_t> output, std::span<const uint8_t> input) = 0;
+      virtual void generate_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) = 0;
 
-      virtual void update(std::span<const uint8_t> input) = 0;
+      virtual void update(Botan::span<const uint8_t> input) = 0;
 
       virtual void clear_state() = 0;
 
    private:
-      void generate_batched_output(std::span<uint8_t> output, std::span<const uint8_t> input);
+      void generate_batched_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input);
 
+<<<<<<< HEAD
       void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) final;
+=======
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override final;
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
       void reset_reseed_counter();
 

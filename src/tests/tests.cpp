@@ -12,6 +12,7 @@
 #include <botan/internal/fmt.h>
 #include <botan/internal/parsing.h>
 #include <botan/internal/stl_util.h>
+#include <botan/contains.h>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -85,7 +86,7 @@ void Test::Result::test_note(const std::string& note, const char* extra) {
 void Test::Result::note_missing(const std::string& whatever) {
    static std::set<std::string> s_already_seen;
 
-   if(!s_already_seen.contains(whatever)) {
+   if(!Botan::contains(s_already_seen, whatever)) {
       test_note("Skipping tests due to missing " + whatever);
       s_already_seen.insert(whatever);
    }
@@ -466,15 +467,15 @@ class Test_Registry {
                          bool smoke_test,
                          bool needs_serialization,
                          std::function<std::unique_ptr<Test>()> maker_fn) {
-         if(m_tests.contains(name)) {
+         if(Botan::contains(m_tests, name)) {
             throw Test_Error("Duplicate registration of test '" + name + "'");
          }
 
-         if(m_tests.contains(category)) {
+         if(Botan::contains(m_tests, category)) {
             throw Test_Error("'" + category + "' cannot be used as category, test exists");
          }
 
-         if(m_categories.contains(name)) {
+         if(Botan::contains(m_categories, name)) {
             throw Test_Error("'" + name + "' cannot be used as test name, category exists");
          }
 
@@ -1078,9 +1079,8 @@ std::vector<Test::Result> Text_Based_Test::run() {
       std::string key = strip_ws(std::string(line.begin(), line.begin() + equal_i - 1));
       std::string val = strip_ws(std::string(line.begin() + equal_i + 1, line.end()));
 
-      if(!m_required_keys.contains(key) && !m_optional_keys.contains(key)) {
-         auto r = Test::Result::Failure(header_or_name, Botan::fmt("{} failed unknown key {}", test_id, key));
-         results.push_back(r);
+      if(!Botan::contains(m_required_keys, key) && !Botan::contains(m_optional_keys, key)) {
+         results.push_back(Test::Result::Failure(header_or_name, test_id + " failed unknown key " + key));
       }
 
       vars.add(key, val);

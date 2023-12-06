@@ -35,6 +35,7 @@ class Kyber_Modern_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
 
       std::unique_ptr<HashFunction> KDF() const override { return m_shake256_256->new_object(); }
 
+<<<<<<< HEAD
       Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const override {
          m_shake128->clear();
          m_shake128->update(seed);
@@ -43,9 +44,35 @@ class Kyber_Modern_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
                                                              std::get<1>(matrix_position)};
          m_shake128->update(matrix_position_buffer);
          return *m_shake128;
+=======
+      std::unique_ptr<Kyber_XOF> XOF(Botan::span<const uint8_t> seed) const override {
+         class Kyber_Modern_XOF final : public Kyber_XOF {
+            public:
+               Kyber_Modern_XOF(Botan::span<const uint8_t> seed) : m_cipher(std::make_unique<SHAKE_128_Cipher>()) {
+                  m_key.reserve(seed.size() + 2);
+                  m_key.insert(m_key.end(), seed.begin(), seed.end());
+                  m_key.push_back(0);
+                  m_key.push_back(0);
+               }
+
+               void set_position(const std::tuple<uint8_t, uint8_t>& matrix_position) override {
+                  m_key[m_key.size() - 2] = std::get<0>(matrix_position);
+                  m_key[m_key.size() - 1] = std::get<1>(matrix_position);
+                  m_cipher->set_key(m_key);
+               }
+
+               void write_output(Botan::span<uint8_t> out) override { m_cipher->write_keystream(out.data(), out.size()); }
+
+            private:
+               std::unique_ptr<StreamCipher> m_cipher;
+               secure_vector<uint8_t> m_key;
+         };
+
+         return std::make_unique<Kyber_Modern_XOF>(seed);
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       }
 
-      secure_vector<uint8_t> PRF(std::span<const uint8_t> seed,
+      secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
                                  const uint8_t nonce,
                                  const size_t outlen) const override {
          SHAKE_256 kdf(outlen * 8);

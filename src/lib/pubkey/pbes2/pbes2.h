@@ -9,8 +9,8 @@
 #define BOTAN_PBE_PKCS_V20_H_
 
 #include <botan/asn1_obj.h>
+#include <botan/span.h>
 #include <chrono>
-#include <span>
 
 namespace Botan {
 
@@ -25,7 +25,7 @@ class RandomNumberGenerator;
 * @param digest specifies the PRF to use with PBKDF2 (eg "HMAC(SHA-1)")
 * @param rng a random number generator
 */
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(Botan::span<const uint8_t> key_bits,
                                                                    std::string_view passphrase,
                                                                    std::chrono::milliseconds msec,
                                                                    std::string_view cipher,
@@ -43,7 +43,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt(std::span<con
 * @param digest specifies the PRF to use with PBKDF2 (eg "HMAC(SHA-1)")
 * @param rng a random number generator
 */
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
                                                                         std::string_view passphrase,
                                                                         std::chrono::milliseconds msec,
                                                                         size_t* out_iterations_if_nonnull,
@@ -60,7 +60,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_msec(std::spa
 * @param digest specifies the PRF to use with PBKDF2 (eg "HMAC(SHA-1)")
 * @param rng a random number generator
 */
-std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(std::span<const uint8_t> key_bits,
+std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
                                                                         std::string_view passphrase,
                                                                         size_t iterations,
                                                                         std::string_view cipher,
@@ -73,7 +73,7 @@ std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbes2_encrypt_iter(std::spa
 * @param passphrase the passphrase to use for decryption
 * @param params the PBES2 parameters
 */
-secure_vector<uint8_t> pbes2_decrypt(std::span<const uint8_t> key_bits,
+secure_vector<uint8_t> pbes2_decrypt(Botan::span<const uint8_t> key_bits,
                                      std::string_view passphrase,
                                      const std::vector<uint8_t>& params);
 

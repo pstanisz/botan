@@ -43,7 +43,7 @@ class BOTAN_TEST_API Sphincs_Address final {
       static constexpr size_t tree_index_offset = hash_offset;
 
    public:
-      using enum Sphincs_Address_Type;
+      //using enum Sphincs_Address_Type;
 
       Sphincs_Address(Sphincs_Address_Type type) {
          m_address.fill(0);

@@ -100,7 +100,7 @@ int botan_rng_init_custom(botan_rng_t* rng_out,
             Custom_RNG& operator=(Custom_RNG&& other) = delete;
 
          protected:
-            void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) override {
+            void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override {
                if(accepts_input() && !input.empty()) {
                   int rc = m_add_entropy_cb(m_context, input.data(), input.size());
                   if(rc) {

@@ -50,7 +50,7 @@ class MockChannel {
             m_callbacks(std::move(core)), m_bytes_till_complete_record(TEST_DATA_SIZE), m_active(false) {}
 
    public:
-      std::size_t received_data(std::span<const uint8_t> data) {
+      std::size_t received_data(Botan::span<const uint8_t> data) {
          if(m_bytes_till_complete_record <= data.size()) {
             m_callbacks->tls_record_received(0, TEST_DATA);
             m_active = true;  // claim to be active once a full record has been received (for handshake test)
@@ -60,7 +60,7 @@ class MockChannel {
          return m_bytes_till_complete_record;
       }
 
-      void send(std::span<const uint8_t> buf) { m_callbacks->tls_emit_data(buf); }
+      void send(Botan::span<const uint8_t> buf) { m_callbacks->tls_emit_data(buf); }
 
       bool is_active() const { return m_active; }
 
@@ -72,13 +72,13 @@ class MockChannel {
 
 class ThrowingMockChannel : public MockChannel {
    public:
-      static boost::system::error_code expected_ec() { return Botan::TLS::Alert::UnexpectedMessage; }
+      static boost::system::error_code expected_ec() { return Botan::TLS::AlertType::UnexpectedMessage; }
 
       ThrowingMockChannel(std::shared_ptr<Botan::TLS::Callbacks> core) : MockChannel(std::move(core)) {}
 
-      std::size_t received_data(std::span<const uint8_t>) { throw Botan::TLS::Unexpected_Message("test_error"); }
+      std::size_t received_data(Botan::span<const uint8_t>) { throw Botan::TLS::Unexpected_Message("test_error"); }
 
-      void send(std::span<const uint8_t>) { throw Botan::TLS::Unexpected_Message("test_error"); }
+      void send(Botan::span<const uint8_t>) { throw Botan::TLS::Unexpected_Message("test_error"); }
 };
 
 // Unfortunately, boost::beast::test::stream keeps lowest_layer_type private and

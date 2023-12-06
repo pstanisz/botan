@@ -8,10 +8,14 @@ minimum_supported_version 17.1
 
 optimization_flags "-O2"
 
+<<<<<<< HEAD
 lang_binary_linker_flags "-bbigtoc"
 
 shared_flags "-fPIC"
 lang_flags "-std=c++20"
+=======
+lang_flags "-std=c++17"
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
 visibility_build_flags "-fvisibility=hidden"
 visibility_attribute '__attribute__((visibility("default")))'

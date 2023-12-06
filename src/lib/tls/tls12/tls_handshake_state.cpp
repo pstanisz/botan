@@ -83,7 +83,7 @@ const char* handshake_type_to_string(Handshake_Type type) {
          return "invalid";
    }
 
-   throw TLS_Exception(Alert::UnexpectedMessage,
+   throw TLS_Exception(AlertType::UnexpectedMessage,
                        "Unknown TLS handshake message type " + std::to_string(static_cast<size_t>(type)));
 }
 
@@ -271,7 +271,7 @@ std::pair<std::string, Signature_Format> Handshake_State::choose_sig_format(cons
    const std::string hash = chosen_scheme.hash_function_name();
 
    if(!policy.allowed_signature_hash(hash)) {
-      throw TLS_Exception(Alert::HandshakeFailure, "Policy refuses to accept signing with any hash supported by peer");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Policy refuses to accept signing with any hash supported by peer");
    }
 
    if(!chosen_scheme.format().has_value()) {
@@ -306,11 +306,11 @@ std::pair<std::string, Signature_Format> Handshake_State::parse_sig_format(
    const std::string key_type = key.algo_name();
 
    if(!policy.allowed_signature_method(key_type)) {
-      throw TLS_Exception(Alert::HandshakeFailure, "Rejecting " + key_type + " signature");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Rejecting " + key_type + " signature");
    }
 
    if(!scheme.is_available()) {
-      throw TLS_Exception(Alert::HandshakeFailure, "Peer sent unknown signature scheme");
+      throw TLS_Exception(AlertType::HandshakeFailure, "Peer sent unknown signature scheme");
    }
 
    if(key_type != scheme.algorithm_name()) {
@@ -318,7 +318,7 @@ std::pair<std::string, Signature_Format> Handshake_State::parse_sig_format(
    }
 
    if(for_client_auth && !cert_req()) {
-      throw TLS_Exception(Alert::HandshakeFailure, "No certificate verify set");
+      throw TLS_Exception(AlertType::HandshakeFailure, "No certificate verify set");
    }
 
    /*
@@ -331,12 +331,12 @@ std::pair<std::string, Signature_Format> Handshake_State::parse_sig_format(
 
    const std::string hash_algo = scheme.hash_function_name();
 
-   if(!scheme.is_compatible_with(Protocol_Version::TLS_V12)) {
-      throw TLS_Exception(Alert::IllegalParameter, "Peer sent unexceptable signature scheme");
+   if(!scheme.is_compatible_with(Version_Code::TLS_V12)) {
+      throw TLS_Exception(AlertType::IllegalParameter, "Peer sent unexceptable signature scheme");
    }
 
    if(!supported_algos_include(supported_algos, key_type, hash_algo)) {
-      throw TLS_Exception(Alert::IllegalParameter,
+      throw TLS_Exception(AlertType::IllegalParameter,
                           "TLS signature extension did not allow for " + key_type + "/" + hash_algo + " signature");
    }
 

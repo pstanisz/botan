@@ -28,7 +28,7 @@ namespace Botan {
 
 namespace {
 
-XMSS_Parameters::xmss_algorithm_t deserialize_xmss_oid(std::span<const uint8_t> raw_key) {
+XMSS_Parameters::xmss_algorithm_t deserialize_xmss_oid(Botan::span<const uint8_t> raw_key) {
    if(raw_key.size() < 4) {
       throw Decoding_Error("XMSS signature OID missing.");
    }
@@ -43,7 +43,7 @@ XMSS_Parameters::xmss_algorithm_t deserialize_xmss_oid(std::span<const uint8_t> 
 }
 
 // fall back to raw decoding for previous versions, which did not encode an OCTET STRING
-std::vector<uint8_t> extract_raw_public_key(std::span<const uint8_t> key_bits) {
+std::vector<uint8_t> extract_raw_public_key(Botan::span<const uint8_t> key_bits) {
    std::vector<uint8_t> raw_key;
    try {
       DataSource_Memory src(key_bits);
@@ -74,7 +74,7 @@ XMSS_PublicKey::XMSS_PublicKey(XMSS_Parameters::xmss_algorithm_t xmss_oid, Rando
       m_root(m_xmss_params.element_size()),
       m_public_seed(rng.random_vec(m_xmss_params.element_size())) {}
 
-XMSS_PublicKey::XMSS_PublicKey(std::span<const uint8_t> key_bits) :
+XMSS_PublicKey::XMSS_PublicKey(Botan::span<const uint8_t> key_bits) :
       m_raw_key(extract_raw_public_key(key_bits)),
       m_xmss_params(deserialize_xmss_oid(m_raw_key)),
       m_wots_params(m_xmss_params.ots_oid()) {

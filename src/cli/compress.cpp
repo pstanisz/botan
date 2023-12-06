@@ -8,6 +8,7 @@
 
 #if defined(BOTAN_HAS_COMPRESSION)
    #include <botan/compression.h>
+   #include <botan/contains.h>
    #include <fstream>
 #endif
 
@@ -28,7 +29,7 @@ class Compress final : public Command {
          };
 
          auto suffix_info = suffixes.find(comp_type);
-         if(!suffixes.contains(comp_type)) {
+         if(!Botan::contains(suffixes, comp_type)) {
             throw CLI_Error_Unsupported("Compressing", comp_type);
          }
 

@@ -1,6 +1,7 @@
 Release Notes
 ========================================
 
+<<<<<<< HEAD
 Version 3.2.0, 2023-10-09
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -96,6 +97,13 @@ Version 3.2.0, 2023-10-09
 
 * Avoid compilation failures when using ``-Werror`` mode with GCC 12
   due to spurious warnings in that version. (GH #3711 #3709)
+=======
+Version 3.1.1 for C++17, 2023-12-06
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Version 3.1.1 backported to C++17 to be used with older compilers.
+  Compiler requirements have been decreased to GCC 9, Clang 5, or MSVC 2017.
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
 Version 3.1.1, 2023-07-13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

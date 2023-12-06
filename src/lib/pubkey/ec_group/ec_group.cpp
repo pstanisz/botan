@@ -328,7 +328,13 @@ std::pair<std::shared_ptr<EC_Group_Data>, bool> EC_Group::BER_decode_EC_group(co
    BER_Decoder ber(bits, len);
    BER_Object obj = ber.get_next_object();
 
+<<<<<<< HEAD
    if(obj.type() == ASN1_Type::ObjectId) {
+=======
+   if(obj.type() == ASN1_Type::Null) {
+      throw Decoding_Error("Cannot handle ImplicitCA ECC parameters");
+   } else if(obj.type() == ASN1_Type::ObjectId) {
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       OID dom_par_oid;
       BER_Decoder(bits, len).decode(dom_par_oid);
       return std::make_pair(ec_group_data().lookup(dom_par_oid), false);

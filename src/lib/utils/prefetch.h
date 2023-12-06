@@ -30,11 +30,11 @@ uint64_t prefetch_array_raw(size_t bytes, const void* array) noexcept;
 * to not elide otherwise "useless" reads. The return value will always
 * be zero.
 */
-template <typename T, size_t... Ns>
-T prefetch_arrays(T (&... arr)[Ns]) noexcept
-   requires std::is_integral<T>::value
+template<typename T, size_t... Ns>
+T prefetch_arrays(T (&...arr)[Ns]) noexcept
 {
-   return (static_cast<T>(prefetch_array_raw(sizeof(T) * Ns, arr)) & ...);
+   static_assert(std::is_integral<T>::value, "prefetch_arrays must use integral type");
+   return (static_cast<T>(prefetch_array_raw(sizeof(T)*Ns, arr)) & ...);
 }
 
 }  // namespace Botan

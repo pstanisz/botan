@@ -21,7 +21,7 @@ Alert::Alert(const secure_vector<uint8_t>& buf) {
    } else if(buf[0] == 2) {
       m_fatal = true;
    } else {
-      throw TLS_Exception(Alert::IllegalParameter, "Bad code for TLS alert level");
+      throw TLS_Exception(AlertType::IllegalParameter, "Bad code for TLS alert level");
    }
 
    const uint8_t dc = buf[1];

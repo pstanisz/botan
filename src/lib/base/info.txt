@@ -14,4 +14,5 @@ brief -> "Defines some high level types"
 hex
 rng
 utils
+cpp20_extras
 </requires>

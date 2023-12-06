@@ -16,7 +16,7 @@
 
 namespace Botan::TLS {
 
-void Handshake_Layer::copy_data(std::span<const uint8_t> data_from_peer) {
+void Handshake_Layer::copy_data(Botan::span<const uint8_t> data_from_peer) {
    m_read_buffer.insert(m_read_buffer.end(), data_from_peer.begin(), data_from_peer.end());
 }
 
@@ -122,7 +122,7 @@ std::optional<Handshake_Message_13> Handshake_Layer::next_message(const Policy& 
    auto msg = parse_message<Handshake_Message_13>(reader, policy, m_peer);
    if(msg.has_value()) {
       BOTAN_ASSERT_NOMSG(m_read_buffer.size() >= reader.read_so_far());
-      transcript_hash.update(std::span{m_read_buffer.data(), reader.read_so_far()});
+      transcript_hash.update(Botan::span{m_read_buffer.data(), reader.read_so_far()});
       m_read_buffer.erase(m_read_buffer.cbegin(), m_read_buffer.cbegin() + reader.read_so_far());
    }
 

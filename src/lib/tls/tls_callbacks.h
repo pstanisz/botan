@@ -54,7 +54,7 @@ class BOTAN_PUBLIC_API(2, 0) Callbacks {
        *
        * @param data a contiguous data buffer to send
        */
-      virtual void tls_emit_data(std::span<const uint8_t> data) = 0;
+      virtual void tls_emit_data(Botan::span<const uint8_t> data) = 0;
 
       /**
        * Mandatory callback: process application data
@@ -65,7 +65,7 @@ class BOTAN_PUBLIC_API(2, 0) Callbacks {
        *
        * @param data a contiguous data buffer containing the received record
        */
-      virtual void tls_record_received(uint64_t seq_no, std::span<const uint8_t> data) = 0;
+      virtual void tls_record_received(uint64_t seq_no, Botan::span<const uint8_t> data) = 0;
 
       /**
        * Mandatory callback: alert received
@@ -354,7 +354,7 @@ class BOTAN_PUBLIC_API(2, 0) Callbacks {
        * security risks are associated with customizing TLS's key exchange
        * mechanism.
        *
-       * @throws TLS_Exception(Alert::DecodeError) if the @p group is not known.
+       * @throws TLS_Exception(AlertType::DecodeError) if the @p group is not known.
        *
        * @param group the group identifier to generate an ephemeral keypair for
        *              TLS 1.2 allows for specifying custom discrete logarithm
@@ -416,7 +416,7 @@ class BOTAN_PUBLIC_API(2, 0) Callbacks {
        * protocol to use. RFC 7301 requires that if the server does not support
        * any protocols offered by the client, then it should close the connection
        * with an alert of no_application_protocol. Within this callback this would
-       * be done by throwing a TLS_Exception(Alert::NoApplicationProtocol)
+       * be done by throwing a TLS_Exception(AlertType::NoApplicationProtocol)
        *
        * @param client_protos the vector of protocols the client is willing to negotiate
        *

@@ -76,10 +76,18 @@ inline void unpoison(T& p) {
 * This must be verified with tooling (eg binary disassembly or using valgrind)
 * since you never know what a compiler might do.
 */
+<<<<<<< HEAD
 template <typename T>
    requires(std::is_unsigned<T>::value && !std::is_same<bool, T>::value)
 class Mask final {
+=======
+template<typename T>
+class Mask final
+{
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
    public:
+      static_assert(std::is_unsigned<T>::value, "CT::Mask only defined for unsigned integer types");
+
       Mask(const Mask<T>& other) = default;
       Mask<T>& operator=(const Mask<T>& other) = default;
 

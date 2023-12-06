@@ -56,11 +56,11 @@ class Fuzzer_TLS_Policy : public Botan::TLS::Policy {
 
 class Fuzzer_TLS_Client_Callbacks : public Botan::TLS::Callbacks {
    public:
-      void tls_emit_data(std::span<const uint8_t>) override {
+      void tls_emit_data(Botan::span<const uint8_t>) override {
          // discard
       }
 
-      void tls_record_received(uint64_t, std::span<const uint8_t>) override {
+      void tls_record_received(uint64_t, Botan::span<const uint8_t>) override {
          // ignore peer data
       }
 
@@ -91,7 +91,7 @@ void fuzz(const uint8_t in[], size_t len) {
 
    auto session_manager = std::make_shared<Botan::TLS::Session_Manager_Noop>();
    auto policy = std::make_shared<Fuzzer_TLS_Policy>();
-   Botan::TLS::Protocol_Version client_offer = Botan::TLS::Protocol_Version::TLS_V12;
+   Botan::TLS::Protocol_Version client_offer = Botan::TLS::Version_Code::TLS_V12;
    Botan::TLS::Server_Information info("server.name", 443);
    auto callbacks = std::make_shared<Fuzzer_TLS_Client_Callbacks>();
    auto creds = std::make_shared<Fuzzer_TLS_Client_Creds>();

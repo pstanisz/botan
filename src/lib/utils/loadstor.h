@@ -32,9 +32,8 @@ inline constexpr uint8_t get_byte_var(size_t byte_num, T input) {
 * @param input the value to extract from
 * @return byte byte number B of input
 */
-template <size_t B, typename T>
+template <size_t B, typename T, typename = std::enable_if_t<B < sizeof(T)>>
 inline constexpr uint8_t get_byte(T input)
-   requires(B < sizeof(T))
 {
    const size_t shift = ((~B) & (sizeof(T) - 1)) << 3;
    return static_cast<uint8_t>((input >> shift) & 0xFF);

@@ -8,9 +8,9 @@
 #define BOTAN_PWDHASH_H_
 
 #include <botan/types.h>
+#include <botan/span.h>
 #include <chrono>
 #include <memory>
-#include <span>
 #include <string>
 #include <vector>
 
@@ -78,7 +78,11 @@ class BOTAN_PUBLIC_API(2, 8) PasswordHash {
       * This function is const, but is not thread safe. Different threads should
       * either use unique objects, or serialize all access.
       */
+<<<<<<< HEAD
       void hash(std::span<uint8_t> out, std::string_view password, std::span<const uint8_t> salt) const {
+=======
+      void hash(Botan::span<uint8_t> out, std::string_view password, Botan::span<const uint8_t> salt) {
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
          this->derive_key(out.data(), out.size(), password.data(), password.size(), salt.data(), salt.size());
       }
 
@@ -94,11 +98,17 @@ class BOTAN_PUBLIC_API(2, 8) PasswordHash {
       * This function is const, but is not thread safe. Different threads should
       * either use unique objects, or serialize all access.
       */
-      void hash(std::span<uint8_t> out,
+      void hash(Botan::span<uint8_t> out,
                 std::string_view password,
+<<<<<<< HEAD
                 std::span<const uint8_t> salt,
                 std::span<const uint8_t> associated_data,
                 std::span<const uint8_t> key) const {
+=======
+                Botan::span<const uint8_t> salt,
+                Botan::span<const uint8_t> associated_data,
+                Botan::span<const uint8_t> key) {
+>>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
          this->derive_key(out.data(),
                           out.size(),
                           password.data(),

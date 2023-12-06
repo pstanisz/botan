@@ -30,10 +30,8 @@ struct is_array : std::false_type {};
 template <class T, std::size_t N>
 struct is_array<std::array<T, N>> : std::true_type {};
 
-template <typename T>
-T impl_from_little_endian(const uint8_t* t, const size_t i)
-   requires(sizeof(T) <= sizeof(int64_t))
-{
+template <typename T, typename = std::enable_if_t<sizeof(T) <= sizeof(int64_t)>>
+T impl_from_little_endian(const uint8_t* t, const size_t i) {
    return T(static_cast<int64_t>(t[i]) << i * 8) + (i == 0 ? T(0) : impl_from_little_endian<T>(t, i - 1));
 }
 

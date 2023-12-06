@@ -65,9 +65,8 @@ class SIMD_16x32 final {
       BOTAN_AVX512_FN
       void store_be(uint8_t out[]) const { bswap().store_le(out); }
 
-      template <size_t ROT>
+      template <size_t ROT, typename = std::enable_if_t<(ROT > 0) && (ROT < 32)>>
       BOTAN_AVX512_FN SIMD_16x32 rotl() const
-         requires(ROT > 0 && ROT < 32)
       {
          return SIMD_16x32(_mm512_rol_epi32(m_avx512, ROT));
       }
