@@ -11,8 +11,8 @@
 #include <botan/asn1_obj.h>
 #include <botan/pk_keys.h>
 #include <botan/pk_ops_fwd.h>
-#include <botan/symkey.h>
 #include <botan/span.h>
+#include <botan/symkey.h>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -654,11 +654,11 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
       */
       KEM_Encapsulation encrypt(RandomNumberGenerator& rng,
                                 size_t desired_shared_key_len = 32,
-                                std::span<const uint8_t> salt = {}) {
+                                Botan::span<const uint8_t> salt = {}) {
          std::vector<uint8_t> encapsulated_shared_key(encapsulated_key_length());
          secure_vector<uint8_t> shared_key(shared_key_length(desired_shared_key_len));
 
-         encrypt(std::span{encapsulated_shared_key}, std::span{shared_key}, rng, desired_shared_key_len, salt);
+         encrypt(Botan::span{encapsulated_shared_key}, Botan::span{shared_key}, rng, desired_shared_key_len, salt);
          return KEM_Encapsulation(std::move(encapsulated_shared_key), std::move(shared_key));
       }
 
@@ -676,10 +676,10 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
                    secure_vector<uint8_t>& out_shared_key,
                    RandomNumberGenerator& rng,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {}) {
+                   Botan::span<const uint8_t> salt = {}) {
          out_encapsulated_key.resize(encapsulated_key_length());
          out_shared_key.resize(shared_key_length(desired_shared_key_len));
-         encrypt(std::span{out_encapsulated_key}, std::span{out_shared_key}, rng, desired_shared_key_len, salt);
+         encrypt(Botan::span{out_encapsulated_key}, Botan::span{out_shared_key}, rng, desired_shared_key_len, salt);
       }
 
       /**
@@ -692,13 +692,13 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
       * @param salt                   a salt value used in the KDF
       *                               (ignored if no KDF is used)
       */
-      void encrypt(std::span<uint8_t> out_encapsulated_key,
-                   std::span<uint8_t> out_shared_key,
+      void encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                   Botan::span<uint8_t> out_shared_key,
                    RandomNumberGenerator& rng,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {});
+                   Botan::span<const uint8_t> salt = {});
 
-      BOTAN_DEPRECATED("use overload with salt as std::span<>")
+      BOTAN_DEPRECATED("use overload with salt as Botan::span<>")
 
       void encrypt(secure_vector<uint8_t>& out_encapsulated_key,
                    secure_vector<uint8_t>& out_shared_key,
@@ -715,29 +715,10 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
                    secure_vector<uint8_t>& out_shared_key,
                    size_t desired_shared_key_len,
                    RandomNumberGenerator& rng,
-<<<<<<< HEAD
-                   std::span<const uint8_t> salt = {}) {
+                   Botan::span<const uint8_t> salt = {}) {
          out_encapsulated_key.resize(encapsulated_key_length());
          out_shared_key.resize(shared_key_length(desired_shared_key_len));
          encrypt(out_encapsulated_key, out_shared_key, rng, desired_shared_key_len, salt);
-=======
-                   Botan::span<const uint8_t> salt) {
-         this->encrypt(out_encapsulated_key, out_shared_key, desired_shared_key_len, rng, salt.data(), salt.size());
-      }
-
-      /**
-      * Generate a shared key for data encryption.
-      * @param out_encapsulated_key the generated encapsulated key
-      * @param out_shared_key the generated shared key
-      * @param desired_shared_key_len desired size of the shared key in bytes
-      * @param rng the RNG to use
-      */
-      void encrypt(secure_vector<uint8_t>& out_encapsulated_key,
-                   secure_vector<uint8_t>& out_shared_key,
-                   size_t desired_shared_key_len,
-                   RandomNumberGenerator& rng) {
-         this->encrypt(out_encapsulated_key, out_shared_key, desired_shared_key_len, rng, nullptr, 0);
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       }
 
    private:
@@ -799,10 +780,10 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Decryptor final {
       * @param salt                   a salt value used in the KDF
       *                               (ignored if no KDF is used)
       */
-      void decrypt(std::span<uint8_t> out_shared_key,
-                   std::span<const uint8_t> encap_key,
+      void decrypt(Botan::span<uint8_t> out_shared_key,
+                   Botan::span<const uint8_t> encap_key,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {});
+                   Botan::span<const uint8_t> salt = {});
 
       /**
       * Decrypts the shared key for data encryption.
@@ -839,19 +820,12 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Decryptor final {
       *
       * @return the shared data encryption key
       */
-<<<<<<< HEAD
-      secure_vector<uint8_t> decrypt(std::span<const uint8_t> encap_key,
+      secure_vector<uint8_t> decrypt(Botan::span<const uint8_t> encap_key,
                                      size_t desired_shared_key_len = 32,
-                                     std::span<const uint8_t> salt = {}) {
+                                     Botan::span<const uint8_t> salt = {}) {
          secure_vector<uint8_t> shared_key(shared_key_length(desired_shared_key_len));
          decrypt(shared_key, encap_key, desired_shared_key_len, salt);
          return shared_key;
-=======
-      secure_vector<uint8_t> decrypt(Botan::span<const uint8_t> encap_key,
-                                     size_t desired_shared_key_len,
-                                     Botan::span<const uint8_t> salt) {
-         return this->decrypt(encap_key.data(), encap_key.size(), desired_shared_key_len, salt.data(), salt.size());
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       }
 
    private:

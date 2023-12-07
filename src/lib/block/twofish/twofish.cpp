@@ -190,7 +190,7 @@ bool Twofish::has_keying_material() const {
 /*
 * Twofish Key Schedule
 */
-void Twofish::key_schedule(std::span<const uint8_t> key) {
+void Twofish::key_schedule(Botan::span<const uint8_t> key) {
    m_SB.resize(1024);
    m_RK.resize(40);
 

@@ -61,7 +61,7 @@ class GCM_Mode : public AEAD_Mode {
    private:
       void start_msg(const uint8_t nonce[], size_t nonce_len) override;
 
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       secure_vector<uint8_t> m_y0;
 };

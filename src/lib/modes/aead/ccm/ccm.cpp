@@ -78,7 +78,7 @@ bool CCM_Mode::has_keying_material() const {
    return m_cipher->has_keying_material();
 }
 
-void CCM_Mode::key_schedule(std::span<const uint8_t> key) {
+void CCM_Mode::key_schedule(Botan::span<const uint8_t> key) {
    m_cipher->set_key(key);
 }
 

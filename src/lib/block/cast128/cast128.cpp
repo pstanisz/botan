@@ -337,7 +337,7 @@ bool CAST_128::has_keying_material() const {
 /*
 * CAST-128 Key Schedule
 */
-void CAST_128::key_schedule(std::span<const uint8_t> key) {
+void CAST_128::key_schedule(Botan::span<const uint8_t> key) {
    m_MK.resize(48);
    m_RK.resize(48);
 

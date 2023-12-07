@@ -47,7 +47,7 @@ void SipRounds(uint64_t M, secure_vector<uint64_t>& V, size_t r) {
 
 }  // namespace
 
-void SipHash::add_data(std::span<const uint8_t> input) {
+void SipHash::add_data(Botan::span<const uint8_t> input) {
    assert_key_material_set();
 
    // SipHash counts the message length mod 256
@@ -78,7 +78,7 @@ void SipHash::add_data(std::span<const uint8_t> input) {
    }
 }
 
-void SipHash::final_result(std::span<uint8_t> mac) {
+void SipHash::final_result(Botan::span<uint8_t> mac) {
    assert_key_material_set();
 
    if(m_mbuf_pos == 0) {
@@ -109,7 +109,7 @@ bool SipHash::has_keying_material() const {
    return !m_V.empty();
 }
 
-void SipHash::key_schedule(std::span<const uint8_t> key) {
+void SipHash::key_schedule(Botan::span<const uint8_t> key) {
    const uint64_t K0 = load_le<uint64_t>(key.data(), 0);
    const uint64_t K1 = load_le<uint64_t>(key.data(), 1);
 

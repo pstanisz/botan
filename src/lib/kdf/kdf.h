@@ -123,10 +123,10 @@ class BOTAN_PUBLIC_API(2, 0) KDF {
       * @param salt a diversifier
       * @param label purpose for the derived keying material
       */
-      void derive_key(std::span<uint8_t> key,
-                      std::span<const uint8_t> secret,
-                      std::span<const uint8_t> salt,
-                      std::span<const uint8_t> label) const {
+      void derive_key(Botan::span<uint8_t> key,
+                      Botan::span<const uint8_t> secret,
+                      Botan::span<const uint8_t> salt,
+                      Botan::span<const uint8_t> label) const {
          return kdf(
             key.data(), key.size(), secret.data(), secret.size(), salt.data(), salt.size(), label.data(), label.size());
       }

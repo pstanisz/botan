@@ -152,11 +152,11 @@ size_t PK_KEM_Encryptor::encapsulated_key_length() const {
    return m_op->encapsulated_key_length();
 }
 
-void PK_KEM_Encryptor::encrypt(std::span<uint8_t> out_encapsulated_key,
-                               std::span<uint8_t> out_shared_key,
+void PK_KEM_Encryptor::encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                               Botan::span<uint8_t> out_shared_key,
                                RandomNumberGenerator& rng,
                                size_t desired_shared_key_len,
-                               std::span<const uint8_t> salt) {
+                               Botan::span<const uint8_t> salt) {
    BOTAN_ARG_CHECK(out_encapsulated_key.size() == encapsulated_key_length(), "not enough space for encapsulated key");
    BOTAN_ARG_CHECK(out_shared_key.size() == shared_key_length(desired_shared_key_len),
                    "not enough space for shared key");
@@ -186,10 +186,10 @@ PK_KEM_Decryptor::~PK_KEM_Decryptor() = default;
 PK_KEM_Decryptor::PK_KEM_Decryptor(PK_KEM_Decryptor&&) noexcept = default;
 PK_KEM_Decryptor& PK_KEM_Decryptor::operator=(PK_KEM_Decryptor&&) noexcept = default;
 
-void PK_KEM_Decryptor::decrypt(std::span<uint8_t> out_shared_key,
-                               std::span<const uint8_t> encap_key,
+void PK_KEM_Decryptor::decrypt(Botan::span<uint8_t> out_shared_key,
+                               Botan::span<const uint8_t> encap_key,
                                size_t desired_shared_key_len,
-                               std::span<const uint8_t> salt) {
+                               Botan::span<const uint8_t> salt) {
    BOTAN_ARG_CHECK(out_shared_key.size() == shared_key_length(desired_shared_key_len),
                    "inconsistent size of shared key output buffer");
    m_op->kem_decrypt(out_shared_key, encap_key, desired_shared_key_len, salt);

@@ -106,7 +106,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          const std::vector<uint8_t> peer_public_value = reader.get_range<uint8_t>(1, 1, 255);
 
          if(!curve_id.is_ecdh_named_curve() && !curve_id.is_x25519()) {
-            throw TLS_Exception(Alert::HandshakeFailure,
+            throw TLS_Exception(AlertType::HandshakeFailure,
                                 "Server selected a group that is not compatible with the negotiated ciphersuite");
          }
 
@@ -122,7 +122,8 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
          //   With X25519 and X448, a receiving party MUST check whether the
          //   computed premaster secret is the all-zero value and abort the
          //   handshake if so, as described in Section 6 of [RFC7748].
-         if(curve_id == Group_Params::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
+         if(curve_id == Group_Params_Code::X25519 &&
+            CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
             throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
          }
 
@@ -247,11 +248,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
             if(policy.hide_unknown_users()) {
                psk = SymmetricKey(rng, 16);
             } else {
-<<<<<<< HEAD
-               throw TLS_Exception(Alert::UnknownPSKIdentity, "No PSK for identifier " + m_psk_identity.value());
-=======
-               throw TLS_Exception(AlertType::UnknownPSKIdentity, "No PSK for identifier " + psk_identity);
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+               throw TLS_Exception(AlertType::UnknownPSKIdentity, "No PSK for identifier " + m_psk_identity.value());
             }
          }
       }
@@ -268,7 +265,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
                                                        : reader.get_range<uint8_t>(1, 1, 255);
 
          const auto shared_group = state.server_kex()->shared_group();
-         BOTAN_STATE_CHECK(shared_group && shared_group.value() != Group_Params::NONE);
+         BOTAN_STATE_CHECK(shared_group && shared_group.value() != Group_Params_Code::NONE);
 
          try {
             auto shared_secret =
@@ -285,7 +282,8 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
                //   handshake if so, as described in Section 6 of [RFC7748].
                BOTAN_ASSERT_NOMSG(state.server_kex()->params().size() >= 3);
                Group_Params group = static_cast<Group_Params>(state.server_kex()->params().at(2));
-               if(group == Group_Params::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
+               if(group == Group_Params_Code::X25519 &&
+                  CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
                   throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
                }
             }

@@ -17,7 +17,7 @@ namespace Botan {
 /*
 * Update an CMAC Calculation
 */
-void CMAC::add_data(std::span<const uint8_t> input) {
+void CMAC::add_data(Botan::span<const uint8_t> input) {
    const size_t bs = output_length();
 
    buffer_insert(m_buffer, m_position, input.data(), input.size());
@@ -43,7 +43,7 @@ void CMAC::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize an CMAC Calculation
 */
-void CMAC::final_result(std::span<uint8_t> mac) {
+void CMAC::final_result(Botan::span<uint8_t> mac) {
    xor_buf(m_state, m_buffer, m_position);
 
    if(m_position == output_length()) {
@@ -69,7 +69,7 @@ bool CMAC::has_keying_material() const {
 /*
 * CMAC Key Schedule
 */
-void CMAC::key_schedule(std::span<const uint8_t> key) {
+void CMAC::key_schedule(Botan::span<const uint8_t> key) {
    clear();
    m_cipher->set_key(key);
    m_cipher->encrypt(m_B);

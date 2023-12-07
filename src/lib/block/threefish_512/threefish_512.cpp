@@ -256,7 +256,7 @@ bool Threefish_512::has_keying_material() const {
    return !m_K.empty();
 }
 
-void Threefish_512::key_schedule(std::span<const uint8_t> key) {
+void Threefish_512::key_schedule(Botan::span<const uint8_t> key) {
    // todo: define key schedule for smaller keys
    m_K.resize(9);
 

@@ -21,7 +21,7 @@ flags, GCC and Clang use the BMI2 instructions without further help.
 
 Likely instruction scheduling could be improved by using inline asm.
 */
-void SHA_256::compress_digest_x86_bmi2(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_256::compress_digest_x86_bmi2(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    uint32_t A = digest[0], B = digest[1], C = digest[2], D = digest[3], E = digest[4], F = digest[5], G = digest[6],
             H = digest[7];
 

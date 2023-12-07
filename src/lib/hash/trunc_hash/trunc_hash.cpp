@@ -13,11 +13,11 @@
 
 namespace Botan {
 
-void Truncated_Hash::add_data(std::span<const uint8_t> input) {
+void Truncated_Hash::add_data(Botan::span<const uint8_t> input) {
    m_hash->update(input);
 }
 
-void Truncated_Hash::final_result(std::span<uint8_t> out) {
+void Truncated_Hash::final_result(Botan::span<uint8_t> out) {
    BOTAN_ASSERT_NOMSG(m_hash->output_length() * 8 >= m_output_bits);
 
    m_hash->final(m_buffer);

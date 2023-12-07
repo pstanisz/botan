@@ -301,7 +301,8 @@ Record_Layer::ReadResult<Record> Record_Layer::next_record(Cipher_State* cipher_
    if(cipher_state != nullptr && plaintext_header.type() != Record_Type::ApplicationData &&
       plaintext_header.type() != Record_Type::ChangeCipherSpec &&
       (!cipher_state->must_expect_unprotected_alert_traffic() || plaintext_header.type() != Record_Type::Alert)) {
-      throw TLS_Exception(AlertType::UnexpectedMessage, "unprotected record received where protected traffic was expected");
+      throw TLS_Exception(AlertType::UnexpectedMessage,
+                          "unprotected record received where protected traffic was expected");
    }
 
    if(m_read_buffer.size() < TLS_HEADER_SIZE + plaintext_header.fragment_length()) {
@@ -331,7 +332,8 @@ Record_Layer::ReadResult<Record> Record_Layer::next_record(Cipher_State* cipher_
       }
 
       if(cipher_state->decrypt_output_length(record.fragment.size()) > m_incoming_record_size_limit) {
-         throw TLS_Exception(AlertType::RecordOverflow, "Received an encrypted record that exceeds maximum plaintext size");
+         throw TLS_Exception(AlertType::RecordOverflow,
+                             "Received an encrypted record that exceeds maximum plaintext size");
       }
 
       record.seq_no = cipher_state->decrypt_record_fragment(plaintext_header.serialized(), record.fragment);
@@ -341,15 +343,11 @@ Record_Layer::ReadResult<Record> Record_Layer::next_record(Cipher_State* cipher_
          std::find_if(record.fragment.crbegin(), record.fragment.crend(), [](auto byte) { return byte != 0x00; });
 
       if(end_of_content == record.fragment.crend()) {
-<<<<<<< HEAD
          // RFC 8446 5.4
          //   If a receiving implementation does not
          //   find a non-zero octet in the cleartext, it MUST terminate the
          //   connection with an "unexpected_message" alert.
-         throw TLS_Exception(Alert::UnexpectedMessage, "No content type found in encrypted record");
-=======
-         throw TLS_Exception(AlertType::DecodeError, "No content type found in encrypted record");
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+         throw TLS_Exception(AlertType::UnexpectedMessage, "No content type found in encrypted record");
       }
 
       // hydrate the actual content type from TLSInnerPlaintext

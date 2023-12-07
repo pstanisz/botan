@@ -91,7 +91,7 @@ bool RC4::has_keying_material() const {
 /*
 * RC4 Key Schedule
 */
-void RC4::key_schedule(std::span<const uint8_t> key) {
+void RC4::key_schedule(Botan::span<const uint8_t> key) {
    m_state.resize(256);
    m_buffer.resize(256);
 

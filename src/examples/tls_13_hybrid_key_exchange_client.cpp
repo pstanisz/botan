@@ -11,12 +11,12 @@
  */
 class Callbacks : public Botan::TLS::Callbacks {
    public:
-      void tls_emit_data(std::span<const uint8_t> data) override {
+      void tls_emit_data(Botan::span<const uint8_t> data) override {
          BOTAN_UNUSED(data);
          // send data to tls server, e.g., using BSD sockets or boost asio
       }
 
-      void tls_record_received(uint64_t seq_no, std::span<const uint8_t> data) override {
+      void tls_record_received(uint64_t seq_no, Botan::span<const uint8_t> data) override {
          BOTAN_UNUSED(seq_no, data);
          // process full TLS record received by tls server, e.g.,
          // by passing it to the application
@@ -54,16 +54,16 @@ class Client_Policy : public Botan::TLS::Default_Policy {
       // additional to the default (classical) key exchange groups
       std::vector<Botan::TLS::Group_Params> key_exchange_groups() const override {
          auto groups = Botan::TLS::Default_Policy::key_exchange_groups();
-         groups.push_back(Botan::TLS::Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE);
-         groups.push_back(Botan::TLS::Group_Params::HYBRID_X25519_KYBER_512_R3_OQS);
+         groups.push_back(Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE);
+         groups.push_back(Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS);
          return groups;
       }
 
       // Define that the client should exclusively pre-offer hybrid groups
       // in its initial Client Hello.
       std::vector<Botan::TLS::Group_Params> key_exchange_groups_to_offer() const override {
-         return {Botan::TLS::Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE,
-                 Botan::TLS::Group_Params::HYBRID_X25519_KYBER_512_R3_OQS};
+         return {Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE,
+                 Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS};
       }
 };
 

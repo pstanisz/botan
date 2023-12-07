@@ -1332,8 +1332,9 @@ Test::Result test_x509_extensions(const Botan::Private_Key& ca_key,
    if(result.confirm("CRL Distribution Points extension present in self-signed certificate",
                      !cert_cdps->crl_distribution_urls().empty())) {
       for(const auto& cdp : cert_cdps->distribution_points()) {
-         result.confirm("CDP URI present in self-signed certificate",
-                        std::ranges::find(cdp_urls, cdp.point().get_first_attribute("URI")) != cdp_urls.end());
+         result.confirm(
+            "CDP URI present in self-signed certificate",
+            std::find(cdp_urls.begin(), cdp_urls.end(), cdp.point().get_first_attribute("URI")) != cdp_urls.end());
       }
    }
 
@@ -1368,8 +1369,9 @@ Test::Result test_x509_extensions(const Botan::Private_Key& ca_key,
    if(result.confirm("CRL Distribution Points extension present in self-signed certificate",
                      !cert_cdps->crl_distribution_urls().empty())) {
       for(const auto& cdp : cert_cdps->distribution_points()) {
-         result.confirm("CDP URI present in self-signed certificate",
-                        std::ranges::find(cdp_urls, cdp.point().get_first_attribute("URI")) != cdp_urls.end());
+         result.confirm(
+            "CDP URI present in self-signed certificate",
+            std::find(cdp_urls.begin(), cdp_urls.end(), cdp.point().get_first_attribute("URI")) != cdp_urls.end());
       }
    }
 

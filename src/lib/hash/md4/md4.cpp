@@ -74,7 +74,7 @@ inline void HH4(uint32_t& A, uint32_t& B, uint32_t& C, uint32_t& D, uint32_t M0,
 /*
 * MD4 Compression Function
 */
-void MD4::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void MD4::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    uint32_t A = digest[0], B = digest[1], C = digest[2], D = digest[3];
 
    BufferSlicer in(input);
@@ -135,11 +135,11 @@ std::unique_ptr<HashFunction> MD4::copy_state() const {
    return std::make_unique<MD4>(*this);
 }
 
-void MD4::add_data(std::span<const uint8_t> input) {
+void MD4::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void MD4::final_result(std::span<uint8_t> output) {
+void MD4::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

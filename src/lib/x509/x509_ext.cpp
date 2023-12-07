@@ -10,10 +10,10 @@
 #include <botan/x509_ext.h>
 
 #include <botan/ber_dec.h>
+#include <botan/contains.h>
 #include <botan/der_enc.h>
 #include <botan/hash.h>
 #include <botan/x509cert.h>
-#include <botan/contains.h>
 #include <botan/internal/bit_ops.h>
 #include <botan/internal/loadstor.h>
 #include <algorithm>
@@ -135,10 +135,9 @@ void Extensions::add(std::unique_ptr<Certificate_Extension> extn, bool critical)
    m_extension_info.emplace(oid, info);
 }
 
-bool Extensions::add_new(std::unique_ptr<Certificate_Extension> extn, bool critical)
-   {
+bool Extensions::add_new(std::unique_ptr<Certificate_Extension> extn, bool critical) {
    if(contains(m_extension_info, extn->oid_of())) {
-      return false; // already exists
+      return false;  // already exists
    }
 
    const OID oid = extn->oid_of();
@@ -747,7 +746,7 @@ void CRL_Distribution_Points::decode_inner(const std::vector<uint8_t>& buf) {
 }
 
 void CRL_Distribution_Points::Distribution_Point::encode_into(DER_Encoder& der) const {
-   if(!m_point.get_attributes().contains("URI")) {
+   if(!Botan::contains(m_point.get_attributes(), "URI")) {
       throw Not_Implemented("Empty CRL_Distribution_Point encoding");
    }
 

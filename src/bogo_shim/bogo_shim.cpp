@@ -992,7 +992,7 @@ class Shim_Policy final : public Botan::TLS::Policy {
                //
                // TODO: once `TLS::Policy::key_exchange_groups()` contains it by
                //       default, remove this explicit check.
-               if(group == Botan::TLS::Group_Params::HYBRID_X25519_KYBER_768_R3_OQS) {
+               if(group == Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS) {
                   groups.push_back(group);
                }
             }
@@ -1019,7 +1019,7 @@ class Shim_Policy final : public Botan::TLS::Policy {
             }
          }
 
-         return Botan::TLS::Group_Params::NONE;
+         return Botan::TLS::Group_Params_Code::NONE;
       }
 
       bool require_client_certificate_authentication() const override {

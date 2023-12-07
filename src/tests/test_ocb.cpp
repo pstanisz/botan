@@ -37,7 +37,7 @@ class OCB_Wide_Test_Block_Cipher final : public Botan::BlockCipher {
 
       bool has_keying_material() const override { return !m_key.empty(); }
 
-      void key_schedule(std::span<const uint8_t> key) override { m_key.assign(key.begin(), key.end()); }
+      void key_schedule(Botan::span<const uint8_t> key) override { m_key.assign(key.begin(), key.end()); }
 
       Botan::Key_Length_Specification key_spec() const override { return Botan::Key_Length_Specification(m_bs); }
 

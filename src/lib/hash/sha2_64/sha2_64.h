@@ -25,7 +25,7 @@ class SHA_384 final : public HashFunction {
       static constexpr size_t output_bytes = 48;
       static constexpr size_t ctr_bytes = 16;
 
-      static void compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks);
+      static void compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks);
       static void init(digest_type& digest);
 
    public:
@@ -44,9 +44,9 @@ class SHA_384 final : public HashFunction {
       void clear() override { m_md.clear(); }
 
    private:
-      void add_data(std::span<const uint8_t> input) override;
+      void add_data(Botan::span<const uint8_t> input) override;
 
-      void final_result(std::span<uint8_t> output) override;
+      void final_result(Botan::span<uint8_t> output) override;
 
    private:
       MerkleDamgard_Hash<SHA_384> m_md;
@@ -65,7 +65,7 @@ class SHA_512 final : public HashFunction {
       static constexpr size_t output_bytes = 64;
       static constexpr size_t ctr_bytes = 16;
 
-      static void compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks);
+      static void compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks);
       static void init(digest_type& digest);
 
    public:
@@ -84,16 +84,16 @@ class SHA_512 final : public HashFunction {
       void clear() override { m_md.clear(); }
 
    public:
-      static void compress_digest(digest_type& digest, std::span<const uint8_t> input, size_t blocks);
+      static void compress_digest(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks);
 
 #if defined(BOTAN_HAS_SHA2_64_BMI2)
-      static void compress_digest_bmi2(digest_type& digest, std::span<const uint8_t> input, size_t blocks);
+      static void compress_digest_bmi2(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks);
 #endif
 
    private:
-      void add_data(std::span<const uint8_t> input) override;
+      void add_data(Botan::span<const uint8_t> input) override;
 
-      void final_result(std::span<uint8_t> output) override;
+      void final_result(Botan::span<uint8_t> output) override;
 
    private:
       MerkleDamgard_Hash<SHA_512> m_md;
@@ -112,7 +112,7 @@ class SHA_512_256 final : public HashFunction {
       static constexpr size_t output_bytes = 32;
       static constexpr size_t ctr_bytes = 16;
 
-      static void compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks);
+      static void compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks);
       static void init(digest_type& digest);
 
    public:
@@ -131,9 +131,9 @@ class SHA_512_256 final : public HashFunction {
       void clear() override { m_md.clear(); }
 
    private:
-      void add_data(std::span<const uint8_t> input) override;
+      void add_data(Botan::span<const uint8_t> input) override;
 
-      void final_result(std::span<uint8_t> output) override;
+      void final_result(Botan::span<uint8_t> output) override;
 
    private:
       MerkleDamgard_Hash<SHA_512_256> m_md;

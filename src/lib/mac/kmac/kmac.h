@@ -34,10 +34,10 @@ class KMAC : public MessageAuthenticationCode {
       std::string provider() const final;
 
    private:
-      void start_msg(std::span<const uint8_t> nonce) final;
-      void add_data(std::span<const uint8_t>) final;
-      void final_result(std::span<uint8_t>) final;
-      void key_schedule(std::span<const uint8_t>) final;
+      void start_msg(Botan::span<const uint8_t> nonce) final;
+      void add_data(Botan::span<const uint8_t>) final;
+      void final_result(Botan::span<uint8_t>) final;
+      void key_schedule(Botan::span<const uint8_t>) final;
 
    private:
       size_t m_output_bit_length;

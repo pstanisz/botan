@@ -314,7 +314,7 @@ std::unique_ptr<PSK> PSK::select_offered_psk(std::string_view host,
       //    The server MUST ensure that it selects a compatible PSK (if any)
       //    and cipher suite.
       if(psk.prf_algo() != cipher.prf_algo()) {
-         throw TLS_Exception(Alert::InternalError,
+         throw TLS_Exception(AlertType::InternalError,
                              "Application chose a PSK that is not compatible with the negotiated ciphersuite");
       }
 
@@ -323,7 +323,7 @@ std::unique_ptr<PSK> PSK::select_offered_psk(std::string_view host,
             return offered_psk.identity_as_string() == psk.identity();
          });
       if(selected_itr == psk_identities.end()) {
-         throw TLS_Exception(Alert::InternalError,
+         throw TLS_Exception(AlertType::InternalError,
                              "Application provided a PSK with an identity that was not offered by the client");
       }
 

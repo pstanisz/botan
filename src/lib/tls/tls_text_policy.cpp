@@ -217,14 +217,14 @@ std::vector<std::string> Text_Policy::get_list(const std::string& key, const std
 std::vector<Group_Params> Text_Policy::read_group_list(std::string_view group_str) const {
    std::vector<Group_Params> groups;
    for(const auto& group_name : split_on(group_str, ' ')) {
-      Group_Params group_id = Group_Params::from_string(group_name).value_or(Group_Params::NONE);
+      Group_Params group_id = Group_Params::from_string(group_name).value_or(Group_Params_Code::NONE);
 
 #if !defined(BOTAN_HAS_CURVE_25519)
-      if(group_id == Group_Params::X25519)
+      if(group_id == Group_Params_Code::X25519)
          continue;
 #endif
 
-      if(group_id == Group_Params::NONE) {
+      if(group_id == Group_Params_Code::NONE) {
          try {
             size_t consumed = 0;
             unsigned long ll_id = std::stoul(group_name, &consumed, 0);
@@ -244,7 +244,7 @@ std::vector<Group_Params> Text_Policy::read_group_list(std::string_view group_st
          }
       }
 
-      if(group_id != Group_Params::NONE) {
+      if(group_id != Group_Params_Code::NONE) {
          groups.push_back(group_id);
       }
    }

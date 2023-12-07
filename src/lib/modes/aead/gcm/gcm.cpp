@@ -77,7 +77,7 @@ bool GCM_Mode::has_keying_material() const {
    return m_ctr->has_keying_material();
 }
 
-void GCM_Mode::key_schedule(std::span<const uint8_t> key) {
+void GCM_Mode::key_schedule(Botan::span<const uint8_t> key) {
    m_ctr->set_key(key);
 
    const std::vector<uint8_t> zeros(GCM_BS);
@@ -136,7 +136,7 @@ void GCM_Encryption::finish_msg(secure_vector<uint8_t>& buffer, size_t offset) {
    m_ghash->update({buf, sz});
 
    std::array<uint8_t, 16> mac = {0};
-   m_ghash->final(std::span(mac).first(tag_size()));
+   m_ghash->final(Botan::span(mac).first(tag_size()));
    buffer += std::make_pair(mac.data(), tag_size());
 }
 
@@ -163,7 +163,7 @@ void GCM_Decryption::finish_msg(secure_vector<uint8_t>& buffer, size_t offset) {
    }
 
    std::array<uint8_t, 16> mac = {0};
-   m_ghash->final(std::span(mac).first(tag_size()));
+   m_ghash->final(Botan::span(mac).first(tag_size()));
 
    const uint8_t* included_tag = &buffer[remaining + offset];
 

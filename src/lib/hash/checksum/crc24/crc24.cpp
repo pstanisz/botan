@@ -172,7 +172,7 @@ std::unique_ptr<HashFunction> CRC24::copy_state() const {
 *    T3[j] = (T2[j] >> 8) ^ T0[ T2[j] & 0xFF ]
 *
 */
-void CRC24::add_data(std::span<const uint8_t> input) {
+void CRC24::add_data(Botan::span<const uint8_t> input) {
    uint32_t tmp = m_crc;
 
    // Input is word aligned if WA & input == 0
@@ -204,7 +204,7 @@ void CRC24::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize a CRC24 Checksum
 */
-void CRC24::final_result(std::span<uint8_t> output) {
+void CRC24::final_result(Botan::span<uint8_t> output) {
    output[0] = get_byte<3>(m_crc);
    output[1] = get_byte<2>(m_crc);
    output[2] = get_byte<1>(m_crc);

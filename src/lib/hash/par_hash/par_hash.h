@@ -35,8 +35,8 @@ class Parallel final : public HashFunction {
       Parallel& operator=(const Parallel&) = delete;
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
 
       std::vector<std::unique_ptr<HashFunction>> m_hashes;
 };

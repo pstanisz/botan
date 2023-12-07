@@ -152,7 +152,7 @@ std::unique_ptr<MessageAuthenticationCode> MessageAuthenticationCode::create_or_
    throw Lookup_Error("MAC", algo, provider);
 }
 
-void MessageAuthenticationCode::start_msg(std::span<const uint8_t> nonce) {
+void MessageAuthenticationCode::start_msg(Botan::span<const uint8_t> nonce) {
    BOTAN_UNUSED(nonce);
    if(!nonce.empty()) {
       throw Invalid_IV_Length(name(), nonce.size());
@@ -162,7 +162,7 @@ void MessageAuthenticationCode::start_msg(std::span<const uint8_t> nonce) {
 /*
 * Default (deterministic) MAC verification operation
 */
-bool MessageAuthenticationCode::verify_mac_result(std::span<const uint8_t> mac) {
+bool MessageAuthenticationCode::verify_mac_result(Botan::span<const uint8_t> mac) {
    secure_vector<uint8_t> our_mac = final();
 
    if(our_mac.size() != mac.size()) {

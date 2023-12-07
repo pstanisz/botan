@@ -104,7 +104,7 @@ bool FPE_FE1::has_keying_material() const {
    return m_mac->has_keying_material();
 }
 
-void FPE_FE1::key_schedule(std::span<const uint8_t> key) {
+void FPE_FE1::key_schedule(Botan::span<const uint8_t> key) {
    m_mac->set_key(key);
 }
 

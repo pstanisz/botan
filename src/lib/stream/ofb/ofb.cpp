@@ -29,7 +29,7 @@ size_t OFB::buffer_size() const {
    return m_buffer.size();  // block size
 }
 
-void OFB::key_schedule(std::span<const uint8_t> key) {
+void OFB::key_schedule(Botan::span<const uint8_t> key) {
    m_cipher->set_key(key);
 
    // Set a default all-zeros IV

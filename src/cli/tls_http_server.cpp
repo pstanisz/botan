@@ -394,15 +394,11 @@ class TLS_Asio_HTTP_Session final : public std::enable_shared_from_this<TLS_Asio
       }
 
       void tls_alert(Botan::TLS::Alert alert) override {
-<<<<<<< HEAD
          if(!m_tls) {
             log_error("Received client data after close");
             return;
          }
-         if(alert.type() == Botan::TLS::Alert::CloseNotify) {
-=======
          if(alert.type() == Botan::TLS::AlertType::CloseNotify) {
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
             m_tls->close();
          } else {
             std::cout << "Alert " << alert.type_string() << std::endl;

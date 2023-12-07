@@ -11,12 +11,12 @@
 
 #include <botan/tls_messages.h>
 
+#include <botan/contains.h>
 #include <botan/mem_ops.h>
 #include <botan/tls_callbacks.h>
 #include <botan/tls_exceptn.h>
 #include <botan/tls_extensions.h>
 #include <botan/tls_session_manager.h>
-#include <botan/contains.h>
 #include <botan/internal/stl_util.h>
 #include <botan/internal/tls_handshake_hash.h>
 #include <botan/internal/tls_handshake_io.h>
@@ -331,7 +331,8 @@ Server_Hello_12::Server_Hello_12(Handshake_IO& io,
       }
    }
 
-   if(resumed_session.ciphersuite().ecc_ciphersuite() && contains(client_hello.extension_types(), Extension_Code::EcPointFormats)) {
+   if(resumed_session.ciphersuite().ecc_ciphersuite() &&
+      contains(client_hello.extension_types(), Extension_Code::EcPointFormats)) {
       m_data->extensions().add(new Supported_Point_Formats(policy.use_ecc_point_compression()));
    }
 
@@ -479,7 +480,7 @@ std::variant<Hello_Retry_Request, Server_Hello_13> Server_Hello_13::create(const
    //    If there is no overlap between the received "supported_groups" and the
    //    groups supported by the server, then the server MUST abort the
    //    handshake with a "handshake_failure" or an "insufficient_security" alert.
-   if(selected_group == Named_Group::NONE) {
+   if(selected_group == Group_Params_Code::NONE) {
       throw TLS_Exception(AlertType::HandshakeFailure, "Client did not offer any acceptable group");
    }
 
@@ -648,7 +649,8 @@ Server_Hello_13::Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data,
    //    Clients MUST abort the handshake with an "illegal_parameter" alert if
    //    the HelloRetryRequest would not result in any change in the ClientHello.
    if(!exts.has<Key_Share>() && !exts.has<Cookie>()) {
-      throw TLS_Exception(AlertType::IllegalParameter, "Hello Retry Request does not request any changes to Client Hello");
+      throw TLS_Exception(AlertType::IllegalParameter,
+                          "Hello Retry Request does not request any changes to Client Hello");
    }
 }
 

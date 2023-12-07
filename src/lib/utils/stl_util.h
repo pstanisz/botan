@@ -25,12 +25,12 @@
 
 namespace Botan {
 
-template <concepts::contiguous_container T = std::vector<uint8_t>>
+template <typename T = std::vector<uint8_t>, typename = concepts::contiguous_container<T>>
 inline T to_byte_vector(std::string_view s) {
    return T(s.cbegin(), s.cend());
 }
 
-inline std::string to_string(std::span<const uint8_t> bytes) {
+inline std::string to_string(Botan::span<const uint8_t> bytes) {
    return std::string(bytes.begin(), bytes.end());
 }
 
@@ -43,10 +43,11 @@ inline std::string to_string(std::span<const uint8_t> bytes) {
  *
  * @return the accumulator containing the reduction of @p keys
  */
-template <typename RetT, typename KeyT, typename ReducerT>
-RetT reduce(const std::vector<KeyT>& keys, RetT acc, ReducerT reducer)
-   requires std::is_convertible_v<ReducerT, std::function<RetT(RetT, const KeyT&)>>
-{
+template <typename RetT,
+          typename KeyT,
+          typename ReducerT,
+          typename = std::enable_if_t<std::is_convertible_v<ReducerT, std::function<RetT(RetT, const KeyT&)>>>>
+RetT reduce(const std::vector<KeyT>& keys, RetT acc, ReducerT reducer) {
    for(const KeyT& key : keys) {
       acc = reducer(std::move(acc), key);
    }
@@ -164,13 +165,9 @@ class BufferSlicer final {
          return StrongSpan<const T>(take(count));
       }
 
-<<<<<<< HEAD
       uint8_t take_byte() { return take(1)[0]; }
 
-      void copy_into(std::span<uint8_t> sink) {
-=======
       void copy_into(Botan::span<uint8_t> sink) {
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
          const auto data = take(sink.size());
          std::copy(data.begin(), data.end(), sink.begin());
       }
@@ -213,16 +210,12 @@ class BufferStuffer {
          return StrongSpan<StrongT>(next(bytes));
       }
 
-<<<<<<< HEAD
       /**
        * @returns a reference to the next single byte in the buffer
        */
       uint8_t& next_byte() { return next(1)[0]; }
 
-      void append(std::span<const uint8_t> buffer) {
-=======
       void append(Botan::span<const uint8_t> buffer) {
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
          auto sink = next(buffer.size());
          std::copy(buffer.begin(), buffer.end(), sink.begin());
       }
@@ -282,9 +275,10 @@ constexpr bool is_generalizable_to(const std::variant<SpecialTs...>&) noexcept {
  * This is useful to convert restricted variant types into more general
  * variants types.
  */
-template <typename GeneralVariantT, typename SpecialT, typename = std::enable_if_t<std::is_constructible_v<GeneralVariantT, std::decay_t<SpecialT>>>>
-constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept
-{
+template <typename GeneralVariantT,
+          typename SpecialT,
+          typename = std::enable_if_t<std::is_constructible_v<GeneralVariantT, std::decay_t<SpecialT>>>>
+constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept {
    return std::forward<SpecialT>(specific);
 }
 

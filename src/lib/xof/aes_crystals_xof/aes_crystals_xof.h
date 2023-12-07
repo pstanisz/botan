@@ -51,14 +51,14 @@ class BOTAN_TEST_API AES_256_CTR_XOF final : public XOF {
        * Sets the @p IV and @p key of the underlying AES-256/CTR object.
        * Do not call AES_256_CTR_XOF::update(), on this object!
        */
-      void start_msg(std::span<const uint8_t> iv = {}, std::span<const uint8_t> key = {}) override;
+      void start_msg(Botan::span<const uint8_t> iv = {}, Botan::span<const uint8_t> key = {}) override;
 
       /**
        * @throws Not_Implemented, use XOF::start() instead of XOF::update()
        */
-      void add_data(std::span<const uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
 
-      void generate_bytes(std::span<uint8_t> output) override;
+      void generate_bytes(Botan::span<uint8_t> output) override;
 
    private:
       std::unique_ptr<StreamCipher> m_stream_cipher;

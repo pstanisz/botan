@@ -55,8 +55,8 @@ enum class AlignmentBufferFinalBlock : size_t {
  */
 template <typename T,
           size_t BLOCK_SIZE,
-          AlignmentBufferFinalBlock FINAL_BLOCK_STRATEGY = AlignmentBufferFinalBlock::is_not_special>
-   requires(BLOCK_SIZE > 0)
+          AlignmentBufferFinalBlock FINAL_BLOCK_STRATEGY = AlignmentBufferFinalBlock::is_not_special,
+          typename = std::enable_if_t<(BLOCK_SIZE > 0)>>
 class AlignmentBuffer {
    public:
       AlignmentBuffer() : m_position(0) {}
@@ -87,7 +87,7 @@ class AlignmentBuffer {
        * Appends the provided @p elements to the buffer. The user has to make
        * sure that @p elements fits in the remaining capacity of the buffer.
        */
-      void append(std::span<const T> elements) {
+      void append(Botan::span<const T> elements) {
          BOTAN_ASSERT_NOMSG(elements.size() <= elements_until_alignment());
          std::copy(elements.begin(), elements.end(), m_buffer.begin() + m_position);
          m_position += elements.size();
@@ -99,9 +99,9 @@ class AlignmentBuffer {
        * capacity into account nor does it change the internal cursor.
        * Beware not to overwrite unconsumed bytes.
        */
-      std::span<T> directly_modify_first(size_t elements) {
+      Botan::span<T> directly_modify_first(size_t elements) {
          BOTAN_ASSERT_NOMSG(size() >= elements);
-         return std::span(m_buffer).first(elements);
+         return Botan::span(m_buffer).first(elements);
       }
 
       /**
@@ -110,9 +110,9 @@ class AlignmentBuffer {
        * capacity into account nor does it change the internal cursor.
        * Beware not to overwrite unconsumed bytes.
        */
-      std::span<T> directly_modify_last(size_t elements) {
+      Botan::span<T> directly_modify_last(size_t elements) {
          BOTAN_ASSERT_NOMSG(size() >= elements);
-         return std::span(m_buffer).last(elements);
+         return Botan::span(m_buffer).last(elements);
       }
 
       /**
@@ -123,7 +123,7 @@ class AlignmentBuffer {
        * @returns a view onto the aligned data from @p slicer and the number of
        *          full blocks that are represented by this view.
        */
-      [[nodiscard]] std::tuple<std::span<const uint8_t>, size_t> aligned_data_to_process(BufferSlicer& slicer) const {
+      [[nodiscard]] std::tuple<Botan::span<const uint8_t>, size_t> aligned_data_to_process(BufferSlicer& slicer) const {
          BOTAN_ASSERT_NOMSG(in_alignment());
 
          // When the final block is to be deferred, the last block must not be
@@ -140,7 +140,8 @@ class AlignmentBuffer {
        * @returns a view onto the next full block from @p slicer or std::nullopt
        *          if not enough data is available in @p slicer.
        */
-      [[nodiscard]] std::optional<std::span<const uint8_t>> next_aligned_block_to_process(BufferSlicer& slicer) const {
+      [[nodiscard]] std::optional<Botan::span<const uint8_t>> next_aligned_block_to_process(
+         BufferSlicer& slicer) const {
          BOTAN_ASSERT_NOMSG(in_alignment());
 
          // When the final block is to be deferred, the last block must not be
@@ -163,7 +164,7 @@ class AlignmentBuffer {
        * @returns a view onto a full block once enough data was collected, or
        *          std::nullopt if no full block is available yet
        */
-      [[nodiscard]] std::optional<std::span<const T>> handle_unaligned_data(BufferSlicer& slicer) {
+      [[nodiscard]] std::optional<Botan::span<const T>> handle_unaligned_data(BufferSlicer& slicer) {
          // When the final block is to be deferred, we would need to store and
          // hold a buffer that contains exactly one block until more data is
          // passed or it is explicitly consumed.
@@ -197,7 +198,7 @@ class AlignmentBuffer {
        * responsibility to ensure that the buffer is filled fully. After
        * consumption, the buffer is cleared and ready to collect new data.
        */
-      [[nodiscard]] std::span<const T> consume() {
+      [[nodiscard]] Botan::span<const T> consume() {
          BOTAN_ASSERT_NOMSG(ready_to_consume());
          m_position = 0;
          return m_buffer;
@@ -208,10 +209,10 @@ class AlignmentBuffer {
        * buffer. After consumption, the buffer is cleared and ready to collect
        * new data.
        */
-      [[nodiscard]] std::span<const T> consume_partial() {
+      [[nodiscard]] Botan::span<const T> consume_partial() {
          const auto elements = elements_in_buffer();
          m_position = 0;
-         return std::span(m_buffer).first(elements);
+         return Botan::span(m_buffer).first(elements);
       }
 
       constexpr size_t size() const { return m_buffer.size(); }

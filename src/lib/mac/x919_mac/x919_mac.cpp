@@ -14,7 +14,7 @@ namespace Botan {
 /*
 * Update an ANSI X9.19 MAC Calculation
 */
-void ANSI_X919_MAC::add_data(std::span<const uint8_t> input) {
+void ANSI_X919_MAC::add_data(Botan::span<const uint8_t> input) {
    assert_key_material_set();
 
    BufferSlicer in(input);
@@ -41,7 +41,7 @@ void ANSI_X919_MAC::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize an ANSI X9.19 MAC Calculation
 */
-void ANSI_X919_MAC::final_result(std::span<uint8_t> mac) {
+void ANSI_X919_MAC::final_result(Botan::span<uint8_t> mac) {
    if(m_position) {
       m_des1->encrypt(m_state);
    }
@@ -58,7 +58,7 @@ bool ANSI_X919_MAC::has_keying_material() const {
 /*
 * ANSI X9.19 MAC Key Schedule
 */
-void ANSI_X919_MAC::key_schedule(std::span<const uint8_t> key) {
+void ANSI_X919_MAC::key_schedule(Botan::span<const uint8_t> key) {
    m_state.resize(8);
 
    m_des1->set_key(key.first(8));

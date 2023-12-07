@@ -282,7 +282,7 @@ bool SM4::has_keying_material() const {
 /*
 * SM4 Key Schedule
 */
-void SM4::key_schedule(std::span<const uint8_t> key) {
+void SM4::key_schedule(Botan::span<const uint8_t> key) {
    // System parameter or family key
    const uint32_t FK[4] = {0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc};
 

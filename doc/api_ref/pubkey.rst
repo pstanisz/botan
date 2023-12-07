@@ -845,16 +845,16 @@ encapsulated key and returns the shared secret.
 
   .. cpp:function:: KEM_Encapsulation encrypt(RandomNumberGenerator& rng, \
                                 size_t desired_shared_key_len = 32, \
-                                std::span<const uint8_t> salt = {})
+                                Botan::span<const uint8_t> salt = {})
 
      Perform a key encapsulation operation with the result being returned
      as a convenient struct.
 
-  .. cpp:function:: void encrypt(std::span<uint8_t> out_encapsulated_key, \
-                   std::span<uint8_t> out_shared_key, \
+  .. cpp:function:: void encrypt(Botan::span<uint8_t> out_encapsulated_key, \
+                   Botan::span<uint8_t> out_shared_key, \
                    RandomNumberGenerator& rng, \
                    size_t desired_shared_key_len = 32, \
-                   std::span<const uint8_t> salt = {})
+                   Botan::span<const uint8_t> salt = {})
 
      Perform a key encapsulation operation by passing in out-buffers of
      the correct output length. Use encapsulated_key_length() and
@@ -883,7 +883,6 @@ encapsulated key and returns the shared secret.
 
      Create a KEM decryptor
 
-<<<<<<< HEAD
   .. cpp:function:: size_t encapsulated_key_length() const
 
      Size in bytes of the encapsulated key expected by this PK_KEM_Decryptor.
@@ -892,19 +891,16 @@ encapsulated key and returns the shared secret.
 
      Size in bytes of the shared key being produced by this PK_KEM_Encryptor.
 
-  .. cpp:function:: secure_vector<uint8> decrypt(std::span<const uint8> encapsulated_key, \
-=======
   .. cpp:function:: secure_vector<uint8> decrypt(Botan::span<const uint8> encapsulated_key, \
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
                     size_t desired_shared_key_len, \
                     Botan::span<const uint8_t> salt)
 
       Perform a key decapsulation operation
 
-  .. cpp:function:: void decrypt(std::span<uint8_t> out_shared_key, \
-                   std::span<const uint8_t> encap_key, \
+  .. cpp:function:: void decrypt(Botan::span<uint8_t> out_shared_key, \
+                   Botan::span<const uint8_t> encap_key, \
                    size_t desired_shared_key_len = 32, \
-                   std::span<const uint8_t> salt = {})
+                   Botan::span<const uint8_t> salt = {})
 
       Perform a key decapsulation operation by passing in a pre-allocated
       out-buffer. Use shared_key_length() to determine the byte-length required.

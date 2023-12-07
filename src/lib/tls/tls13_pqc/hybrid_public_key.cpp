@@ -25,19 +25,19 @@ std::vector<std::pair<std::string, std::string>> algorithm_specs_for_group(Group
    BOTAN_ARG_CHECK(group.is_pqc_hybrid(), "Group is not hybrid");
 
    switch(group.code()) {
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_OQS:
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
          return {{"Curve25519", "Curve25519"}, {"Kyber", "Kyber-512-r3"}};
-      case Group_Params::HYBRID_X25519_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS:
          return {{"Curve25519", "Curve25519"}, {"Kyber", "Kyber-768-r3"}};
 
-      case Group_Params::HYBRID_SECP256R1_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_512_R3_OQS:
          return {{"ECDH", "secp256r1"}, {"Kyber", "Kyber-512-r3"}};
-      case Group_Params::HYBRID_SECP256R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_768_R3_OQS:
          return {{"ECDH", "secp256r1"}, {"Kyber", "Kyber-768-r3"}};
-      case Group_Params::HYBRID_SECP384R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP384R1_KYBER_768_R3_OQS:
          return {{"ECDH", "secp384r1"}, {"Kyber", "Kyber-768-r3"}};
-      case Group_Params::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
          return {{"ECDH", "secp521r1"}, {"Kyber", "Kyber-1024-r3"}};
 
       default:
@@ -74,19 +74,19 @@ std::vector<size_t> public_value_lengths_for_group(Group_Params group) {
    // TODO: Find a way to expose important algorithm constants globally
    //       in the library, to avoid violating the DRY principle.
    switch(group.code()) {
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS:
          return {32, 800};
-      case Group_Params::HYBRID_X25519_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS:
          return {32, 1184};
 
-      case Group_Params::HYBRID_SECP256R1_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_512_R3_OQS:
          return {32, 800};
-      case Group_Params::HYBRID_SECP256R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_768_R3_OQS:
          return {32, 1184};
-      case Group_Params::HYBRID_SECP384R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP384R1_KYBER_768_R3_OQS:
          return {48, 1184};
-      case Group_Params::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
          return {66, 1568};
 
       default:
@@ -97,7 +97,7 @@ std::vector<size_t> public_value_lengths_for_group(Group_Params group) {
 }  // namespace
 
 std::unique_ptr<Hybrid_KEM_PublicKey> Hybrid_KEM_PublicKey::load_for_group(
-   Group_Params group, std::span<const uint8_t> concatenated_public_values) {
+   Group_Params group, Botan::span<const uint8_t> concatenated_public_values) {
    const auto public_value_lengths = public_value_lengths_for_group(group);
    auto alg_ids = algorithm_identifiers_for_group(group);
    BOTAN_ASSERT_NOMSG(public_value_lengths.size() == alg_ids.size());
@@ -226,8 +226,8 @@ class Hybrid_KEM_Encryption_Operation final : public PK_Ops::KEM_Encryption_with
 
       size_t encapsulated_key_length() const override { return m_encapsulated_key_length; }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> raw_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> raw_shared_key,
                            Botan::RandomNumberGenerator& rng) override {
          BOTAN_ASSERT_NOMSG(out_encapsulated_key.size() == encapsulated_key_length());
          BOTAN_ASSERT_NOMSG(raw_shared_key.size() == raw_kem_shared_key_length());
@@ -334,7 +334,7 @@ class Hybrid_KEM_Decryption final : public PK_Ops::KEM_Decryption_with_KDF {
          }
       }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encap_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encap_key) override {
          BOTAN_ASSERT_NOMSG(out_shared_key.size() == raw_kem_shared_key_length());
          BOTAN_ASSERT_NOMSG(encap_key.size() == encapsulated_key_length());
 

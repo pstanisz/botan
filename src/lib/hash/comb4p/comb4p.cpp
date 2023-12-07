@@ -85,12 +85,12 @@ std::unique_ptr<HashFunction> Comb4P::copy_state() const {
    return copy;
 }
 
-void Comb4P::add_data(std::span<const uint8_t> input) {
+void Comb4P::add_data(Botan::span<const uint8_t> input) {
    m_hash1->update(input);
    m_hash2->update(input);
 }
 
-void Comb4P::final_result(std::span<uint8_t> output) {
+void Comb4P::final_result(Botan::span<uint8_t> output) {
    secure_vector<uint8_t> h1 = m_hash1->final();
    secure_vector<uint8_t> h2 = m_hash2->final();
 

@@ -34,9 +34,9 @@ class Poly1305 final : public MessageAuthenticationCode {
       bool has_keying_material() const override;
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
-      void key_schedule(std::span<const uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
+      void key_schedule(Botan::span<const uint8_t>) override;
 
       secure_vector<uint64_t> m_poly;
       secure_vector<uint8_t> m_buf;

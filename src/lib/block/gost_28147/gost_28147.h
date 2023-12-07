@@ -81,7 +81,7 @@ class GOST_28147_89 final : public Block_Cipher_Fixed_Params<8, 32> {
             m_SBOX(other_SBOX), m_EK(8), m_name(name) {}
 
    private:
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       /*
       * The sbox is not secret, this is just a larger expansion of it

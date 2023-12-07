@@ -55,7 +55,7 @@ std::string XOF::provider() const {
    return "base";
 }
 
-void XOF::start(std::span<const uint8_t> salt, std::span<const uint8_t> key) {
+void XOF::start(Botan::span<const uint8_t> salt, Botan::span<const uint8_t> key) {
    if(!key_spec().valid_keylength(key.size())) {
       throw Invalid_Key_Length(name(), key.size());
    }
@@ -68,7 +68,7 @@ void XOF::start(std::span<const uint8_t> salt, std::span<const uint8_t> key) {
    start_msg(salt, key);
 }
 
-void XOF::start_msg(std::span<const uint8_t> salt, std::span<const uint8_t> key) {
+void XOF::start_msg(Botan::span<const uint8_t> salt, Botan::span<const uint8_t> key) {
    BOTAN_UNUSED(salt, key);
 }
 

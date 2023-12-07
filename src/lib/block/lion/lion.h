@@ -46,7 +46,7 @@ class Lion final : public BlockCipher {
       Lion(std::unique_ptr<HashFunction> hash, std::unique_ptr<StreamCipher> cipher, size_t block_size);
 
    private:
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       size_t left_size() const { return m_hash->output_length(); }
 

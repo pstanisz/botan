@@ -79,7 +79,7 @@ class Key_Share_Entry {
          }
       }
 
-      bool empty() const { return (m_group == Group_Params::NONE) && m_key_exchange.empty(); }
+      bool empty() const { return (m_group == Group_Params_Code::NONE) && m_key_exchange.empty(); }
 
       std::vector<uint8_t> serialize() const {
          std::vector<uint8_t> result;
@@ -125,7 +125,8 @@ class Key_Share_Entry {
          //   With X25519 and X448, a receiving party MUST check whether the
          //   computed premaster secret is the all-zero value and abort the
          //   handshake if so, as described in Section 6 of [RFC7748].
-         if(m_group == Named_Group::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
+         if(m_group == Group_Params_Code::X25519 &&
+            CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
             throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
          }
 
@@ -215,7 +216,8 @@ class Key_Share_ClientHello {
             if(std::find_if(m_client_shares.begin(), m_client_shares.end(), [&](const auto& entry) {
                   return entry.group() == new_entry.group();
                }) != m_client_shares.end()) {
-               throw TLS_Exception(AlertType::IllegalParameter, "Received multiple key share entries for the same group");
+               throw TLS_Exception(AlertType::IllegalParameter,
+                                   "Received multiple key share entries for the same group");
             }
 
             m_client_shares.emplace_back(std::move(new_entry));
@@ -390,7 +392,7 @@ class Key_Share_HelloRetryRequest {
          throw Invalid_Argument("Hello Retry Request never offers any key exchange groups");
       }
 
-      bool empty() const { return m_selected_group == Group_Params::NONE; }
+      bool empty() const { return m_selected_group == Group_Params_Code::NONE; }
 
    private:
       Named_Group m_selected_group;
@@ -500,7 +502,8 @@ void Key_Share::retry_offer(const Key_Share& retry_request_keyshare,
                             //    [T]he selected_group field [MUST correspond] to a group which was provided in
                             //    the "supported_groups" extension in the original ClientHello
                             if(!value_exists(supported_groups, selected)) {
-                               throw TLS_Exception(AlertType::IllegalParameter, "group was not advertised as supported");
+                               throw TLS_Exception(AlertType::IllegalParameter,
+                                                   "group was not advertised as supported");
                             }
 
                             return ch.retry_offer(selected, cb, rng);

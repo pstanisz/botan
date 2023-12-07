@@ -133,14 +133,14 @@ class XOF_Tests final : public Text_Based_Test {
                               new_accepts_input);
 
                new_xof->start(salt, key);
-               std::span<const uint8_t> in_span(in);
+               Botan::span<const uint8_t> in_span(in);
                while(!in_span.empty()) {
                   const auto bytes = std::min(block_size, in_span.size());
                   new_xof->update(in_span.first(bytes));
                   in_span = in_span.last(in_span.size() - bytes);
                }
                std::vector<uint8_t> blockwise_out(expected.size());
-               std::span<uint8_t> out_span(blockwise_out);
+               Botan::span<uint8_t> out_span(blockwise_out);
                while(!out_span.empty()) {
                   const auto bytes = std::min(block_size, out_span.size());
                   new_xof->output(out_span.first(bytes));
@@ -157,11 +157,11 @@ class XOF_Tests final : public Text_Based_Test {
             try {
                xof->clear();
                xof->start(salt, key);
-               xof->update(std::span(in).first(in.size() / 2));
+               xof->update(Botan::span(in).first(in.size() / 2));
                auto xof2 = xof->copy_state();
                result.test_eq("copied object might still accept input", xof2->accepts_input(), new_accepts_input);
-               xof->update(std::span(in).last(in.size() - in.size() / 2));
-               xof2->update(std::span(in).last(in.size() - in.size() / 2));
+               xof->update(Botan::span(in).last(in.size() - in.size() / 2));
+               xof2->update(Botan::span(in).last(in.size() - in.size() / 2));
                auto cp_out1 = xof->output_stdvec(expected.size());
                auto cp_out2_1 = xof2->output_stdvec(expected.size() / 2);
                auto xof3 = xof2->copy_state();
@@ -198,14 +198,17 @@ class XOF_Tests final : public Text_Based_Test {
                }),
    #endif
    #if defined(BOTAN_HAS_AES_CRYSTALS_XOF)
-               Botan_Tests::CHECK("AES-256/CTR XOF failure modes", [](Test::Result& result) {
-                  Botan::AES_256_CTR_XOF aes_xof;
-                  result.test_throws("AES-256/CTR XOF throws for empty key", [&]() { aes_xof.start({}, {}); });
-                  result.test_throws("AES-256/CTR XOF throws for too long key",
-                                     [&]() { aes_xof.start({}, std::vector<uint8_t>(33)); });
-                  result.test_throws("AES-256/CTR XOF throws for too long IV",
-                                     [&]() { aes_xof.start(std::vector<uint8_t>(17), std::vector<uint8_t>(32)); });
-               }),
+            Botan_Tests::CHECK("AES-256/CTR XOF failure modes",
+                               [](Test::Result& result) {
+                                  Botan::AES_256_CTR_XOF aes_xof;
+                                  result.test_throws("AES-256/CTR XOF throws for empty key",
+                                                     [&]() { aes_xof.start({}, {}); });
+                                  result.test_throws("AES-256/CTR XOF throws for too long key",
+                                                     [&]() { aes_xof.start({}, std::vector<uint8_t>(33)); });
+                                  result.test_throws("AES-256/CTR XOF throws for too long IV", [&]() {
+                                     aes_xof.start(std::vector<uint8_t>(17), std::vector<uint8_t>(32));
+                                  });
+                               }),
    #endif
          };
       }

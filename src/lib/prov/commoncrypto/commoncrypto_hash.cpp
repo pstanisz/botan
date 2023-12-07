@@ -55,7 +55,7 @@ class CommonCrypto_HashFunction final : public HashFunction {
       CommonCrypto_HashFunction(const digest_config_t& info, const CTX& ctx) : m_ctx(ctx), m_info(info) {}
 
    private:
-      void add_data(std::span<const uint8_t> input) override {
+      void add_data(Botan::span<const uint8_t> input) override {
          BufferSlicer in(input);
 
          /* update len parameter is 32 bit unsigned integer, feed input in parts */
@@ -66,7 +66,7 @@ class CommonCrypto_HashFunction final : public HashFunction {
          }
       }
 
-      void final_result(std::span<uint8_t> output) override {
+      void final_result(Botan::span<uint8_t> output) override {
          if(m_info.final(output.data(), &m_ctx) != 1)
             throw CommonCrypto_Error("CC_" + m_info.name + "_Final");
          clear();

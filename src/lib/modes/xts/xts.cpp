@@ -67,7 +67,7 @@ bool XTS_Mode::has_keying_material() const {
    return m_cipher->has_keying_material() && m_tweak_cipher->has_keying_material();
 }
 
-void XTS_Mode::key_schedule(std::span<const uint8_t> key) {
+void XTS_Mode::key_schedule(Botan::span<const uint8_t> key) {
    const size_t key_half = key.size() / 2;
 
    if(key.size() % 2 == 1 || !m_cipher->valid_keylength(key_half)) {

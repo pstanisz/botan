@@ -478,7 +478,7 @@ class RFC8448_Text_Policy : public Botan::TLS::Text_Policy {
                return value_exists(supported_by_peer, group);
             });
 
-         return selected_group != supported_by_us.end() ? *selected_group : Named_Group::NONE;
+         return selected_group != supported_by_us.end() ? *selected_group : Group_Params_Code::NONE;
       }
 
    private:

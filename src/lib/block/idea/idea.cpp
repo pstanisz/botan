@@ -169,7 +169,7 @@ bool IDEA::has_keying_material() const {
 /*
 * IDEA Key Schedule
 */
-void IDEA::key_schedule(std::span<const uint8_t> key) {
+void IDEA::key_schedule(Botan::span<const uint8_t> key) {
    m_EK.resize(52);
    m_DK.resize(52);
 

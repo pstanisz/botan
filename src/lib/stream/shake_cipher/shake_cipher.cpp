@@ -48,7 +48,7 @@ void SHAKE_Cipher::cipher_bytes(const uint8_t in[], uint8_t out[], size_t length
       if(bytes > 0) {
          BOTAN_ASSERT_NOMSG(bytes <= block_size);
          BOTAN_ASSERT_NOMSG(bytes <= length);
-         generate_keystream_internal(std::span(m_keystream_buffer).first(bytes));
+         generate_keystream_internal(Botan::span(m_keystream_buffer).first(bytes));
          xor_buf(out, m_keystream_buffer.data(), in, bytes);
          out += bytes;
          in += bytes;
@@ -76,12 +76,12 @@ void SHAKE_Cipher::generate_keystream(uint8_t out[], size_t length) {
    generate_keystream_internal({out, length});
 }
 
-void SHAKE_Cipher::generate_keystream_internal(std::span<uint8_t> out) {
+void SHAKE_Cipher::generate_keystream_internal(Botan::span<uint8_t> out) {
    m_keccak.squeeze(out);
    m_bytes_generated += out.size();
 }
 
-void SHAKE_Cipher::key_schedule(std::span<const uint8_t> key) {
+void SHAKE_Cipher::key_schedule(Botan::span<const uint8_t> key) {
    clear();
    m_keccak.absorb(key);
    m_keccak.finish();

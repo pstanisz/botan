@@ -332,7 +332,7 @@ bool DES::has_keying_material() const {
 /*
 * DES Key Schedule
 */
-void DES::key_schedule(std::span<const uint8_t> key) {
+void DES::key_schedule(Botan::span<const uint8_t> key) {
    m_round_key.resize(32);
    des_key_schedule(m_round_key.data(), key.data());
 }
@@ -442,7 +442,7 @@ bool TripleDES::has_keying_material() const {
 /*
 * TripleDES Key Schedule
 */
-void TripleDES::key_schedule(std::span<const uint8_t> key) {
+void TripleDES::key_schedule(Botan::span<const uint8_t> key) {
    m_round_key.resize(3 * 32);
    des_key_schedule(&m_round_key[0], key.first(8).data());
    des_key_schedule(&m_round_key[32], key.subspan(8, 8).data());

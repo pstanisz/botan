@@ -47,7 +47,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
    if(kex_algo == Kex_Algo::DH) {
       const std::vector<Group_Params> dh_groups = state.client_hello()->supported_dh_groups();
 
-      m_shared_group = Group_Params::NONE;
+      m_shared_group = Group_Params_Code::NONE;
 
       /*
       If the client does not send any DH groups that we recognize in
@@ -61,7 +61,7 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
          m_shared_group = policy.choose_key_exchange_group(dh_groups, {});
       }
 
-      if(m_shared_group.value() == Group_Params::NONE) {
+      if(m_shared_group.value() == Group_Params_Code::NONE) {
          throw TLS_Exception(AlertType::HandshakeFailure, "Could not agree on a DH group with the client");
       }
 
@@ -93,13 +93,13 @@ Server_Key_Exchange::Server_Key_Exchange(Handshake_IO& io,
 
       m_shared_group = policy.choose_key_exchange_group(ec_groups, {});
 
-      if(m_shared_group.value() == Group_Params::NONE) {
+      if(m_shared_group.value() == Group_Params_Code::NONE) {
          throw TLS_Exception(AlertType::HandshakeFailure, "No shared ECC group with client");
       }
 
       std::vector<uint8_t> ecdh_public_val;
 
-      if(m_shared_group.value() == Group_Params::X25519) {
+      if(m_shared_group.value() == Group_Params_Code::X25519) {
          m_kex_key = state.callbacks().tls_generate_ephemeral_key(m_shared_group.value(), rng);
          if(!m_kex_key) {
             throw TLS_Exception(AlertType::InternalError, "Application did not provide a X25519 key");

@@ -338,15 +338,9 @@ Record_Header read_tls_record(secure_vector<uint8_t>& readbuf,
          // RFC 5246 Section 6.
          //   If a TLS implementation receives an unexpected record type, it MUST
          //   send an unexpected_message alert.
-         throw TLS_Exception(Alert::UnexpectedMessage, "TLS record type had unexpected value");
+         throw TLS_Exception(AlertType::UnexpectedMessage, "TLS record type had unexpected value");
       }
-<<<<<<< HEAD
-      throw TLS_Exception(Alert::ProtocolVersion, "TLS record version had unexpected value");
-=======
-      oss << " had unexpected value";
-
-      throw TLS_Exception(AlertType::ProtocolVersion, oss.str());
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+      throw TLS_Exception(AlertType::ProtocolVersion, "TLS record version had unexpected value");
    }
 
    const Protocol_Version version(readbuf[1], readbuf[2]);

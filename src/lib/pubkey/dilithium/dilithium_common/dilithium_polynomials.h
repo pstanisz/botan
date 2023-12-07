@@ -16,9 +16,9 @@
 
 #include <botan/dilithium.h>
 
+#include <botan/span.h>
 #include <botan/internal/dilithium_symmetric_primitives.h>
 #include <botan/internal/shake.h>
-#include <botan/span.h>
 
 #include <array>
 #include <vector>
@@ -158,7 +158,7 @@ class Polynomial {
          size_t ctr = Polynomial::rej_eta(a, 0, DilithiumModeConstants::N, buf, buf.size(), mode);
 
          while(ctr < DilithiumModeConstants::N) {
-            xof->output(std::span(buf).first(mode.stream256_blockbytes()));
+            xof->output(Botan::span(buf).first(mode.stream256_blockbytes()));
             ctr += Polynomial::rej_eta(a, ctr, DilithiumModeConstants::N - ctr, buf, mode.stream256_blockbytes(), mode);
          }
       }
@@ -996,7 +996,7 @@ class PolynomialVector {
          std::vector<uint8_t> buf(buflen + 2);
 
          auto xof = mode.XOF_128(seed, nonce);
-         xof->output(std::span(buf).first(buflen));
+         xof->output(Botan::span(buf).first(buflen));
 
          size_t ctr = Polynomial::rej_uniform(sample_poly, 0, DilithiumModeConstants::N, buf.data(), buflen);
          size_t off;
@@ -1006,7 +1006,7 @@ class PolynomialVector {
                buf[i] = buf[buflen - off + i];
             }
 
-            xof->output(std::span(buf).subspan(off, mode.stream128_blockbytes()));
+            xof->output(Botan::span(buf).subspan(off, mode.stream128_blockbytes()));
             buflen = mode.stream128_blockbytes() + off;
             ctr += Polynomial::rej_uniform(sample_poly, ctr, DilithiumModeConstants::N - ctr, buf.data(), buflen);
          }

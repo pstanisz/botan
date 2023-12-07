@@ -1,7 +1,12 @@
 Release Notes
 ========================================
 
-<<<<<<< HEAD
+Version 3.2.0 for C++17, 2023-12-07
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* Version 3.2.0 backported to C++17 to be used with older compilers.
+  Compiler requirements have been decreased to GCC 9, Clang 5, or MSVC 2017.
+
 Version 3.2.0, 2023-10-09
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -62,7 +67,7 @@ Version 3.2.0, 2023-10-09
 
 * On MinGW the global thread pool is disabled by default (GH #3726 #2582)
 
-* Various internal functions now use ``std::span`` instead of raw pointers
+* Various internal functions now use ``Botan::span`` instead of raw pointers
   plus length field. NOTE: any implementations of ``BlockCipher``, ``HashFunction``
   etc that live outside the library will have to be updated. This is not covered
   by the SemVer guarantee; see ``doc/sem_ver.rst`` (GH #3684 #3681 #3713 #3714
@@ -97,13 +102,6 @@ Version 3.2.0, 2023-10-09
 
 * Avoid compilation failures when using ``-Werror`` mode with GCC 12
   due to spurious warnings in that version. (GH #3711 #3709)
-=======
-Version 3.1.1 for C++17, 2023-12-06
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* Version 3.1.1 backported to C++17 to be used with older compilers.
-  Compiler requirements have been decreased to GCC 9, Clang 5, or MSVC 2017.
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
 Version 3.1.1, 2023-07-13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

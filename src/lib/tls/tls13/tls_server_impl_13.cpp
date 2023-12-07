@@ -239,14 +239,9 @@ void Server_Impl_13::handle_reply_to_client_hello(Server_Hello_13 server_hello) 
       //
       // Note: PSK selection was performed earlier, resulting in the existence
       //       of this extension in the first place.
-<<<<<<< HEAD
       if(!exts.get<PSK>()->validate_binder(*psk_extension,
                                            psk_cipher_state->psk_binder_mac(m_transcript_hash.truncated()))) {
-         throw TLS_Exception(Alert::DecryptError, "PSK binder does not check out");
-=======
-      if(!exts.get<PSK>()->validate_binder(*psk, psk_cipher_state->psk_binder_mac(m_transcript_hash.truncated()))) {
          throw TLS_Exception(AlertType::DecryptError, "PSK binder does not check out");
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       }
 
       // RFC 8446 4.2.10
@@ -426,7 +421,8 @@ void Server_Impl_13::handle(const Client_Hello_13& client_hello) {
       const auto offered_groups = exts.get<Key_Share>()->offered_groups();
       const auto selected_group = hrr_exts.get<Key_Share>()->selected_group();
       if(offered_groups.size() != 1 || offered_groups.at(0) != selected_group) {
-         throw TLS_Exception(AlertType::IllegalParameter, "Client did not comply with the requested key exchange group");
+         throw TLS_Exception(AlertType::IllegalParameter,
+                             "Client did not comply with the requested key exchange group");
       }
    }
 
@@ -446,7 +442,8 @@ void Server_Impl_13::handle(const Certificate_13& certificate_msg) {
    //    certificate_request_context:  [...] This field SHALL be zero length
    //    unless used for the post-handshake authentication exchanges [...].
    if(!handshake_finished() && !certificate_msg.request_context().empty()) {
-      throw TLS_Exception(AlertType::DecodeError, "Received a client certificate message with non-empty request context");
+      throw TLS_Exception(AlertType::DecodeError,
+                          "Received a client certificate message with non-empty request context");
    }
 
    // RFC 8446 4.4.2
@@ -462,7 +459,8 @@ void Server_Impl_13::handle(const Certificate_13& certificate_msg) {
    //   a "certificate_required" alert.
    if(certificate_msg.empty()) {
       if(policy().require_client_certificate_authentication()) {
-         throw TLS_Exception(AlertType::CertificateRequired, "Policy requires client send a certificate, but it did not");
+         throw TLS_Exception(AlertType::CertificateRequired,
+                             "Policy requires client send a certificate, but it did not");
       }
 
       // RFC 8446 4.4.2

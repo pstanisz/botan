@@ -20,12 +20,12 @@ void SHAKE_XOF::reset() {
    m_output_generated = false;
 }
 
-void SHAKE_XOF::add_data(std::span<const uint8_t> input) {
+void SHAKE_XOF::add_data(Botan::span<const uint8_t> input) {
    BOTAN_STATE_CHECK(!m_output_generated);
    m_keccak.absorb(input);
 }
 
-void SHAKE_XOF::generate_bytes(std::span<uint8_t> output) {
+void SHAKE_XOF::generate_bytes(Botan::span<uint8_t> output) {
    if(!m_output_generated) {
       m_output_generated = true;
       m_keccak.finish();

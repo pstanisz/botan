@@ -118,7 +118,7 @@ bool Policy::use_ecc_point_compression() const {
 Group_Params Policy::choose_key_exchange_group(const std::vector<Group_Params>& supported_by_peer,
                                                const std::vector<Group_Params>& offered_by_peer) const {
    if(supported_by_peer.empty()) {
-      return Group_Params::NONE;
+      return Group_Params_Code::NONE;
    }
 
    const std::vector<Group_Params> our_groups = key_exchange_groups();
@@ -139,7 +139,7 @@ Group_Params Policy::choose_key_exchange_group(const std::vector<Group_Params>& 
       }
    }
 
-   return Group_Params::NONE;
+   return Group_Params_Code::NONE;
 }
 
 Group_Params Policy::default_dh_group() const {
@@ -152,21 +152,28 @@ Group_Params Policy::default_dh_group() const {
       }
    }
 
-   return Group_Params::FFDHE_2048;
+   return Group_Params_Code::FFDHE_2048;
 }
 
 std::vector<Group_Params> Policy::key_exchange_groups() const {
    // Default list is ordered by performance
    return {
 #if defined(BOTAN_HAS_CURVE_25519)
-      Group_Params::X25519,
+      Group_Params_Code::X25519,
 #endif
 
-         Group_Params::SECP256R1, Group_Params::BRAINPOOL256R1, Group_Params::SECP384R1, Group_Params::BRAINPOOL384R1,
-         Group_Params::SECP521R1, Group_Params::BRAINPOOL512R1,
+      Group_Params_Code::SECP256R1,
+      Group_Params_Code::BRAINPOOL256R1,
+      Group_Params_Code::SECP384R1,
+      Group_Params_Code::BRAINPOOL384R1,
+      Group_Params_Code::SECP521R1,
+      Group_Params_Code::BRAINPOOL512R1,
 
-         Group_Params::FFDHE_2048, Group_Params::FFDHE_3072, Group_Params::FFDHE_4096, Group_Params::FFDHE_6144,
-         Group_Params::FFDHE_8192,
+      Group_Params_Code::FFDHE_2048,
+      Group_Params_Code::FFDHE_3072,
+      Group_Params_Code::FFDHE_4096,
+      Group_Params_Code::FFDHE_6144,
+      Group_Params_Code::FFDHE_8192,
    };
 }
 

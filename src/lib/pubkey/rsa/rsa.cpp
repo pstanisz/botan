@@ -10,6 +10,7 @@
 #include <botan/ber_dec.h>
 #include <botan/der_enc.h>
 #include <botan/reducer.h>
+#include <botan/starts_with.h>
 #include <botan/internal/blinding.h>
 #include <botan/internal/divide.h>
 #include <botan/internal/emsa.h>
@@ -21,7 +22,6 @@
 #include <botan/internal/pk_ops_impl.h>
 #include <botan/internal/pss_params.h>
 #include <botan/internal/workfactor.h>
-#include <botan/starts_with.h>
 
 #if defined(BOTAN_HAS_THREAD_UTILS)
    #include <botan/internal/thread_pool.h>
@@ -446,7 +446,7 @@ class RSA_Private_Operation {
             m_max_d1_bits(m_private->p_bits() + m_blinding_bits),
             m_max_d2_bits(m_private->q_bits() + m_blinding_bits) {}
 
-      void raw_op(std::span<uint8_t> out, std::span<const uint8_t> input) {
+      void raw_op(Botan::span<uint8_t> out, Botan::span<const uint8_t> input) {
          if(input.size() > public_modulus_bytes()) {
             throw Decoding_Error("RSA input is too long for this key");
          }
@@ -607,7 +607,7 @@ class RSA_KEM_Decryption_Operation final : public PK_Ops::KEM_Decryption_with_KD
 
       size_t encapsulated_key_length() const override { return public_modulus_bytes(); }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encapsulated_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encapsulated_key) override {
          raw_op(out_shared_key, encapsulated_key);
       }
 };
@@ -695,8 +695,8 @@ class RSA_KEM_Encryption_Operation final : public PK_Ops::KEM_Encryption_with_KD
 
       size_t encapsulated_key_length() const override { return public_modulus_bytes(); }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> raw_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> raw_shared_key,
                            RandomNumberGenerator& rng) override {
          const BigInt r = BigInt::random_integer(rng, 1, get_n());
          const BigInt c = public_op(r);

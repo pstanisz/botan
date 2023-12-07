@@ -20,18 +20,16 @@ namespace Botan {
 * If top bit of arg is set, return ~0. Otherwise return 0.
 */
 template <typename T>
-inline constexpr T expand_top_bit(T a)
-{
+inline constexpr T expand_top_bit(T a) {
    static_assert(std::is_integral<T>::value, "expand_top_bit needs integral");
-   return static_cast<T>(0) - (a >> (sizeof(T)*8-1));
+   return static_cast<T>(0) - (a >> (sizeof(T) * 8 - 1));
 }
 
 /**
 * If arg is zero, return ~0. Otherwise return 0
 */
 template <typename T>
-inline constexpr T ct_is_zero(T x)
-{
+inline constexpr T ct_is_zero(T x) {
    static_assert(std::is_integral<T>::value, "ct_is_zero needs integral");
    return expand_top_bit<T>(~x & (x - 1));
 }
@@ -42,10 +40,9 @@ inline constexpr T ct_is_zero(T x)
 * @return true iff arg is 2^n for some n > 0
 */
 template <typename T>
-inline constexpr bool is_power_of_2(T arg)
-{
+inline constexpr bool is_power_of_2(T arg) {
    static_assert(std::is_unsigned<T>::value, "is_power_of_2 needs unsigned");
-   return (arg != 0) && (arg != 1) && ((arg & static_cast<T>(arg-1)) == 0);
+   return (arg != 0) && (arg != 1) && ((arg & static_cast<T>(arg - 1)) == 0);
 }
 
 /**
@@ -55,8 +52,7 @@ inline constexpr bool is_power_of_2(T arg)
 * @return index of the highest set bit in n
 */
 template <typename T>
-inline constexpr size_t high_bit(T n)
-{
+inline constexpr size_t high_bit(T n) {
    static_assert(std::is_unsigned<T>::value, "high_bit needs unsigned");
    size_t hb = 0;
 
@@ -77,8 +73,7 @@ inline constexpr size_t high_bit(T n)
 * @return number of significant bytes in n
 */
 template <typename T>
-inline constexpr size_t significant_bytes(T n)
-{
+inline constexpr size_t significant_bytes(T n) {
    static_assert(std::is_integral<T>::value, "significant_bytes needs integral");
    size_t b = 0;
 
@@ -99,8 +94,7 @@ inline constexpr size_t significant_bytes(T n)
 * @return maximum x st 2^x divides n
 */
 template <typename T>
-inline constexpr size_t ctz(T n)
-{
+inline constexpr size_t ctz(T n) {
    static_assert(std::is_integral<T>::value, "ctz needs integral");
 
    /*
@@ -119,19 +113,11 @@ inline constexpr size_t ctz(T n)
    return lb;
 }
 
-template <typename T>
-constexpr uint8_t ceil_log2(T x)
-{
-<<<<<<< HEAD
+template <typename T, typename = std::enable_if_t<std::is_integral<T>::value && (sizeof(T) < 32)>>
+constexpr uint8_t ceil_log2(T x) {
    if(x >> (sizeof(T) * 8 - 1)) {
       return sizeof(T) * 8;
    }
-=======
-   static_assert(std::is_integral<T>::value && sizeof(T) < 32, "Abnormally large scalar");
-
-   if(x >> (sizeof(T)*8-1))
-      return sizeof(T)*8;
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
    uint8_t result = 0;
    T compare = 1;
@@ -148,8 +134,7 @@ constexpr uint8_t ceil_log2(T x)
  * Return the number of bytes necessary to contain @p bits bits.
  */
 template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
-inline constexpr T ceil_tobytes(T bits)
-{
+inline constexpr T ceil_tobytes(T bits) {
    return (bits + 7) / 8;
 }
 

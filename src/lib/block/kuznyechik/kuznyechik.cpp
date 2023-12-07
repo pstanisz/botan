@@ -4226,7 +4226,7 @@ bool Kuznyechik::has_keying_material() const {
    return m_has_keying_material;
 }
 
-void Kuznyechik::key_schedule(std::span<const uint8_t> key) {
+void Kuznyechik::key_schedule(Botan::span<const uint8_t> key) {
    using namespace Kuznyechik_F;
 
    BOTAN_ASSERT_NOMSG(key.size() == 32);

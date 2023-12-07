@@ -13,13 +13,13 @@
 
 namespace Botan {
 
-void Parallel::add_data(std::span<const uint8_t> input) {
+void Parallel::add_data(Botan::span<const uint8_t> input) {
    for(auto&& hash : m_hashes) {
       hash->update(input);
    }
 }
 
-void Parallel::final_result(std::span<uint8_t> output) {
+void Parallel::final_result(Botan::span<uint8_t> output) {
    BufferStuffer out(output);
    for(auto&& hash : m_hashes) {
       hash->final(out.next(hash->output_length()));

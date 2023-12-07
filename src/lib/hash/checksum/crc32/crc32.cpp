@@ -49,7 +49,7 @@ alignas(256) const uint32_t CRC32_T0[256] = {
 /*
 * Update a CRC32 Checksum
 */
-void CRC32::add_data(std::span<const uint8_t> input) {
+void CRC32::add_data(Botan::span<const uint8_t> input) {
    uint32_t tmp = m_crc;
    for(; input.size() >= 16; input = input.last(input.size() - 16)) {
       tmp = CRC32_T0[(tmp ^ input[0]) & 0xFF] ^ (tmp >> 8);
@@ -80,7 +80,7 @@ void CRC32::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize a CRC32 Checksum
 */
-void CRC32::final_result(std::span<uint8_t> output) {
+void CRC32::final_result(Botan::span<uint8_t> output) {
    m_crc ^= 0xFFFFFFFF;
    store_be(m_crc, output.data());
    clear();

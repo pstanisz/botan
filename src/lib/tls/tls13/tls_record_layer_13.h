@@ -13,8 +13,8 @@
 #include <variant>
 #include <vector>
 
-#include <botan/span.h>
 #include <botan/secmem.h>
+#include <botan/span.h>
 #include <botan/tls_magic.h>
 #include <botan/internal/tls_channel_impl.h>
 
@@ -71,13 +71,8 @@ class BOTAN_TEST_API Record_Layer {
        */
       ReadResult<Record> next_record(Cipher_State* cipher_state = nullptr);
 
-<<<<<<< HEAD
       std::vector<uint8_t> prepare_records(Record_Type type,
-                                           std::span<const uint8_t> data,
-=======
-      std::vector<uint8_t> prepare_records(const Record_Type type,
                                            Botan::span<const uint8_t> data,
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
                                            Cipher_State* cipher_state = nullptr) const;
 
       /**

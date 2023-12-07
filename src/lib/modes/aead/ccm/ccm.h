@@ -20,11 +20,7 @@ namespace Botan {
 */
 class CCM_Mode : public AEAD_Mode {
    public:
-<<<<<<< HEAD
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) final;
-=======
-      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override final;
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) final;
 
       bool associated_data_requires_key() const final { return false; }
 
@@ -72,7 +68,7 @@ class CCM_Mode : public AEAD_Mode {
       void start_msg(const uint8_t nonce[], size_t nonce_len) final;
       size_t process_msg(uint8_t buf[], size_t sz) final;
 
-      void key_schedule(std::span<const uint8_t> key) final;
+      void key_schedule(Botan::span<const uint8_t> key) final;
 
       const size_t m_tag_size;
       const size_t m_L;

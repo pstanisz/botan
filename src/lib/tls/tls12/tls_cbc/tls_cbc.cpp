@@ -91,7 +91,7 @@ bool TLS_CBC_HMAC_AEAD_Mode::has_keying_material() const {
    return mac().has_keying_material() && cbc().has_keying_material();
 }
 
-void TLS_CBC_HMAC_AEAD_Mode::key_schedule(std::span<const uint8_t> key) {
+void TLS_CBC_HMAC_AEAD_Mode::key_schedule(Botan::span<const uint8_t> key) {
    // Both keys are of fixed length specified by the ciphersuite
 
    if(key.size() != m_cipher_keylen + m_mac_keylen) {

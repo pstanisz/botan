@@ -30,7 +30,7 @@ class BOTAN_TEST_API cSHAKE_XOF : public XOF {
        *                      derived from cSHAKE
        */
       cSHAKE_XOF(size_t capacity, std::vector<uint8_t> function_name);
-      cSHAKE_XOF(size_t capacity, std::span<const uint8_t> function_name);
+      cSHAKE_XOF(size_t capacity, Botan::span<const uint8_t> function_name);
       cSHAKE_XOF(size_t capacity, std::string_view function_name);
 
    public:
@@ -50,9 +50,9 @@ class BOTAN_TEST_API cSHAKE_XOF : public XOF {
        * @param salt  the S value for cSHAKE (see NIST SP.800-185)
        * @param key   not supported, must be an empty buffer
        */
-      void start_msg(std::span<const uint8_t> salt, std::span<const uint8_t> key) final;
-      void add_data(std::span<const uint8_t> input) final;
-      void generate_bytes(std::span<uint8_t> output) final;
+      void start_msg(Botan::span<const uint8_t> salt, Botan::span<const uint8_t> key) final;
+      void add_data(Botan::span<const uint8_t> input) final;
+      void generate_bytes(Botan::span<uint8_t> output) final;
       void reset() final;
 
    private:
@@ -69,7 +69,7 @@ class BOTAN_TEST_API cSHAKE_128_XOF final : public cSHAKE_XOF {
    public:
       cSHAKE_128_XOF(std::vector<uint8_t> function_name) : cSHAKE_XOF(256, std::move(function_name)) {}
 
-      cSHAKE_128_XOF(std::span<const uint8_t> function_name) : cSHAKE_XOF(256, function_name) {}
+      cSHAKE_128_XOF(Botan::span<const uint8_t> function_name) : cSHAKE_XOF(256, function_name) {}
 
       cSHAKE_128_XOF(std::string_view function_name) : cSHAKE_XOF(256, function_name) {}
 
@@ -88,7 +88,7 @@ class BOTAN_TEST_API cSHAKE_256_XOF final : public cSHAKE_XOF {
    public:
       cSHAKE_256_XOF(std::vector<uint8_t> function_name) : cSHAKE_XOF(512, std::move(function_name)) {}
 
-      cSHAKE_256_XOF(std::span<const uint8_t> function_name) : cSHAKE_XOF(512, function_name) {}
+      cSHAKE_256_XOF(Botan::span<const uint8_t> function_name) : cSHAKE_XOF(512, function_name) {}
 
       cSHAKE_256_XOF(std::string_view function_name) : cSHAKE_XOF(512, function_name) {}
 

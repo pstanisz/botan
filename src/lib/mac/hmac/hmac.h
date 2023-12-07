@@ -37,9 +37,9 @@ class HMAC final : public MessageAuthenticationCode {
       HMAC& operator=(const HMAC&) = delete;
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
-      void key_schedule(std::span<const uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
+      void key_schedule(Botan::span<const uint8_t>) override;
 
       std::unique_ptr<HashFunction> m_hash;
       secure_vector<uint8_t> m_ikey, m_okey;

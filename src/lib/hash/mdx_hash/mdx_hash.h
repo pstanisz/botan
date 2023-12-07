@@ -22,26 +22,42 @@ enum class MD_Endian {
    Big,
 };
 
-template <typename T>
-concept md_hash_implementation =
-   concepts::contiguous_container<typename T::digest_type> &&
-   requires(typename T::digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
-      { T::init(digest) } -> std::same_as<void>;
-      { T::compress_n(digest, input, blocks) } -> std::same_as<void>;
-      T::bit_endianness;
-      T::byte_endianness;
-      T::block_bytes;
-      T::output_bytes;
-      T::ctr_bytes;
-   } && T::block_bytes >= 64 && is_power_of_2(T::block_bytes) && T::output_bytes >= 16 && T::ctr_bytes >= 8 &&
-   is_power_of_2(T::ctr_bytes) && T::ctr_bytes < T::block_bytes;
+// template <typename T>
+// concept md_hash_implementation =
+//    concepts::contiguous_container<typename T::digest_type> &&
+//    requires(typename T::digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
+//       { T::init(digest) } -> std::same_as<void>;
+//       { T::compress_n(digest, input, blocks) } -> std::same_as<void>;
+//       T::bit_endianness;
+//       T::byte_endianness;
+//       T::block_bytes;
+//       T::output_bytes;
+//       T::ctr_bytes;
+//    } && T::block_bytes >= 64 && is_power_of_2(T::block_bytes) && T::output_bytes >= 16 && T::ctr_bytes >= 8 &&
+//    is_power_of_2(T::ctr_bytes) && T::ctr_bytes < T::block_bytes;
 
-template <md_hash_implementation MD>
+template <typename T>
+using md_hash_implementation = std::void_t<
+   std::enable_if_t<concepts::is_contiguous_container_v<typename T::digest_type> &&
+                    concepts::same_as_v<decltype(T::init(std::declval<typename T::digest_type&>())), void> &&
+                    concepts::same_as_v<decltype(T::compress_n(std::declval<typename T::digest_type&>(),
+                                                               std::declval<Botan::span<const uint8_t>>(),
+                                                               std::declval<size_t>())),
+                                        void>>,
+   decltype(T::bit_endianness),
+   decltype(T::byte_endianness),
+   decltype(T::block_bytes),
+   decltype(T::output_bytes),
+   decltype(T::ctr_bytes),
+   std::enable_if_t<(T::block_bytes >= 64) && is_power_of_2(T::block_bytes) && (T::output_bytes >= 16) &&
+                    (T::ctr_bytes >= 8) && is_power_of_2(T::ctr_bytes) && (T::ctr_bytes < T::block_bytes)>>;
+
+template <typename MD, typename = md_hash_implementation<MD>>
 class MerkleDamgard_Hash final {
    public:
       MerkleDamgard_Hash() { clear(); }
 
-      void update(std::span<const uint8_t> input) {
+      void update(Botan::span<const uint8_t> input) {
          BufferSlicer in(input);
 
          while(!in.empty()) {
@@ -60,7 +76,7 @@ class MerkleDamgard_Hash final {
          m_count += input.size();
       }
 
-      void final(std::span<uint8_t> output) {
+      void final(Botan::span<uint8_t> output) {
          append_padding_bit();
          append_counter_and_finalize();
          copy_output(output);
@@ -110,7 +126,7 @@ class MerkleDamgard_Hash final {
          MD::compress_n(m_digest, m_buffer.consume(), 1);
       }
 
-      void copy_output(std::span<uint8_t> output) {
+      void copy_output(Botan::span<uint8_t> output) {
          BOTAN_ASSERT_NOMSG(output.size() >= MD::output_bytes);
 
          if constexpr(MD::byte_endianness == MD_Endian::Big) {

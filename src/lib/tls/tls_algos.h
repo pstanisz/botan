@@ -123,8 +123,6 @@ enum class Group_Params_Code : uint16_t {
 
 class BOTAN_PUBLIC_API(3, 2) Group_Params final {
    public:
-      using enum Group_Params_Code;
-
       constexpr Group_Params() : m_code(Group_Params_Code::NONE) {}
 
       constexpr Group_Params(Group_Params_Code code) : m_code(code) {}
@@ -138,7 +136,11 @@ class BOTAN_PUBLIC_API(3, 2) Group_Params final {
 
       constexpr bool operator==(Group_Params_Code code) const { return m_code == code; }
 
+      constexpr bool operator!=(Group_Params_Code code) const { return !operator==(code); }
+
       constexpr bool operator==(Group_Params other) const { return m_code == other.m_code; }
+
+      constexpr bool operator!=(Group_Params other) const { return !operator==(other); }
 
       constexpr bool operator<(Group_Params other) const { return m_code < other.m_code; }
 
@@ -170,7 +172,7 @@ class BOTAN_PUBLIC_API(3, 2) Group_Params final {
       constexpr bool is_post_quantum() const { return is_pure_kyber() || is_pqc_hybrid(); }
 
       constexpr bool is_pqc_hybrid() const {
-         return m_code == Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE ||
+         return m_code == Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE ||
                 m_code == Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS ||
                 m_code == Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS ||
                 m_code == Group_Params_Code::HYBRID_SECP256R1_KYBER_512_R3_OQS ||

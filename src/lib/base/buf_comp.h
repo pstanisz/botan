@@ -37,11 +37,7 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * Add new input to process.
       * @param in the input to process as a contiguous data range
       */
-<<<<<<< HEAD
-      void update(std::span<const uint8_t> in) { add_data(in); }
-=======
-      void update(Botan::span<const uint8_t> in) { add_data(in.data(), in.size()); }
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+      void update(Botan::span<const uint8_t> in) { add_data(in); }
 
       void update_be(uint16_t val);
       void update_be(uint32_t val);
@@ -86,15 +82,9 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
 
       std::vector<uint8_t> final_stdvec() { return final<std::vector<uint8_t>>(); }
 
-<<<<<<< HEAD
-      void final(std::span<uint8_t> out) {
+      void final(Botan::span<uint8_t> out) {
          BOTAN_ARG_CHECK(out.size() >= output_length(), "provided output buffer has insufficient capacity");
          final_result(out);
-=======
-      void final(Botan::span<uint8_t> out) {
-         BOTAN_ASSERT_NOMSG(out.size() >= output_length());
-         final_result(out.data());
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
       }
 
       template <typename T, typename = concepts::resizable_byte_buffer<T>>
@@ -147,13 +137,13 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * Add more data to the computation
       * @param input is an input buffer
       */
-      virtual void add_data(std::span<const uint8_t> input) = 0;
+      virtual void add_data(Botan::span<const uint8_t> input) = 0;
 
       /**
       * Write the final output to out
       * @param out is an output buffer of output_length()
       */
-      virtual void final_result(std::span<uint8_t> out) = 0;
+      virtual void final_result(Botan::span<uint8_t> out) = 0;
 };
 
 }  // namespace Botan

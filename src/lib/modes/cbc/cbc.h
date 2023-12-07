@@ -57,7 +57,7 @@ class CBC_Mode : public Cipher_Mode {
    private:
       void start_msg(const uint8_t nonce[], size_t nonce_len) override;
 
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       std::unique_ptr<BlockCipher> m_cipher;
       std::unique_ptr<BlockCipherModePaddingMethod> m_padding;

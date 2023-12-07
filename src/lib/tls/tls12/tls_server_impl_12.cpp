@@ -8,6 +8,7 @@
 
 #include <botan/internal/tls_server_impl_12.h>
 
+#include <botan/contains.h>
 #include <botan/ocsp.h>
 #include <botan/tls_magic.h>
 #include <botan/tls_messages.h>
@@ -15,7 +16,6 @@
 #include <botan/tls_version.h>
 #include <botan/internal/stl_util.h>
 #include <botan/internal/tls_handshake_state.h>
-#include <botan/contains.h>
 
 namespace Botan::TLS {
 
@@ -92,7 +92,8 @@ std::optional<Session> check_for_resume(const Session_Handle& handle_to_resume,
          Client previously negotiated session with extended master secret,
          but has now attempted to resume without the extension: abort
          */
-         throw TLS_Exception(AlertType::HandshakeFailure, "Client resumed extended ms session without sending extension");
+         throw TLS_Exception(AlertType::HandshakeFailure,
+                             "Client resumed extended ms session without sending extension");
       }
    }
 
@@ -102,7 +103,8 @@ std::optional<Session> check_for_resume(const Session_Handle& handle_to_resume,
       Client previously negotiated session with Encrypt-then-MAC,
       but has now attempted to resume without the extension: abort
       */
-      throw TLS_Exception(AlertType::HandshakeFailure, "Client resumed Encrypt-then-MAC session without sending extension");
+      throw TLS_Exception(AlertType::HandshakeFailure,
+                          "Client resumed Encrypt-then-MAC session without sending extension");
    }
 
    return session;
@@ -124,12 +126,12 @@ uint16_t choose_ciphersuite(const Policy& policy,
    }
 
    const bool have_shared_ecc_curve =
-      (policy.choose_key_exchange_group(client_hello.supported_ecc_curves(), {}) != Group_Params::NONE);
+      (policy.choose_key_exchange_group(client_hello.supported_ecc_curves(), {}) != Group_Params_Code::NONE);
 
    const bool client_supports_ffdhe_groups = !client_hello.supported_dh_groups().empty();
 
    const bool have_shared_dh_group =
-      (policy.choose_key_exchange_group(client_hello.supported_dh_groups(), {}) != Group_Params::NONE);
+      (policy.choose_key_exchange_group(client_hello.supported_dh_groups(), {}) != Group_Params_Code::NONE);
 
    /*
    Walk down one list in preference order
@@ -200,7 +202,6 @@ uint16_t choose_ciphersuite(const Policy& policy,
       return suite_id;
    }
 
-<<<<<<< HEAD
    // RFC 7919 Section 4.
    //   If the [Supported Groups] extension is present
    //   with FFDHE groups, none of the client’s offered groups are acceptable
@@ -208,13 +209,11 @@ uint16_t choose_ciphersuite(const Policy& policy,
    //   suites are acceptable to the server, the server MUST end the
    //   connection with a fatal TLS alert of type insufficient_security(71).
    if(client_supports_ffdhe_groups && !have_shared_dh_group) {
-      throw TLS_Exception(Alert::InsufficientSecurity, "Can't agree on a sufficiently strong ciphersuite with client");
+      throw TLS_Exception(AlertType::InsufficientSecurity,
+                          "Can't agree on a sufficiently strong ciphersuite with client");
    }
 
-   throw TLS_Exception(Alert::HandshakeFailure, "Can't agree on a ciphersuite with client");
-=======
    throw TLS_Exception(AlertType::HandshakeFailure, "Can't agree on a ciphersuite with client");
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 }
 
 std::map<std::string, std::vector<X509_Certificate>> get_server_certs(
@@ -432,7 +431,8 @@ void Server_Impl_12::process_client_hello_msg(const Handshake_State* active_stat
             return;
          }
       } else if(epoch0_restart) {
-         throw TLS_Exception(AlertType::HandshakeFailure, "Reuse of DTLS association requires DTLS cookie secret be set");
+         throw TLS_Exception(AlertType::HandshakeFailure,
+                             "Reuse of DTLS association requires DTLS cookie secret be set");
       }
    }
 

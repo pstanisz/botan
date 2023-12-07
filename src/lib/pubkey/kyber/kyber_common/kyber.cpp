@@ -212,13 +212,9 @@ class KyberConstants {
 
       std::unique_ptr<HashFunction> KDF() const { return m_symmetric_primitives->KDF(); }
 
-<<<<<<< HEAD
-      Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const {
+      Botan::XOF& XOF(Botan::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const {
          return m_symmetric_primitives->XOF(seed, matrix_position);
       }
-=======
-      std::unique_ptr<Kyber_XOF> XOF(Botan::span<const uint8_t> seed) const { return m_symmetric_primitives->XOF(seed); }
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
 
       secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed, const uint8_t nonce, const size_t outlen) const {
          return m_symmetric_primitives->PRF(seed, nonce, outlen);
@@ -596,7 +592,9 @@ class PolynomialVector {
          return r;
       }
 
-      static PolynomialVector getnoise_eta2(Botan::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static PolynomialVector getnoise_eta2(Botan::span<const uint8_t> seed,
+                                            uint8_t nonce,
+                                            const KyberConstants& mode) {
          PolynomialVector r(mode.k());
 
          for(auto& p : r.m_vec) {
@@ -606,7 +604,9 @@ class PolynomialVector {
          return r;
       }
 
-      static PolynomialVector getnoise_eta1(Botan::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static PolynomialVector getnoise_eta1(Botan::span<const uint8_t> seed,
+                                            uint8_t nonce,
+                                            const KyberConstants& mode) {
          PolynomialVector r(mode.k());
 
          for(auto& p : r.m_vec) {
@@ -1079,8 +1079,8 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
          return kyber_key_length_to_encap_key_length(m_key.key_length());
       }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> out_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> out_shared_key,
                            RandomNumberGenerator& rng) override {
          // naming from kyber spec
          auto H = mode().H();
@@ -1102,7 +1102,7 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
 
          const auto encapsulation = indcpa_enc(shared_secret, upper_g_out);
 
-         // TODO: avoid copy by letting Ciphertext write straight into std::span<>
+         // TODO: avoid copy by letting Ciphertext write straight into Botan::span<>
          BOTAN_ASSERT_NOMSG(encapsulation.size() == out_encapsulated_key.size());
          std::copy(encapsulation.begin(), encapsulation.end(), out_encapsulated_key.begin());
 
@@ -1127,7 +1127,7 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
          return kyber_key_length_to_encap_key_length(m_key.key_length());
       }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encapsulated_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encapsulated_key) override {
          // naming from kyber spec
          auto H = mode().H();
          auto G = mode().G();
@@ -1168,13 +1168,8 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
       }
 
    private:
-<<<<<<< HEAD
-      secure_vector<uint8_t> indcpa_dec(std::span<const uint8_t> c) {
+      secure_vector<uint8_t> indcpa_dec(Botan::span<const uint8_t> c) {
          auto ct = Ciphertext::from_bytes(c, mode());
-=======
-      secure_vector<uint8_t> indcpa_dec(const uint8_t c[], size_t c_len) {
-         auto ct = Ciphertext::from_bytes(Botan::span(c, c_len), mode());
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
          return ct.indcpa_decrypt(m_key.m_private->polynomials());
       }
 

@@ -175,7 +175,7 @@ KEM_Encapsulation TLS::Callbacks::tls_kem_encapsulate(TLS::Group_Params group,
          }
 #endif
 
-         throw TLS_Exception(Alert::IllegalParameter, "KEM is not supported");
+         throw TLS_Exception(AlertType::IllegalParameter, "KEM is not supported");
       }();
 
       return PK_KEM_Encryptor(*kem_pub_key, "Raw").encrypt(rng);
@@ -248,15 +248,11 @@ std::unique_ptr<PK_Key_Agreement_Key> TLS::Callbacks::tls_generate_ephemeral_key
    }
 #endif
 
-<<<<<<< HEAD
    if(group_params.is_kem()) {
-      throw TLS_Exception(Alert::IllegalParameter, "cannot generate an ephemeral KEX key for a KEM");
+      throw TLS_Exception(AlertType::IllegalParameter, "cannot generate an ephemeral KEX key for a KEM");
    }
 
-   throw TLS_Exception(Alert::DecodeError, "cannot create a key offering without a group definition");
-=======
-   throw TLS_Exception(AlertType ::DecodeError, "cannot create a key offering without a group definition");
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+   throw TLS_Exception(AlertType::DecodeError, "cannot create a key offering without a group definition");
 }
 
 secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(

@@ -34,7 +34,7 @@ std::unique_ptr<HashFunction> GOST_34_11::copy_state() const {
 /**
 * Hash additional inputs
 */
-void GOST_34_11::add_data(std::span<const uint8_t> input) {
+void GOST_34_11::add_data(Botan::span<const uint8_t> input) {
    BufferSlicer in(input);
 
    while(!in.empty()) {
@@ -200,7 +200,7 @@ void GOST_34_11::compress_n(const uint8_t input[], size_t blocks) {
 /**
 * Produce the final GOST 34.11 output
 */
-void GOST_34_11::final_result(std::span<uint8_t> out) {
+void GOST_34_11::final_result(Botan::span<uint8_t> out) {
    if(!m_buffer.in_alignment()) {
       m_buffer.fill_up_with_zeros();
       compress_n(m_buffer.consume().data(), 1);

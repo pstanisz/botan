@@ -110,24 +110,20 @@ class BOTAN_PUBLIC_API(2, 0) SymmetricAlgorithm {
       * Set the symmetric key of this object.
       * @param key the SymmetricKey to be set.
       */
-      void set_key(const SymmetricKey& key) { set_key(std::span{key.begin(), key.length()}); }
+      void set_key(const SymmetricKey& key) { set_key(Botan::span{key.begin(), key.length()}); }
 
       /**
       * Set the symmetric key of this object.
       * @param key the contiguous byte range to be set.
       */
-<<<<<<< HEAD
-      void set_key(std::span<const uint8_t> key);
-=======
-      void set_key(Botan::span<const uint8_t> key) { set_key(key.data(), key.size()); }
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+      void set_key(Botan::span<const uint8_t> key);
 
       /**
       * Set the symmetric key of this object.
       * @param key the to be set as a byte array.
       * @param length in bytes of key param
       */
-      void set_key(const uint8_t key[], size_t length) { set_key(std::span{key, length}); }
+      void set_key(const uint8_t key[], size_t length) { set_key(Botan::span{key, length}); }
 
       /**
       * @return the algorithm name
@@ -155,7 +151,7 @@ class BOTAN_PUBLIC_API(2, 0) SymmetricAlgorithm {
       * Run the key schedule
       * @param key the key
       */
-      virtual void key_schedule(std::span<const uint8_t> key) = 0;
+      virtual void key_schedule(Botan::span<const uint8_t> key) = 0;
 };
 
 }  // namespace Botan

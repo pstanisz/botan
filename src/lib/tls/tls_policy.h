@@ -122,7 +122,7 @@ class BOTAN_PUBLIC_API(2, 0) Policy {
       * peer. In TLS 1.3 handshakes the peer might have provided cryptographic material
       * for a subset of its available groups. Choosing a group for which no share was
       * provided will result in an additional round trip. If none are acceptable, return
-      * Group_Params::NONE.
+      * Group_Params_Code::NONE.
       *
       * By default this will try to optimize for less round trips even if this results
       * in the usage of a less preferred group.
@@ -467,7 +467,7 @@ class BOTAN_PUBLIC_API(2, 0) NSA_Suite_B_128 : public Policy {
          return std::vector<std::string>({"ECDSA"});
       }
 
-      std::vector<Group_Params> key_exchange_groups() const override { return {Group_Params::SECP256R1}; }
+      std::vector<Group_Params> key_exchange_groups() const override { return {Group_Params_Code::SECP256R1}; }
 
       size_t minimum_signature_strength() const override { return 128; }
 
@@ -499,7 +499,7 @@ class BOTAN_PUBLIC_API(2, 7) NSA_Suite_B_192 : public Policy {
          return std::vector<std::string>({"ECDSA"});
       }
 
-      std::vector<Group_Params> key_exchange_groups() const override { return {Group_Params::SECP384R1}; }
+      std::vector<Group_Params> key_exchange_groups() const override { return {Group_Params_Code::SECP384R1}; }
 
       size_t minimum_signature_strength() const override { return 192; }
 
@@ -537,14 +537,14 @@ class BOTAN_PUBLIC_API(2, 0) BSI_TR_02102_2 : public Policy {
       }
 
       std::vector<Group_Params> key_exchange_groups() const override {
-         return std::vector<Group_Params>({Group_Params::BRAINPOOL512R1,
-                                           Group_Params::BRAINPOOL384R1,
-                                           Group_Params::BRAINPOOL256R1,
-                                           Group_Params::SECP384R1,
-                                           Group_Params::SECP256R1,
-                                           Group_Params::FFDHE_4096,
-                                           Group_Params::FFDHE_3072,
-                                           Group_Params::FFDHE_2048});
+         return std::vector<Group_Params>({Group_Params_Code::BRAINPOOL512R1,
+                                           Group_Params_Code::BRAINPOOL384R1,
+                                           Group_Params_Code::BRAINPOOL256R1,
+                                           Group_Params_Code::SECP384R1,
+                                           Group_Params_Code::SECP256R1,
+                                           Group_Params_Code::FFDHE_4096,
+                                           Group_Params_Code::FFDHE_3072,
+                                           Group_Params_Code::FFDHE_2048});
       }
 
       bool allow_insecure_renegotiation() const override { return false; }

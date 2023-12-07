@@ -158,8 +158,8 @@ class KEX_to_KEM_Adapter_Encryption_Operation final : public PK_Ops::KEM_Encrypt
 
       size_t encapsulated_key_length() const override { return kex_public_value(m_public_key).size(); }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> raw_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> raw_shared_key,
                            Botan::RandomNumberGenerator& rng) override {
          const auto sk = generate_key_agreement_private_key(m_public_key, rng);
          const auto shared_key = PK_Key_Agreement(*sk, rng, "Raw", m_provider)
@@ -168,7 +168,7 @@ class KEX_to_KEM_Adapter_Encryption_Operation final : public PK_Ops::KEM_Encrypt
 
          const auto public_value = sk->public_value();
 
-         // TODO: perhaps avoid these copies by providing std::span out-params
+         // TODO: perhaps avoid these copies by providing Botan::span out-params
          //       for `PK_Key_Agreement::derive_key()` and
          //       `PK_Key_Agreement_Key::public_value()`
          BOTAN_ASSERT_EQUAL(public_value.size(),
@@ -195,7 +195,7 @@ class KEX_to_KEM_Decryption_Operation final : public PK_Ops::KEM_Decryption_with
             m_operation(key, rng, "Raw", provider),
             m_encapsulated_key_length(key.public_value().size()) {}
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encap_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encap_key) override {
          secure_vector<uint8_t> shared_secret = m_operation.derive_key(0 /* no KDF */, encap_key).bits_of();
          BOTAN_ASSERT_EQUAL(
             shared_secret.size(), out_shared_key.size(), "KEX-to-KEM Adapter: shared key out-param has correct length");

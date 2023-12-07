@@ -36,14 +36,14 @@ class SHAKE_Cipher : public StreamCipher {
       size_t buffer_size() const final { return m_keccak.byte_rate(); }
 
    private:
-      void key_schedule(std::span<const uint8_t> key) final;
+      void key_schedule(Botan::span<const uint8_t> key) final;
       /**
       * Produce more XOF output
       */
       void cipher_bytes(const uint8_t in[], uint8_t out[], size_t length) final;
       void generate_keystream(uint8_t out[], size_t length) override;
 
-      void generate_keystream_internal(std::span<uint8_t> out);
+      void generate_keystream_internal(Botan::span<uint8_t> out);
 
       /**
       * IV not supported, this function will throw unless iv_len == 0

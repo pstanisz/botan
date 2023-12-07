@@ -47,7 +47,7 @@ bool ChaCha20Poly1305_Mode::has_keying_material() const {
    return m_chacha->has_keying_material();
 }
 
-void ChaCha20Poly1305_Mode::key_schedule(std::span<const uint8_t> key) {
+void ChaCha20Poly1305_Mode::key_schedule(Botan::span<const uint8_t> key) {
    m_chacha->set_key(key);
 }
 

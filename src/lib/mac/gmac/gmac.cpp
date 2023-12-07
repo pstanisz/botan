@@ -41,7 +41,7 @@ size_t GMAC::output_length() const {
    return GCM_BS;
 }
 
-void GMAC::add_data(std::span<const uint8_t> input) {
+void GMAC::add_data(Botan::span<const uint8_t> input) {
    BufferSlicer in(input);
 
    while(!in.empty()) {
@@ -62,7 +62,7 @@ bool GMAC::has_keying_material() const {
    return m_cipher->has_keying_material();
 }
 
-void GMAC::key_schedule(std::span<const uint8_t> key) {
+void GMAC::key_schedule(Botan::span<const uint8_t> key) {
    clear();
    m_cipher->set_key(key);
 
@@ -70,7 +70,7 @@ void GMAC::key_schedule(std::span<const uint8_t> key) {
    m_ghash->set_key(m_H);
 }
 
-void GMAC::start_msg(std::span<const uint8_t> nonce) {
+void GMAC::start_msg(Botan::span<const uint8_t> nonce) {
    secure_vector<uint8_t> y0(GCM_BS);
 
    if(nonce.size() == 12) {
@@ -87,7 +87,7 @@ void GMAC::start_msg(std::span<const uint8_t> nonce) {
    m_initialized = true;
 }
 
-void GMAC::final_result(std::span<uint8_t> mac) {
+void GMAC::final_result(Botan::span<uint8_t> mac) {
    // This ensures the GMAC computation has been initialized with a fresh
    // nonce. The aim of this check is to prevent developers from re-using
    // nonces (and potential nonce-reuse attacks).

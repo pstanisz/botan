@@ -59,7 +59,7 @@ inline void II(uint32_t& A, uint32_t B, uint32_t C, uint32_t D, uint32_t M) {
 /*
 * MD5 Compression Function
 */
-void MD5::compress_n(MD5::digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void MD5::compress_n(MD5::digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    uint32_t A = digest[0], B = digest[1], C = digest[2], D = digest[3];
    std::array<uint32_t, 16> M;
 
@@ -155,11 +155,11 @@ std::unique_ptr<HashFunction> MD5::copy_state() const {
    return std::make_unique<MD5>(*this);
 }
 
-void MD5::add_data(std::span<const uint8_t> input) {
+void MD5::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void MD5::final_result(std::span<uint8_t> output) {
+void MD5::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

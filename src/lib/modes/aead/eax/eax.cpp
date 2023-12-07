@@ -84,7 +84,7 @@ bool EAX_Mode::has_keying_material() const {
 /*
 * Set the EAX key
 */
-void EAX_Mode::key_schedule(std::span<const uint8_t> key) {
+void EAX_Mode::key_schedule(Botan::span<const uint8_t> key) {
    /*
    * These could share the key schedule, which is one nice part of EAX,
    * but it's much easier to ignore that here...

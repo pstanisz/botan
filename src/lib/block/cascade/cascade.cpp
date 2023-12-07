@@ -28,7 +28,7 @@ void Cascade_Cipher::decrypt_n(const uint8_t in[], uint8_t out[], size_t blocks)
    m_cipher1->decrypt_n(out, out, c1_blocks);
 }
 
-void Cascade_Cipher::key_schedule(std::span<const uint8_t> key) {
+void Cascade_Cipher::key_schedule(Botan::span<const uint8_t> key) {
    BufferSlicer keys(key);
 
    m_cipher1->set_key(keys.take(m_cipher1->maximum_keylength()));

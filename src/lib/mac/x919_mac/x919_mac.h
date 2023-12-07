@@ -35,9 +35,9 @@ class ANSI_X919_MAC final : public MessageAuthenticationCode {
       ANSI_X919_MAC& operator=(const ANSI_X919_MAC&) = delete;
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
-      void key_schedule(std::span<const uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
+      void key_schedule(Botan::span<const uint8_t>) override;
 
       std::unique_ptr<BlockCipher> m_des1, m_des2;
       secure_vector<uint8_t> m_state;

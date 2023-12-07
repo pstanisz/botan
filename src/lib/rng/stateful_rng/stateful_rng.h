@@ -119,11 +119,7 @@ class BOTAN_PUBLIC_API(2, 0) Stateful_RNG : public RandomNumberGenerator {
    private:
       void generate_batched_output(Botan::span<uint8_t> output, Botan::span<const uint8_t> input);
 
-<<<<<<< HEAD
-      void fill_bytes_with_input(std::span<uint8_t> output, std::span<const uint8_t> input) final;
-=======
-      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) override final;
->>>>>>> 1937774b4 ([c++17] Botan 3.1.1 backported to C++17)
+      void fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<const uint8_t> input) final;
 
       void reset_reseed_counter();
 

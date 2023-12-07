@@ -16,7 +16,7 @@ namespace Botan {
 /*
 * Update a HMAC Calculation
 */
-void HMAC::add_data(std::span<const uint8_t> input) {
+void HMAC::add_data(Botan::span<const uint8_t> input) {
    assert_key_material_set();
    m_hash->update(input);
 }
@@ -24,7 +24,7 @@ void HMAC::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize a HMAC Calculation
 */
-void HMAC::final_result(std::span<uint8_t> mac) {
+void HMAC::final_result(Botan::span<uint8_t> mac) {
    assert_key_material_set();
    m_hash->final(mac);
    m_hash->update(m_okey);
@@ -49,7 +49,7 @@ bool HMAC::has_keying_material() const {
 /*
 * HMAC Key Schedule
 */
-void HMAC::key_schedule(std::span<const uint8_t> key) {
+void HMAC::key_schedule(Botan::span<const uint8_t> key) {
    const uint8_t ipad = 0x36;
    const uint8_t opad = 0x5C;
 
