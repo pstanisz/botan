@@ -79,7 +79,7 @@ applications:
 tls_record_received() / tls_emit_data()
 """""""""""""""""""""""""""""""""""""""
 
-Those callbacks now take `std::span<const uint8_t>` instead of `const uint8_t*`
+Those callbacks now take `Botan::span<const uint8_t>` instead of `const uint8_t*`
 with a `size_t` buffer length.
 
 tls_session_established()

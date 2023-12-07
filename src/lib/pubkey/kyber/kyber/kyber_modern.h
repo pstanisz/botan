@@ -35,7 +35,7 @@ class Kyber_Modern_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
 
       std::unique_ptr<HashFunction> KDF() const override { return m_shake256_256->new_object(); }
 
-      Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const override {
+      Botan::XOF& XOF(Botan::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const override {
          m_shake128->clear();
          m_shake128->update(seed);
 
@@ -45,7 +45,7 @@ class Kyber_Modern_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
          return *m_shake128;
       }
 
-      secure_vector<uint8_t> PRF(std::span<const uint8_t> seed,
+      secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
                                  const uint8_t nonce,
                                  const size_t outlen) const override {
          SHAKE_256 kdf(outlen * 8);

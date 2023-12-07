@@ -63,7 +63,7 @@ class Keccak_Permutation final {
       *
       * @param input the input data
       */
-      void absorb(std::span<const uint8_t> input);
+      void absorb(Botan::span<const uint8_t> input);
 
       /**
       * @brief Expand output data from the current Keccak state
@@ -72,7 +72,7 @@ class Keccak_Permutation final {
       *
       * @param output the designated output memory
       */
-      void squeeze(std::span<uint8_t> output);
+      void squeeze(Botan::span<uint8_t> output);
 
       /**
       * @brief Add final padding (as provided in the constructor) and permute

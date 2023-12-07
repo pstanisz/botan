@@ -227,7 +227,7 @@ inline uint64_t left_rot_lo(uint64_t h, uint64_t l, size_t shift) {
 /*
 * Camellia Key Schedule
 */
-void key_schedule(secure_vector<uint64_t>& SK, std::span<const uint8_t> key) {
+void key_schedule(secure_vector<uint64_t>& SK, Botan::span<const uint8_t> key) {
    const uint64_t Sigma1 = 0xA09E667F3BCC908B;
    const uint64_t Sigma2 = 0xB67AE8584CAA73B2;
    const uint64_t Sigma3 = 0xC6EF372FE94F82BE;
@@ -382,15 +382,15 @@ bool Camellia_256::has_keying_material() const {
    return !m_SK.empty();
 }
 
-void Camellia_128::key_schedule(std::span<const uint8_t> key) {
+void Camellia_128::key_schedule(Botan::span<const uint8_t> key) {
    Camellia_F::key_schedule(m_SK, key);
 }
 
-void Camellia_192::key_schedule(std::span<const uint8_t> key) {
+void Camellia_192::key_schedule(Botan::span<const uint8_t> key) {
    Camellia_F::key_schedule(m_SK, key);
 }
 
-void Camellia_256::key_schedule(std::span<const uint8_t> key) {
+void Camellia_256::key_schedule(Botan::span<const uint8_t> key) {
    Camellia_F::key_schedule(m_SK, key);
 }
 

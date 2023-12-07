@@ -12,11 +12,11 @@
 
 #include <botan/dilithium.h>
 
+#include <botan/span.h>
 #include <botan/xof.h>
 #include <botan/internal/shake.h>
 
 #include <memory>
-#include <span>
 #include <vector>
 
 namespace Botan {
@@ -35,22 +35,22 @@ class Dilithium_Symmetric_Primitives {
       virtual ~Dilithium_Symmetric_Primitives() = default;
 
       // H is same for all modes
-      secure_vector<uint8_t> H(std::span<const uint8_t> seed, size_t out_len) const {
+      secure_vector<uint8_t> H(Botan::span<const uint8_t> seed, size_t out_len) const {
          return SHAKE_256(out_len * 8).process(seed.data(), seed.size());
       }
 
       // CRH is same for all modes
-      secure_vector<uint8_t> CRH(std::span<const uint8_t> in, size_t out_len) const {
+      secure_vector<uint8_t> CRH(Botan::span<const uint8_t> in, size_t out_len) const {
          return SHAKE_256(out_len * 8).process(in.data(), in.size());
       }
 
       // ExpandMatrix always uses the 256 version of the XOF
-      secure_vector<uint8_t> ExpandMask(std::span<const uint8_t> seed, uint16_t nonce, size_t out_len) const {
+      secure_vector<uint8_t> ExpandMask(Botan::span<const uint8_t> seed, uint16_t nonce, size_t out_len) const {
          return XOF(XofType::k256, seed, nonce)->output(out_len);
       }
 
       // Mode dependent function
-      virtual std::unique_ptr<Botan::XOF> XOF(XofType type, std::span<const uint8_t> seed, uint16_t nonce) const = 0;
+      virtual std::unique_ptr<Botan::XOF> XOF(XofType type, Botan::span<const uint8_t> seed, uint16_t nonce) const = 0;
 };
 
 enum DilithiumEta : uint32_t { Eta2 = 2, Eta4 = 4 };
@@ -151,19 +151,19 @@ class DilithiumModeConstants {
       size_t nist_security_strength() const { return m_nist_security_strength; }
 
       // Wrapper
-      decltype(auto) H(std::span<const uint8_t> seed, size_t out_len) const {
+      decltype(auto) H(Botan::span<const uint8_t> seed, size_t out_len) const {
          return m_symmetric_primitives->H(seed, out_len);
       }
 
-      secure_vector<uint8_t> CRH(const std::span<const uint8_t> in) const {
+      secure_vector<uint8_t> CRH(const Botan::span<const uint8_t> in) const {
          return m_symmetric_primitives->CRH(in, DilithiumModeConstants::CRHBYTES);
       }
 
-      std::unique_ptr<Botan::XOF> XOF_128(std::span<const uint8_t> seed, uint16_t nonce) const {
+      std::unique_ptr<Botan::XOF> XOF_128(Botan::span<const uint8_t> seed, uint16_t nonce) const {
          return this->m_symmetric_primitives->XOF(Dilithium_Symmetric_Primitives::XofType::k128, seed, nonce);
       }
 
-      std::unique_ptr<Botan::XOF> XOF_256(std::span<const uint8_t> seed, uint16_t nonce) const {
+      std::unique_ptr<Botan::XOF> XOF_256(Botan::span<const uint8_t> seed, uint16_t nonce) const {
          return this->m_symmetric_primitives->XOF(Dilithium_Symmetric_Primitives::XofType::k256, seed, nonce);
       }
 

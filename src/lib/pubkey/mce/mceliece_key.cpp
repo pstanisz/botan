@@ -98,7 +98,7 @@ size_t McEliece_PublicKey::estimated_strength() const {
    return mceliece_work_factor(m_code_length, m_t);
 }
 
-McEliece_PublicKey::McEliece_PublicKey(std::span<const uint8_t> key_bits) {
+McEliece_PublicKey::McEliece_PublicKey(Botan::span<const uint8_t> key_bits) {
    BER_Decoder dec(key_bits);
    size_t n;
    size_t t;
@@ -164,7 +164,7 @@ bool McEliece_PrivateKey::check_key(RandomNumberGenerator& rng, bool /*unused*/)
    return true;
 }
 
-McEliece_PrivateKey::McEliece_PrivateKey(std::span<const uint8_t> key_bits) {
+McEliece_PrivateKey::McEliece_PrivateKey(Botan::span<const uint8_t> key_bits) {
    size_t n, t;
    secure_vector<uint8_t> enc_g;
    BER_Decoder dec_base(key_bits);
@@ -290,8 +290,8 @@ class MCE_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF {
 
       size_t encapsulated_key_length() const override { return (m_key.get_code_length() + 7) / 8; }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> raw_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> raw_shared_key,
                            RandomNumberGenerator& rng) override {
          secure_vector<uint8_t> plaintext = m_key.random_plaintext_element(rng);
 
@@ -325,7 +325,7 @@ class MCE_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF {
 
       size_t encapsulated_key_length() const override { return (m_key.get_code_length() + 7) / 8; }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encapsulated_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encapsulated_key) override {
          secure_vector<uint8_t> plaintext, error_mask;
          mceliece_decrypt(plaintext, error_mask, encapsulated_key.data(), encapsulated_key.size(), m_key);
 

@@ -25,7 +25,7 @@ void poly1305_init(secure_vector<uint64_t>& X, const uint8_t key[32]) {
    const uint64_t t0 = load_le<uint64_t>(key, 0);
    const uint64_t t1 = load_le<uint64_t>(key, 1);
 
-   X[0] = (t0)&0xffc0fffffff;
+   X[0] = (t0) & 0xffc0fffffff;
    X[1] = ((t0 >> 44) | (t1 << 20)) & 0xfffffc0ffff;
    X[2] = ((t1 >> 24)) & 0x00ffffffc0f;
 
@@ -172,7 +172,7 @@ bool Poly1305::has_keying_material() const {
    return m_poly.size() == 8;
 }
 
-void Poly1305::key_schedule(std::span<const uint8_t> key) {
+void Poly1305::key_schedule(Botan::span<const uint8_t> key) {
    m_buf_pos = 0;
    m_buf.resize(16);
    m_poly.resize(8);
@@ -180,7 +180,7 @@ void Poly1305::key_schedule(std::span<const uint8_t> key) {
    poly1305_init(m_poly, key.data());
 }
 
-void Poly1305::add_data(std::span<const uint8_t> input) {
+void Poly1305::add_data(Botan::span<const uint8_t> input) {
    assert_key_material_set();
 
    if(m_buf_pos) {
@@ -205,7 +205,7 @@ void Poly1305::add_data(std::span<const uint8_t> input) {
    m_buf_pos += remaining.size();
 }
 
-void Poly1305::final_result(std::span<uint8_t> out) {
+void Poly1305::final_result(Botan::span<uint8_t> out) {
    assert_key_material_set();
 
    if(m_buf_pos != 0) {

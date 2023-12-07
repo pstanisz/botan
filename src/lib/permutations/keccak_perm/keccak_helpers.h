@@ -11,10 +11,10 @@
 
 #include <array>
 #include <cstdint>
-#include <span>
 
 #include <botan/assert.h>
 #include <botan/concepts.h>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -33,7 +33,7 @@ namespace Botan {
  * @param x       the integer to be left-encoded
  * @return        the byte span that represents the bytes written to @p buffer.
  */
-BOTAN_TEST_API std::span<const uint8_t> keccak_int_left_encode(std::span<uint8_t> buffer, size_t x);
+BOTAN_TEST_API Botan::span<const uint8_t> keccak_int_left_encode(Botan::span<uint8_t> buffer, size_t x);
 
 /**
  * Integer encoding defined in NIST SP.800-185 that can be unambiguously
@@ -50,7 +50,7 @@ BOTAN_TEST_API std::span<const uint8_t> keccak_int_left_encode(std::span<uint8_t
  * @param x    the integer to be right-encoded
  * @return     the byte span that represents the bytes written to @p buffer.
  */
-BOTAN_TEST_API std::span<const uint8_t> keccak_int_right_encode(std::span<uint8_t> out, size_t x);
+BOTAN_TEST_API Botan::span<const uint8_t> keccak_int_right_encode(Botan::span<uint8_t> out, size_t x);
 
 /**
  * @returns the required bytes for encodings of keccak_int_left_encode() or
@@ -67,13 +67,35 @@ constexpr size_t keccak_max_int_encoding_size() {
 }
 
 template <typename T>
-concept updatable_object = requires(T& a, std::span<const uint8_t> span) { a.update(span); };
+using updatable_object = std::void_t<decltype(std::declval<std::remove_reference_t<T>&>().update(
+   std::declval<Botan::span<const uint8_t>>()))>;
+
+template <typename T, typename = void>
+struct is_updatable_object : std::false_type {};
 
 template <typename T>
-concept appendable_object = requires(T& a, std::span<const uint8_t> s) { a.insert(a.end(), s.begin(), s.end()); };
+struct is_updatable_object<T, updatable_object<T>> : std::true_type {};
 
 template <typename T>
-concept absorbing_object = updatable_object<T> || appendable_object<T>;
+constexpr bool is_updatable_object_v = is_updatable_object<T>::value;
+
+template <typename T>
+using appendable_object = std::void_t<decltype(std::declval<std::remove_reference_t<T>&>().insert(
+   std::declval<std::remove_reference_t<T>&>().end(),
+   std::declval<Botan::span<const uint8_t>>().begin(),
+   std::declval<Botan::span<const uint8_t>>().end()))>;
+
+template <typename T, typename = void>
+struct is_appendable_object : std::false_type {};
+
+template <typename T>
+struct is_appendable_object<T, appendable_object<T>> : std::true_type {};
+
+template <typename T>
+constexpr bool is_appendable_object_v = is_appendable_object<T>::value;
+
+template <typename T>
+using absorbing_object = std::enable_if_t<is_updatable_object_v<T> || is_appendable_object_v<T>>;
 
 /**
  * This is a combination of the functions encode_string() and bytepad() defined
@@ -86,8 +108,12 @@ concept absorbing_object = updatable_object<T> || appendable_object<T>;
  *                     absorbed into the given @p xof
  * @returns the number of bytes absorbed into the @p xof
  */
-template <absorbing_object T, typename... Ts>
-   requires(concepts::constructible_from<std::span<const uint8_t>, Ts> && ...)
+template <typename T,
+          typename... Ts,
+          typename = absorbing_object<T>>  //,
+                                           //typename = concepts::constructible_from<Botan::span<const uint8_t>, Ts...>>
+// TODO: pstanisz check if above and below are equivalent
+//requires(concepts::constructible_from<Botan::span<const uint8_t>, Ts> && ...)
 size_t keccak_absorb_padded_strings_encoding(T& sink, size_t padding_mod, Ts... byte_strings) {
    BOTAN_ASSERT_NOMSG(padding_mod > 0);
 
@@ -96,17 +122,17 @@ size_t keccak_absorb_padded_strings_encoding(T& sink, size_t padding_mod, Ts... 
 
    // absorbs byte strings and counts the number of absorbed bytes
    size_t bytes_absorbed = 0;
-   auto absorb = [&](std::span<const uint8_t> bytes) {
-      if constexpr(updatable_object<T>) {
+   auto absorb = [&](Botan::span<const uint8_t> bytes) {
+      if constexpr(is_updatable_object_v<T>) {
          sink.update(bytes);
-      } else if constexpr(appendable_object<T>) {
+      } else if constexpr(is_appendable_object_v<T>) {
          sink.insert(sink.end(), bytes.begin(), bytes.end());
       }
       bytes_absorbed += bytes.size();
    };
 
    // encodes a given string and absorbs it into the XOF straight away
-   auto encode_string_and_absorb = [&](std::span<const uint8_t> bytes) {
+   auto encode_string_and_absorb = [&](Botan::span<const uint8_t> bytes) {
       absorb(keccak_int_left_encode(int_encoding_buffer, bytes.size() * 8));
       absorb(bytes);
    };

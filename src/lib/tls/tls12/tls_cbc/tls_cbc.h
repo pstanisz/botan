@@ -24,7 +24,7 @@ class BOTAN_TEST_API TLS_CBC_HMAC_AEAD_Mode : public AEAD_Mode {
    public:
       std::string name() const final;
 
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) override;
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override;
 
       size_t update_granularity() const final;
 
@@ -84,7 +84,7 @@ class BOTAN_TEST_API TLS_CBC_HMAC_AEAD_Mode : public AEAD_Mode {
       void start_msg(const uint8_t nonce[], size_t nonce_len) final;
       size_t process_msg(uint8_t buf[], size_t sz) final;
 
-      void key_schedule(std::span<const uint8_t> key) final;
+      void key_schedule(Botan::span<const uint8_t> key) final;
 
       const std::string m_cipher_name;
       const std::string m_mac_name;
@@ -125,7 +125,7 @@ class BOTAN_TEST_API TLS_CBC_HMAC_AEAD_Encryption final : public TLS_CBC_HMAC_AE
                                    version,
                                    use_encrypt_then_mac) {}
 
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) override;
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override;
 
       size_t output_length(size_t input_length) const override;
 

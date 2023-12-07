@@ -804,7 +804,7 @@ class BOTAN_PUBLIC_API(2, 0) BigInt final {
      * @result a secure_vector<uint8_t> containing the encoded BigInt
      */
       static secure_vector<uint8_t> encode_1363(const BigInt& n, size_t bytes);
-      static void encode_1363(std::span<uint8_t> out, const BigInt& n);
+      static void encode_1363(Botan::span<uint8_t> out, const BigInt& n);
 
       static void encode_1363(uint8_t out[], size_t bytes, const BigInt& n);
 
@@ -964,19 +964,19 @@ inline BigInt operator-(const BigInt& x, word y) {
    return BigInt::add2(x, &y, 1, BigInt::Negative);
 }
 
-BigInt BOTAN_PUBLIC_API(2, 0) operator*(const BigInt& x, const BigInt& y);
-BigInt BOTAN_PUBLIC_API(2, 8) operator*(const BigInt& x, word y);
+BigInt BOTAN_PUBLIC_API(2, 0) operator*(const BigInt & x, const BigInt & y);
+BigInt BOTAN_PUBLIC_API(2, 8) operator*(const BigInt & x, word y);
 
 inline BigInt operator*(word x, const BigInt& y) {
    return y * x;
 }
 
-BigInt BOTAN_PUBLIC_API(2, 0) operator/(const BigInt& x, const BigInt& d);
-BigInt BOTAN_PUBLIC_API(2, 0) operator/(const BigInt& x, word m);
-BigInt BOTAN_PUBLIC_API(2, 0) operator%(const BigInt& x, const BigInt& m);
-word BOTAN_PUBLIC_API(2, 0) operator%(const BigInt& x, word m);
-BigInt BOTAN_PUBLIC_API(2, 0) operator<<(const BigInt& x, size_t n);
-BigInt BOTAN_PUBLIC_API(2, 0) operator>>(const BigInt& x, size_t n);
+BigInt BOTAN_PUBLIC_API(2, 0) operator/(const BigInt & x, const BigInt & d);
+BigInt BOTAN_PUBLIC_API(2, 0) operator/(const BigInt & x, word m);
+BigInt BOTAN_PUBLIC_API(2, 0) operator%(const BigInt & x, const BigInt & m);
+word BOTAN_PUBLIC_API(2, 0) operator%(const BigInt & x, word m);
+BigInt BOTAN_PUBLIC_API(2, 0) operator<<(const BigInt & x, size_t n);
+BigInt BOTAN_PUBLIC_API(2, 0) operator>>(const BigInt & x, size_t n);
 
 /*
 * Comparison Operators

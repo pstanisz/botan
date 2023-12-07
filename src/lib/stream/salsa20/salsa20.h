@@ -39,7 +39,7 @@ class Salsa20 final : public StreamCipher {
       void set_iv_bytes(const uint8_t iv[], size_t iv_len) override;
 
    private:
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       void initialize_state();
 

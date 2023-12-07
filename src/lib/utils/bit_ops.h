@@ -20,9 +20,8 @@ namespace Botan {
 * If top bit of arg is set, return ~0. Otherwise return 0.
 */
 template <typename T>
-inline constexpr T expand_top_bit(T a)
-   requires(std::is_integral<T>::value)
-{
+inline constexpr T expand_top_bit(T a) {
+   static_assert(std::is_integral<T>::value, "expand_top_bit needs integral");
    return static_cast<T>(0) - (a >> (sizeof(T) * 8 - 1));
 }
 
@@ -30,9 +29,8 @@ inline constexpr T expand_top_bit(T a)
 * If arg is zero, return ~0. Otherwise return 0
 */
 template <typename T>
-inline constexpr T ct_is_zero(T x)
-   requires(std::is_integral<T>::value)
-{
+inline constexpr T ct_is_zero(T x) {
+   static_assert(std::is_integral<T>::value, "ct_is_zero needs integral");
    return expand_top_bit<T>(~x & (x - 1));
 }
 
@@ -42,9 +40,8 @@ inline constexpr T ct_is_zero(T x)
 * @return true iff arg is 2^n for some n > 0
 */
 template <typename T>
-inline constexpr bool is_power_of_2(T arg)
-   requires(std::is_unsigned<T>::value)
-{
+inline constexpr bool is_power_of_2(T arg) {
+   static_assert(std::is_unsigned<T>::value, "is_power_of_2 needs unsigned");
    return (arg != 0) && (arg != 1) && ((arg & static_cast<T>(arg - 1)) == 0);
 }
 
@@ -55,9 +52,8 @@ inline constexpr bool is_power_of_2(T arg)
 * @return index of the highest set bit in n
 */
 template <typename T>
-inline constexpr size_t high_bit(T n)
-   requires(std::is_unsigned<T>::value)
-{
+inline constexpr size_t high_bit(T n) {
+   static_assert(std::is_unsigned<T>::value, "high_bit needs unsigned");
    size_t hb = 0;
 
    for(size_t s = 8 * sizeof(T) / 2; s > 0; s /= 2) {
@@ -77,9 +73,8 @@ inline constexpr size_t high_bit(T n)
 * @return number of significant bytes in n
 */
 template <typename T>
-inline constexpr size_t significant_bytes(T n)
-   requires(std::is_integral<T>::value)
-{
+inline constexpr size_t significant_bytes(T n) {
+   static_assert(std::is_integral<T>::value, "significant_bytes needs integral");
    size_t b = 0;
 
    for(size_t s = 8 * sizeof(n) / 2; s >= 8; s /= 2) {
@@ -99,9 +94,9 @@ inline constexpr size_t significant_bytes(T n)
 * @return maximum x st 2^x divides n
 */
 template <typename T>
-inline constexpr size_t ctz(T n)
-   requires(std::is_integral<T>::value)
-{
+inline constexpr size_t ctz(T n) {
+   static_assert(std::is_integral<T>::value, "ctz needs integral");
+
    /*
    * If n == 0 then this function will compute 8*sizeof(T)-1, so
    * initialize lb to 1 if n == 0 to produce the expected result.
@@ -118,10 +113,8 @@ inline constexpr size_t ctz(T n)
    return lb;
 }
 
-template <typename T>
-constexpr uint8_t ceil_log2(T x)
-   requires(std::is_integral<T>::value && sizeof(T) < 32)
-{
+template <typename T, typename = std::enable_if_t<std::is_integral<T>::value && (sizeof(T) < 32)>>
+constexpr uint8_t ceil_log2(T x) {
    if(x >> (sizeof(T) * 8 - 1)) {
       return sizeof(T) * 8;
    }
@@ -140,10 +133,8 @@ constexpr uint8_t ceil_log2(T x)
 /**
  * Return the number of bytes necessary to contain @p bits bits.
  */
-template <typename T>
-inline constexpr T ceil_tobytes(T bits)
-   requires(std::is_integral<T>::value)
-{
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+inline constexpr T ceil_tobytes(T bits) {
    return (bits + 7) / 8;
 }
 

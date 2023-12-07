@@ -9,8 +9,8 @@
 #define BOTAN_MEMORY_OPS_H_
 
 #include <botan/types.h>
+#include <botan/span.h>
 #include <cstring>
-#include <span>
 #include <type_traits>
 #include <vector>
 
@@ -116,29 +116,27 @@ inline constexpr void clear_mem(T* ptr, size_t n) {
 * @param in the source array
 * @param n the number of elements of in/out
 */
-template <typename T>
-inline constexpr void copy_mem(T* out, const T* in, size_t n)
-   requires std::is_trivial<typename std::decay<T>::type>::value
+template<typename T> inline constexpr void copy_mem(T* out, const T* in, size_t n)
 {
-   BOTAN_ASSERT_IMPLICATION(n > 0, in != nullptr && out != nullptr, "If n > 0 then args are not null");
+   static_assert(std::is_trivial<typename std::decay<T>::type>::value, "");
+   BOTAN_ASSERT_IMPLICATION(n > 0, in != nullptr && out != nullptr,
+                            "If n > 0 then args are not null");
 
    if(in != nullptr && out != nullptr && n > 0) {
       std::memmove(out, in, sizeof(T) * n);
    }
 }
 
-template <typename T>
-inline constexpr void typecast_copy(uint8_t out[], T in[], size_t N)
-   requires std::is_trivially_copyable<T>::value
+template<typename T> inline constexpr void typecast_copy(uint8_t out[], T in[], size_t N)
 {
-   std::memcpy(out, in, sizeof(T) * N);
+   static_assert(std::is_trivially_copyable<T>::value, "");
+   std::memcpy(out, in, sizeof(T)*N);
 }
 
-template <typename T>
-inline constexpr void typecast_copy(T out[], const uint8_t in[], size_t N)
-   requires std::is_trivial<T>::value
+template<typename T> inline constexpr void typecast_copy(T out[], const uint8_t in[], size_t N)
 {
-   std::memcpy(out, in, sizeof(T) * N);
+   static_assert(std::is_trivial<T>::value, "");
+   std::memcpy(out, in, sizeof(T)*N);
 }
 
 template <typename T>
@@ -146,17 +144,15 @@ inline constexpr void typecast_copy(uint8_t out[], T in) {
    typecast_copy(out, &in, 1);
 }
 
-template <typename T>
-inline constexpr void typecast_copy(T& out, const uint8_t in[])
-   requires std::is_trivial<typename std::decay<T>::type>::value
+template<typename T> inline constexpr void typecast_copy(T& out, const uint8_t in[])
 {
+   static_assert(std::is_trivial<typename std::decay<T>::type>::value, "");
    typecast_copy(&out, in, 1);
 }
 
-template <class To, class FromT>
-inline constexpr To typecast_copy(const FromT* src) noexcept
-   requires std::is_trivially_copyable<FromT>::value && std::is_trivial<To>::value
+template <class To, class FromT> inline constexpr To typecast_copy(const FromT *src) noexcept
 {
+   static_assert(std::is_trivially_copyable<FromT>::value && std::is_trivial<To>::value, "");
    To dst;
    std::memcpy(&dst, src, sizeof(To));
    return dst;
@@ -287,7 +283,7 @@ inline void xor_buf(uint8_t out[], const uint8_t in[], const uint8_t in2[], size
    }
 }
 
-inline void xor_buf(std::span<uint8_t> out, std::span<const uint8_t> in, size_t n) {
+inline void xor_buf(Botan::span<uint8_t> out, Botan::span<const uint8_t> in, size_t n) {
    xor_buf(out.data(), in.data(), n);
 }
 

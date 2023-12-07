@@ -10,11 +10,11 @@
 
 namespace Botan {
 
-void RawHashFunction::add_data(std::span<const uint8_t> input) {
+void RawHashFunction::add_data(Botan::span<const uint8_t> input) {
    m_bits += std::make_pair(input.data(), input.size());
 }
 
-void RawHashFunction::final_result(std::span<uint8_t> out) {
+void RawHashFunction::final_result(Botan::span<uint8_t> out) {
    if(m_output_length > 0 && m_bits.size() != m_output_length) {
       m_bits.clear();
       throw Invalid_Argument("Raw padding was configured to use a " + std::to_string(m_output_length) +

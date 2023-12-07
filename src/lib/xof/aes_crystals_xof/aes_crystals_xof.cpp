@@ -22,7 +22,7 @@ void AES_256_CTR_XOF::reset() {
    m_stream_cipher->clear();
 }
 
-void AES_256_CTR_XOF::start_msg(std::span<const uint8_t> iv, std::span<const uint8_t> key) {
+void AES_256_CTR_XOF::start_msg(Botan::span<const uint8_t> iv, Botan::span<const uint8_t> key) {
    m_stream_cipher->set_key(key);
    m_stream_cipher->set_iv(iv);
 }
@@ -39,13 +39,13 @@ std::unique_ptr<XOF> AES_256_CTR_XOF::copy_state() const {
    throw Not_Implemented(fmt("Copying the state of XOF {} is not implemented", name()));
 }
 
-void AES_256_CTR_XOF::add_data(std::span<const uint8_t> input) {
+void AES_256_CTR_XOF::add_data(Botan::span<const uint8_t> input) {
    if(!input.empty()) {
       throw Not_Implemented(fmt("XOF {} does not support data input", name()));
    }
 }
 
-void AES_256_CTR_XOF::generate_bytes(std::span<uint8_t> output) {
+void AES_256_CTR_XOF::generate_bytes(Botan::span<uint8_t> output) {
    m_stream_cipher->write_keystream(output);
 }
 

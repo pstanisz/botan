@@ -57,7 +57,7 @@ std::unique_ptr<Sphincs_Hash_Functions> Sphincs_Hash_Functions::create(const Sph
 namespace {
 
 template <typename T>
-T from_first_n_bits(const uint32_t nbits, std::span<const uint8_t> bytes) {
+T from_first_n_bits(const uint32_t nbits, Botan::span<const uint8_t> bytes) {
    using wrapped_type = typename T::wrapped_type;
 
    constexpr const auto outsize = sizeof(wrapped_type);
@@ -76,7 +76,7 @@ T from_first_n_bits(const uint32_t nbits, std::span<const uint8_t> bytes) {
 }  // namespace
 
 std::tuple<SphincsHashedMessage, XmssTreeIndexInLayer, TreeNodeIndex> Sphincs_Hash_Functions::H_msg(
-   StrongSpan<const SphincsMessageRandomness> r, const SphincsTreeNode& root, std::span<const uint8_t> message) {
+   StrongSpan<const SphincsMessageRandomness> r, const SphincsTreeNode& root, Botan::span<const uint8_t> message) {
    const auto digest = H_msg_digest(r, root, message);
 
    // The following calculates the message digest and indices from the

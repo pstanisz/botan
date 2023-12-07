@@ -33,14 +33,14 @@ class Kyber_90s_Symmetric_Primitives : public Kyber_Symmetric_Primitives {
 
       std::unique_ptr<HashFunction> KDF() const override { return m_sha256->new_object(); }
 
-      Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> mpos) const override {
+      Botan::XOF& XOF(Botan::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> mpos) const override {
          m_aes256_ctr_xof->clear();
          const std::array<uint8_t, 12> iv{std::get<0>(mpos), std::get<1>(mpos), 0};
          m_aes256_ctr_xof->start(iv, seed);
          return *m_aes256_ctr_xof;
       }
 
-      secure_vector<uint8_t> PRF(std::span<const uint8_t> seed,
+      secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed,
                                  const uint8_t nonce,
                                  const size_t outlen) const override {
          m_aes256_ctr_prf->clear();

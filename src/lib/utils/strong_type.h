@@ -2,6 +2,7 @@
  * A wrapper class to implement strong types
  * (C) 2022 Jack Lloyd
  *     2022 René Meusel - Rohde & Schwarz Cybersecurity
+ *     2023 Piotr Staniszewski - CodeVision
  *
  * Botan is released under the Simplified BSD License (see license.txt)
  */
@@ -9,10 +10,9 @@
 #ifndef BOTAN_STRONG_TYPE_H_
 #define BOTAN_STRONG_TYPE_H_
 
-#include <ostream>
-#include <span>
-
 #include <botan/concepts.h>
+#include <botan/span.h>
+#include <ostream>
 
 namespace Botan {
 
@@ -52,20 +52,20 @@ class Strong_Base {
       const T& get() const { return m_value; }
 };
 
-template <typename T>
+template <typename T, typename = void>
 class Strong_Adapter : public Strong_Base<T> {
    public:
       using Strong_Base<T>::Strong_Base;
 };
 
-template <concepts::integral T>
-class Strong_Adapter<T> : public Strong_Base<T> {
+template <typename T>
+class Strong_Adapter<T, std::enable_if_t<concepts::is_integral_v<T>>> : public Strong_Base<T> {
    public:
       using Strong_Base<T>::Strong_Base;
 };
 
-template <concepts::container T>
-class Strong_Adapter<T> : public Strong_Base<T> {
+template <typename T>
+class Strong_Adapter<T, std::enable_if_t<concepts::is_container_v<T>>> : public Strong_Base<T> {
    public:
       using value_type = typename T::value_type;
       using size_type = typename T::size_type;
@@ -77,23 +77,20 @@ class Strong_Adapter<T> : public Strong_Base<T> {
    public:
       using Strong_Base<T>::Strong_Base;
 
-      explicit Strong_Adapter(std::span<const value_type> span)
-         requires(concepts::contiguous_container<T>)
-            : Strong_Adapter(T(span.begin(), span.end())) {}
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
+      explicit Strong_Adapter(Botan::span<const value_type> span) : Strong_Adapter(T(span.begin(), span.end())) {}
 
-      explicit Strong_Adapter(size_t size)
-         requires(concepts::resizable_container<T>)
-            : Strong_Adapter(T(size)) {}
+      template <typename U = T, typename = std::enable_if_t<concepts::is_resizable_container_v<U>>>
+      explicit Strong_Adapter(size_t size) : Strong_Adapter(T(size)) {}
 
       template <typename InputIt>
       Strong_Adapter(InputIt begin, InputIt end) : Strong_Adapter(T(begin, end)) {}
 
       // Disambiguates the usage of string literals, otherwise:
-      // Strong_Adapter(std::span<>) and Strong_Adapter(const char*)
+      // Strong_Adapter(Botan::span<>) and Strong_Adapter(const char*)
       // would be ambiguous.
-      explicit Strong_Adapter(const char* str)
-         requires(std::same_as<T, std::string>)
-            : Strong_Adapter(std::string(str)) {}
+      template <typename U = T, typename = std::enable_if_t<concepts::same_as_v<U, std::string>>>
+      explicit Strong_Adapter(const char* str) : Strong_Adapter(std::string(str)) {}
 
    public:
       decltype(auto) begin() noexcept(noexcept(this->get().begin())) { return this->get().begin(); }
@@ -114,27 +111,23 @@ class Strong_Adapter<T> : public Strong_Base<T> {
 
       size_type size() const noexcept(noexcept(this->get().size())) { return this->get().size(); }
 
-      decltype(auto) data() noexcept(noexcept(this->get().data()))
-         requires(concepts::contiguous_container<T>)
-      {
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
+      decltype(auto) data() noexcept(noexcept(this->get().data())) {
          return this->get().data();
       }
 
-      decltype(auto) data() const noexcept(noexcept(this->get().data()))
-         requires(concepts::contiguous_container<T>)
-      {
+      template <typename U = T, typename = std::enable_if_t<concepts::is_contiguous_container_v<U>>>
+      decltype(auto) data() const noexcept(noexcept(this->get().data())) {
          return this->get().data();
       }
 
-      bool empty() const noexcept(noexcept(this->get().empty()))
-         requires(concepts::has_empty<T>)
-      {
+      template <typename U = T, typename = std::enable_if_t<concepts::has_empty_method_v<U>>>
+      bool empty() const noexcept(noexcept(this->get().empty())) {
          return this->get().empty();
       }
 
-      void resize(size_type size) noexcept(noexcept(this->get().resize(size)))
-         requires(concepts::resizable_container<T>)
-      {
+      template <typename U = T, typename = std::enable_if_t<concepts::is_resizable_container_v<U>>>
+      void resize(size_type size) noexcept(noexcept(this->get().resize(size))) {
          this->get().resize(size);
       }
 };
@@ -161,342 +154,480 @@ class Strong : public detail::Strong_Adapter<T> {
       using Tag = TagTypeT;
 };
 
-template <typename T, typename... Tags>
-   requires(concepts::streamable<T>) decltype(auto)
-operator<<(std::ostream& os, const Strong<T, Tags...>& v) {
+template <typename T, typename... Tags, typename = concepts::streamable<T>>
+decltype(auto) operator<<(std::ostream& os, const Strong<T, Tags...>& v) {
    return os << v.get();
 }
 
-template <typename T, typename... Tags>
-   requires(concepts::equality_comparable<T>) bool
-operator==(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+template <typename T, typename... Tags, typename = concepts::equality_comparable<T>>
+bool operator==(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
    return lhs.get() == rhs.get();
 }
 
-template <typename T, typename... Tags>
-   requires(concepts::three_way_comparable<T>)
-auto operator<=>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
-   return lhs.get() <=> rhs.get();
+template <typename T, typename... Tags, typename = concepts::equality_comparable<T>>
+bool operator!=(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+   return !operator==(lhs, rhs);
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-auto operator<=>(T1 a, Strong<T2, Tags...> b) {
-   return a <=> b.get();
+template <typename T, typename... Tags, typename = concepts::less_comparable<T>>
+auto operator<(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+   return lhs.get() < rhs.get();
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-auto operator<=>(Strong<T1, Tags...> a, T2 b) {
-   return a.get() <=> b;
+template <typename T, typename... Tags, typename = concepts::greater_comparable<T>>
+auto operator>(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+   return lhs.get() > rhs.get();
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
+template <typename T, typename... Tags, typename = concepts::less_comparable<T>>
+auto operator<=(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+   return lhs.get() <= rhs.get();
+}
+
+template <typename T, typename... Tags, typename = concepts::greater_comparable<T>>
+auto operator>=(const Strong<T, Tags...>& lhs, const Strong<T, Tags...>& rhs) {
+   return lhs.get() >= rhs.get();
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator<(T1 a, Strong<T2, Tags...> b) {
+   return a < b.get();
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator<=(Strong<T1, Tags...> a, T2 b) {
+   return a.get() <= b;
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator<=(T1 a, Strong<T2, Tags...> b) {
+   return a <= b.get();
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator>=(Strong<T1, Tags...> a, T2 b) {
+   return a.get() >= b;
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator>=(T1 a, Strong<T2, Tags...> b) {
+   return a >= b.get();
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator<(Strong<T1, Tags...> a, T2 b) {
+   return a.get() < b;
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator>(T1 a, Strong<T2, Tags...> b) {
+   return a > b.get();
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator>(Strong<T1, Tags...> a, T2 b) {
+   return a.get() > b;
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
 auto operator==(T1 a, Strong<T2, Tags...> b) {
    return a == b.get();
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
 auto operator==(Strong<T1, Tags...> a, T2 b) {
    return a.get() == b;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator!=(T1 a, Strong<T2, Tags...> b) {
+   return !operator==(a, b);
+}
+
+template <typename T1, typename T2, typename... Tags, typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2>>>
+auto operator!=(Strong<T1, Tags...> a, T2 b) {
+   return !operator==(a, b);
+}
+
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator+(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a + b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator+(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() + b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator+(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() + b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator-(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a - b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator-(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() - b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator-(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() - b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator*(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a * b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator*(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() * b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator*(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() * b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator/(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a / b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator/(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() / b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator/(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() / b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator^(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a ^ b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator^(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() ^ b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator^(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() ^ b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator&(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a & b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator&(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() & b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator&(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() & b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator|(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a | b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator|(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() | b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator|(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() | b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator>>(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a >> b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator>>(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() >> b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator>>(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() >> b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator<<(T1 a, Strong<T2, Tags...> b) {
    return Strong<T2, Tags...>(a << b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr decltype(auto) operator<<(Strong<T1, Tags...> a, T2 b) {
    return Strong<T1, Tags...>(a.get() << b);
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr decltype(auto) operator<<(Strong<T, Tags...> a, Strong<T, Tags...> b) {
    return Strong<T, Tags...>(a.get() << b.get());
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator+=(Strong<T1, Tags...>& a, T2 b) {
    a.get() += b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator+=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() += b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator-=(Strong<T1, Tags...>& a, T2 b) {
    a.get() -= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator-=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() -= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator*=(Strong<T1, Tags...>& a, T2 b) {
    a.get() *= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator*=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() *= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator/=(Strong<T1, Tags...>& a, T2 b) {
    a.get() /= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator/=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() /= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator^=(Strong<T1, Tags...>& a, T2 b) {
    a.get() ^= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator^=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() ^= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator&=(Strong<T1, Tags...>& a, T2 b) {
    a.get() &= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator&=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() &= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator|=(Strong<T1, Tags...>& a, T2 b) {
    a.get() |= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator|=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() |= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator>>=(Strong<T1, Tags...>& a, T2 b) {
    a.get() >>= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator>>=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() >>= b.get();
    return a;
 }
 
-template <concepts::integral T1, concepts::integral T2, typename... Tags>
-   requires(detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>)
+template <typename T1,
+          typename T2,
+          typename... Tags,
+          typename = std::enable_if_t<concepts::is_both_integral_v<T1, T2> &&
+                                      detail::has_capability<EnableArithmeticWithPlainNumber, Tags...>>>
 constexpr auto operator<<=(Strong<T1, Tags...>& a, T2 b) {
    a.get() <<= b;
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator<<=(Strong<T, Tags...>& a, Strong<T, Tags...> b) {
    a.get() <<= b.get();
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator++(Strong<T, Tags...>& a, int) {
    auto tmp = a;
    ++a.get();
    return tmp;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator++(Strong<T, Tags...>& a) {
    ++a.get();
    return a;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator--(Strong<T, Tags...>& a, int) {
    auto tmp = a;
    --a.get();
    return tmp;
 }
 
-template <concepts::integral T, typename... Tags>
+template <typename T, typename... Tags, typename = std::enable_if_t<concepts::is_integral_v<T>>>
 constexpr auto operator--(Strong<T, Tags...>& a) {
    --a.get();
    return a;
 }
 
 /**
- * This mimmicks a std::span but keeps track of the strong-type information. Use
+ * This mimmicks a Botan::span but keeps track of the strong-type information. Use
  * this when you would want to use `const Strong<...>&` as a parameter
  * declaration. In particular this allows assigning strong-type information to
  * slices of a bigger buffer without copying the bytes. E.g:
@@ -510,10 +641,11 @@ constexpr auto operator--(Strong<T, Tags...>& a) {
  *    bar(slicer.take<Foo>());  // This does not copy the data from buffer but
  *                              // just annotates the 'Foo' strong-type info.
  */
-template <concepts::contiguous_strong_type T>
+template <typename T, typename = concepts::contiguous_strong_type<T>>
 class StrongSpan {
-      using underlying_span = std::
-         conditional_t<std::is_const_v<T>, std::span<const typename T::value_type>, std::span<typename T::value_type>>;
+      using underlying_span = std::conditional_t<std::is_const_v<T>,
+                                                 Botan::span<const typename T::value_type>,
+                                                 Botan::span<typename T::value_type>>;
 
    public:
       using value_type = typename underlying_span::value_type;
@@ -538,8 +670,9 @@ class StrongSpan {
       //       a declaration of an ordinary copy constructor. The existance of a copy constructor
       //       is interpreted as "not cheap to copy", setting off the `performance-unnecessary-value-param` check.
       //       See also: https://github.com/randombit/botan/issues/3591
-      template <concepts::contiguous_strong_type T2,
-                typename = std::enable_if_t<std::is_same_v<T2, std::remove_const_t<T>>>>
+      template <typename T2,
+                typename = std::enable_if_t<concepts::is_contiguous_strong_type_v<T2> &&
+                                            std::is_same_v<T2, std::remove_const_t<T>>>>
       StrongSpan(const StrongSpan<T2>& other) : m_span(other.get()) {}
 
       StrongSpan(const StrongSpan& other) = default;
@@ -547,12 +680,12 @@ class StrongSpan {
       ~StrongSpan() = default;
 
       /**
-       * @returns the underlying std::span without any type constraints
+       * @returns the underlying Botan::span without any type constraints
        */
       underlying_span get() const { return m_span; }
 
       /**
-       * @returns the underlying std::span without any type constraints
+       * @returns the underlying Botan::span without any type constraints
        */
       underlying_span get() { return m_span; }
 

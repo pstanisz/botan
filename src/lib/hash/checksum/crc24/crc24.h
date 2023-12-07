@@ -35,8 +35,8 @@ class CRC24 final : public HashFunction {
       ~CRC24() override { clear(); }
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
       uint32_t m_crc;
 };
 

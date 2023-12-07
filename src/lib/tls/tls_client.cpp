@@ -40,7 +40,7 @@ Client::Client(const std::shared_ptr<Callbacks>& callbacks,
                    "Policy does not allow to offer requested protocol version");
 
 #if defined(BOTAN_HAS_TLS_13)
-   if(offer_version == Protocol_Version::TLS_V13) {
+   if(offer_version == Version_Code::TLS_V13) {
       m_impl = std::make_unique<Client_Impl_13>(
          callbacks, session_manager, creds, policy, rng, std::move(info), next_protocols);
 
@@ -87,7 +87,7 @@ size_t Client::downgrade() {
    }
 }
 
-size_t Client::from_peer(std::span<const uint8_t> data) {
+size_t Client::from_peer(Botan::span<const uint8_t> data) {
    auto read = m_impl->from_peer(data);
 
    if(m_impl->is_downgrading()) {
@@ -137,7 +137,7 @@ bool Client::secure_renegotiation_supported() const {
    return m_impl->secure_renegotiation_supported();
 }
 
-void Client::to_peer(std::span<const uint8_t> data) {
+void Client::to_peer(Botan::span<const uint8_t> data) {
    m_impl->to_peer(data);
 }
 

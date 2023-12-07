@@ -11,8 +11,8 @@
 #include <botan/asn1_obj.h>
 #include <botan/pk_keys.h>
 #include <botan/pk_ops_fwd.h>
+#include <botan/span.h>
 #include <botan/symkey.h>
-#include <span>
 #include <string>
 #include <string_view>
 #include <utility>
@@ -44,7 +44,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Encryptor {
       * @param rng the random number source to use
       * @return encrypted message
       */
-      std::vector<uint8_t> encrypt(std::span<const uint8_t> in, RandomNumberGenerator& rng) const {
+      std::vector<uint8_t> encrypt(Botan::span<const uint8_t> in, RandomNumberGenerator& rng) const {
          return enc(in.data(), in.size(), rng);
       }
 
@@ -93,7 +93,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Decryptor {
       * @param in the ciphertext
       * @return decrypted message
       */
-      secure_vector<uint8_t> decrypt(std::span<const uint8_t> in) const { return decrypt(in.data(), in.size()); }
+      secure_vector<uint8_t> decrypt(Botan::span<const uint8_t> in) const { return decrypt(in.data(), in.size()); }
 
       /**
       * Decrypt a ciphertext. If the ciphertext is invalid (eg due to
@@ -194,7 +194,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Signer final {
       * @param rng the rng to use
       * @return signature
       */
-      std::vector<uint8_t> sign_message(std::span<const uint8_t> in, RandomNumberGenerator& rng) {
+      std::vector<uint8_t> sign_message(Botan::span<const uint8_t> in, RandomNumberGenerator& rng) {
          return sign_message(in.data(), in.size(), rng);
       }
 
@@ -215,7 +215,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Signer final {
       * Add a message part.
       * @param in the message part to add
       */
-      void update(std::span<const uint8_t> in) { update(in.data(), in.size()); }
+      void update(Botan::span<const uint8_t> in) { update(in.data(), in.size()); }
 
       /**
       * Add a message part.
@@ -322,7 +322,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Verifier final {
       * @param sig the signature
       * @return true if the signature is valid
       */
-      bool verify_message(std::span<const uint8_t> msg, std::span<const uint8_t> sig) {
+      bool verify_message(Botan::span<const uint8_t> msg, Botan::span<const uint8_t> sig) {
          return verify_message(msg.data(), msg.size(), sig.data(), sig.size());
       }
 
@@ -346,7 +346,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Verifier final {
       * signature to be verified.
       * @param in the new message part
       */
-      void update(std::span<const uint8_t> in) { update(in.data(), in.size()); }
+      void update(Botan::span<const uint8_t> in) { update(in.data(), in.size()); }
 
       /**
       * Add a message part of the message corresponding to the
@@ -369,7 +369,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Verifier final {
       * @param sig the signature to be verified
       * @return true if the signature is valid, false otherwise
       */
-      bool check_signature(std::span<const uint8_t> sig) { return check_signature(sig.data(), sig.size()); }
+      bool check_signature(Botan::span<const uint8_t> sig) { return check_signature(sig.data(), sig.size()); }
 
       /**
       * Set the format of the signatures fed to this verifier.
@@ -435,7 +435,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Key_Agreement final {
       * @param params_len the length of params in bytes
       */
       SymmetricKey derive_key(size_t key_len,
-                              std::span<const uint8_t> in,
+                              Botan::span<const uint8_t> in,
                               const uint8_t params[],
                               size_t params_len) const {
          return derive_key(key_len, in.data(), in.size(), params, params_len);
@@ -458,7 +458,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_Key_Agreement final {
       * @param in the other parties key
       * @param params extra derivation params
       */
-      SymmetricKey derive_key(size_t key_len, const std::span<const uint8_t> in, std::string_view params = "") const {
+      SymmetricKey derive_key(size_t key_len, const Botan::span<const uint8_t> in, std::string_view params = "") const {
          return derive_key(key_len, in.data(), in.size(), cast_char_ptr_to_uint8(params.data()), params.length());
       }
 
@@ -654,11 +654,11 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
       */
       KEM_Encapsulation encrypt(RandomNumberGenerator& rng,
                                 size_t desired_shared_key_len = 32,
-                                std::span<const uint8_t> salt = {}) {
+                                Botan::span<const uint8_t> salt = {}) {
          std::vector<uint8_t> encapsulated_shared_key(encapsulated_key_length());
          secure_vector<uint8_t> shared_key(shared_key_length(desired_shared_key_len));
 
-         encrypt(std::span{encapsulated_shared_key}, std::span{shared_key}, rng, desired_shared_key_len, salt);
+         encrypt(Botan::span{encapsulated_shared_key}, Botan::span{shared_key}, rng, desired_shared_key_len, salt);
          return KEM_Encapsulation(std::move(encapsulated_shared_key), std::move(shared_key));
       }
 
@@ -676,10 +676,10 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
                    secure_vector<uint8_t>& out_shared_key,
                    RandomNumberGenerator& rng,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {}) {
+                   Botan::span<const uint8_t> salt = {}) {
          out_encapsulated_key.resize(encapsulated_key_length());
          out_shared_key.resize(shared_key_length(desired_shared_key_len));
-         encrypt(std::span{out_encapsulated_key}, std::span{out_shared_key}, rng, desired_shared_key_len, salt);
+         encrypt(Botan::span{out_encapsulated_key}, Botan::span{out_shared_key}, rng, desired_shared_key_len, salt);
       }
 
       /**
@@ -692,13 +692,13 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
       * @param salt                   a salt value used in the KDF
       *                               (ignored if no KDF is used)
       */
-      void encrypt(std::span<uint8_t> out_encapsulated_key,
-                   std::span<uint8_t> out_shared_key,
+      void encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                   Botan::span<uint8_t> out_shared_key,
                    RandomNumberGenerator& rng,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {});
+                   Botan::span<const uint8_t> salt = {});
 
-      BOTAN_DEPRECATED("use overload with salt as std::span<>")
+      BOTAN_DEPRECATED("use overload with salt as Botan::span<>")
 
       void encrypt(secure_vector<uint8_t>& out_encapsulated_key,
                    secure_vector<uint8_t>& out_shared_key,
@@ -715,7 +715,7 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Encryptor final {
                    secure_vector<uint8_t>& out_shared_key,
                    size_t desired_shared_key_len,
                    RandomNumberGenerator& rng,
-                   std::span<const uint8_t> salt = {}) {
+                   Botan::span<const uint8_t> salt = {}) {
          out_encapsulated_key.resize(encapsulated_key_length());
          out_shared_key.resize(shared_key_length(desired_shared_key_len));
          encrypt(out_encapsulated_key, out_shared_key, rng, desired_shared_key_len, salt);
@@ -780,10 +780,10 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Decryptor final {
       * @param salt                   a salt value used in the KDF
       *                               (ignored if no KDF is used)
       */
-      void decrypt(std::span<uint8_t> out_shared_key,
-                   std::span<const uint8_t> encap_key,
+      void decrypt(Botan::span<uint8_t> out_shared_key,
+                   Botan::span<const uint8_t> encap_key,
                    size_t desired_shared_key_len = 32,
-                   std::span<const uint8_t> salt = {});
+                   Botan::span<const uint8_t> salt = {});
 
       /**
       * Decrypts the shared key for data encryption.
@@ -820,9 +820,9 @@ class BOTAN_PUBLIC_API(2, 0) PK_KEM_Decryptor final {
       *
       * @return the shared data encryption key
       */
-      secure_vector<uint8_t> decrypt(std::span<const uint8_t> encap_key,
+      secure_vector<uint8_t> decrypt(Botan::span<const uint8_t> encap_key,
                                      size_t desired_shared_key_len = 32,
-                                     std::span<const uint8_t> salt = {}) {
+                                     Botan::span<const uint8_t> salt = {}) {
          secure_vector<uint8_t> shared_key(shared_key_length(desired_shared_key_len));
          decrypt(shared_key, encap_key, desired_shared_key_len, salt);
          return shared_key;

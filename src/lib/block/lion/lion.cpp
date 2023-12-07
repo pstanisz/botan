@@ -79,7 +79,7 @@ bool Lion::has_keying_material() const {
 /*
 * Lion Key Schedule
 */
-void Lion::key_schedule(std::span<const uint8_t> key) {
+void Lion::key_schedule(Botan::span<const uint8_t> key) {
    clear();
 
    const size_t half = key.size() / 2;

@@ -69,7 +69,6 @@ enum class AlertType {
 class BOTAN_PUBLIC_API(2, 0) Alert final {
    public:
       typedef AlertType Type;
-      using enum AlertType;
 
       /**
       * @return true iff this alert is non-empty

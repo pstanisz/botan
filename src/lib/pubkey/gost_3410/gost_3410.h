@@ -32,7 +32,7 @@ class BOTAN_PUBLIC_API(2, 0) GOST_3410_PublicKey : public virtual EC_PublicKey {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      GOST_3410_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      GOST_3410_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Get this keys algorithm name.
@@ -77,7 +77,7 @@ class BOTAN_PUBLIC_API(2, 0) GOST_3410_PrivateKey final : public GOST_3410_Publi
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits ECPrivateKey bits
       */
-      GOST_3410_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+      GOST_3410_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
             EC_PrivateKey(alg_id, key_bits) {}
 
       /**

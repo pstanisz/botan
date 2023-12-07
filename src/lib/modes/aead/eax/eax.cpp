@@ -84,7 +84,7 @@ bool EAX_Mode::has_keying_material() const {
 /*
 * Set the EAX key
 */
-void EAX_Mode::key_schedule(std::span<const uint8_t> key) {
+void EAX_Mode::key_schedule(Botan::span<const uint8_t> key) {
    /*
    * These could share the key schedule, which is one nice part of EAX,
    * but it's much easier to ignore that here...
@@ -96,7 +96,7 @@ void EAX_Mode::key_schedule(std::span<const uint8_t> key) {
 /*
 * Set the EAX associated data
 */
-void EAX_Mode::set_associated_data_n(size_t idx, std::span<const uint8_t> ad) {
+void EAX_Mode::set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) {
    BOTAN_ARG_CHECK(idx == 0, "EAX: cannot handle non-zero index in set_associated_data_n");
    if(m_nonce_mac.empty() == false) {
       throw Invalid_State("Cannot set AD for EAX while processing a message");

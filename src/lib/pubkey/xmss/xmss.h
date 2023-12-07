@@ -15,6 +15,7 @@
 #include <botan/exceptn.h>
 #include <botan/pk_keys.h>
 #include <botan/xmss_parameters.h>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -55,7 +56,7 @@ class BOTAN_PUBLIC_API(2, 0) XMSS_PublicKey : public virtual Public_Key {
        *
        * @param key_bits DER encoded public key bits
        */
-      XMSS_PublicKey(std::span<const uint8_t> key_bits);
+      XMSS_PublicKey(Botan::span<const uint8_t> key_bits);
 
       /**
        * Creates a new XMSS public key for a chosen XMSS signature method as
@@ -182,7 +183,7 @@ class BOTAN_PUBLIC_API(2, 0) XMSS_PrivateKey final : public virtual XMSS_PublicK
        *
        * @param raw_key An XMSS private key serialized using raw_private_key().
        **/
-      XMSS_PrivateKey(std::span<const uint8_t> raw_key);
+      XMSS_PrivateKey(Botan::span<const uint8_t> raw_key);
 
       /**
        * Creates a new XMSS private key for the chosen XMSS signature method

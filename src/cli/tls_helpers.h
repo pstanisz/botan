@@ -35,7 +35,7 @@ inline bool value_exists(const std::vector<std::string>& vec, const std::string&
 inline std::string maybe_hex_encode(std::string_view v) {
    auto is_printable_char = [](uint8_t c) { return c >= 32 && c < 127; };
    if(!std::all_of(v.begin(), v.end(), is_printable_char)) {
-      return Botan::hex_encode(std::span<const uint8_t>(reinterpret_cast<const uint8_t*>(v.data()), v.size()));
+      return Botan::hex_encode(Botan::span<const uint8_t>(reinterpret_cast<const uint8_t*>(v.data()), v.size()));
    }
    return std::string(v);
 }

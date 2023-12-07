@@ -61,9 +61,8 @@ class SIMD_8x32 final {
       BOTAN_AVX2_FN
       void store_be(uint8_t out[]) const noexcept { bswap().store_le(out); }
 
-      template <size_t ROT>
+      template <size_t ROT, typename = std::enable_if_t<(ROT > 0) && (ROT < 32)>>
       BOTAN_AVX2_FN SIMD_8x32 rotl() const noexcept
-         requires(ROT > 0 && ROT < 32)
       {
 #if defined(__AVX512VL__)
          return SIMD_8x32(_mm256_rol_epi32(m_avx2, ROT));

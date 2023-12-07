@@ -276,7 +276,7 @@ void decrypt_record(secure_vector<uint8_t>& output,
    * including older versions of TLS-Attacker.
    */
    if(msg_length < aead.minimum_final_size()) {
-      throw TLS_Exception(Alert::BadRecordMac, "AEAD packet is shorter than the tag");
+      throw TLS_Exception(AlertType::BadRecordMac, "AEAD packet is shorter than the tag");
    }
 
    const size_t ptext_size = aead.output_length(msg_length);
@@ -326,11 +326,11 @@ Record_Header read_tls_record(secure_vector<uint8_t>& readbuf,
       const std::string first5 = std::string(reinterpret_cast<const char*>(readbuf.data()), 5);
 
       if(first5 == "GET /" || first5 == "PUT /" || first5 == "POST " || first5 == "HEAD ") {
-         throw TLS_Exception(Alert::ProtocolVersion, "Client sent plaintext HTTP request instead of TLS handshake");
+         throw TLS_Exception(AlertType::ProtocolVersion, "Client sent plaintext HTTP request instead of TLS handshake");
       }
 
       if(first5 == "CONNE") {
-         throw TLS_Exception(Alert::ProtocolVersion,
+         throw TLS_Exception(AlertType::ProtocolVersion,
                              "Client sent plaintext HTTP proxy CONNECT request instead of TLS handshake");
       }
 
@@ -338,25 +338,25 @@ Record_Header read_tls_record(secure_vector<uint8_t>& readbuf,
          // RFC 5246 Section 6.
          //   If a TLS implementation receives an unexpected record type, it MUST
          //   send an unexpected_message alert.
-         throw TLS_Exception(Alert::UnexpectedMessage, "TLS record type had unexpected value");
+         throw TLS_Exception(AlertType::UnexpectedMessage, "TLS record type had unexpected value");
       }
-      throw TLS_Exception(Alert::ProtocolVersion, "TLS record version had unexpected value");
+      throw TLS_Exception(AlertType::ProtocolVersion, "TLS record version had unexpected value");
    }
 
    const Protocol_Version version(readbuf[1], readbuf[2]);
 
    if(version.is_datagram_protocol()) {
-      throw TLS_Exception(Alert::ProtocolVersion, "Expected TLS but got a record with DTLS version");
+      throw TLS_Exception(AlertType::ProtocolVersion, "Expected TLS but got a record with DTLS version");
    }
 
    const size_t record_size = make_uint16(readbuf[TLS_HEADER_SIZE - 2], readbuf[TLS_HEADER_SIZE - 1]);
 
    if(record_size > MAX_CIPHERTEXT_SIZE) {
-      throw TLS_Exception(Alert::RecordOverflow, "Received a record that exceeds maximum size");
+      throw TLS_Exception(AlertType::RecordOverflow, "Received a record that exceeds maximum size");
    }
 
    if(record_size == 0) {
-      throw TLS_Exception(Alert::DecodeError, "Received a completely empty record");
+      throw TLS_Exception(AlertType::DecodeError, "Received a completely empty record");
    }
 
    if(size_t needed = fill_buffer_to(readbuf, input, input_len, consumed, TLS_HEADER_SIZE + record_size)) {

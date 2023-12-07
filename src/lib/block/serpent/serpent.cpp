@@ -320,7 +320,7 @@ bool Serpent::has_keying_material() const {
 /*
 * Serpent Key Schedule
 */
-void Serpent::key_schedule(std::span<const uint8_t> key) {
+void Serpent::key_schedule(Botan::span<const uint8_t> key) {
    using namespace Botan::Serpent_F;
 
    const uint32_t PHI = 0x9E3779B9;

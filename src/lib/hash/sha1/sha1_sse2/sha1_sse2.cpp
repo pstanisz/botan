@@ -112,7 +112,9 @@ inline void F4(uint32_t A, uint32_t& B, uint32_t C, uint32_t D, uint32_t& E, uin
 * SHA-1 Compression Function using SSE for message expansion
 */
 //static
-BOTAN_FUNC_ISA("sse2") void SHA_1::sse2_compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+BOTAN_FUNC_ISA("sse2") void SHA_1::sse2_compress_n(digest_type& digest,
+                                                   Botan::span<const uint8_t> input,
+                                                   size_t blocks) {
    using namespace SHA1_SSE2_F;
 
    const SIMD_4x32 K00_19 = SIMD_4x32::splat(0x5A827999);

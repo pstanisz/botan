@@ -16,7 +16,7 @@ namespace Botan {
 
 namespace {
 
-void copy_into(std::span<uint8_t> out, std::span<const uint8_t> in) {
+void copy_into(Botan::span<uint8_t> out, Botan::span<const uint8_t> in) {
    BOTAN_ASSERT_NOMSG(in.size() == out.size());
    std::copy(in.begin(), in.end(), out.begin());
 }
@@ -77,7 +77,7 @@ void treehash(StrongSpan<SphincsTreeNode> out_root,
 
          // At this point we know that we'll need to use the stack. Get a
          // reference to the correct location.
-         auto stack_location = std::span(stack).subspan(h.get() * params.n(), params.n());
+         auto stack_location = Botan::span(stack).subspan(h.get() * params.n(), params.n());
 
          // Check if we're at a left child; if so, stop going up the stack
          // Exception: if we've reached the end of the tree, keep on going (so

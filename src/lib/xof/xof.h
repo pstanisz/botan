@@ -83,7 +83,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        * @param salt  a salt value to parameterize the XOF
        * @param key   a key to parameterize the XOF
        */
-      void start(std::span<const uint8_t> salt = {}, std::span<const uint8_t> key = {});
+      void start(Botan::span<const uint8_t> salt = {}, Botan::span<const uint8_t> key = {});
 
       /**
        * @returns true if salt length is acceptable, false otherwise
@@ -139,7 +139,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        *
        * @param input  the data that shall be
        */
-      void update(std::span<const uint8_t> input) {
+      void update(Botan::span<const uint8_t> input) {
          if(!m_xof_started) {
             // If the user didn't start() before the first input, we enforce
             // it with a default value, here.
@@ -151,7 +151,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
       /**
        * @return the next @p bytes output bytes as the specified container type @p T.
        */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T output(size_t bytes) {
          T out(bytes);
          generate_bytes(out);
@@ -170,7 +170,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        * Fill @p output with the next output bytes. The number of bytes
        * depends on the size of @p output.
        */
-      void output(std::span<uint8_t> output) { generate_bytes(output); }
+      void output(Botan::span<uint8_t> output) { generate_bytes(output); }
 
       /**
        * @return the next single output byte
@@ -189,7 +189,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        * @param salt  a salt value to parameterize the XOF
        * @param key   a key to parameterize the XOF
        */
-      virtual void start_msg(std::span<const uint8_t> salt, std::span<const uint8_t> key);
+      virtual void start_msg(Botan::span<const uint8_t> salt, Botan::span<const uint8_t> key);
 
       /**
        * Consume @p input data bytes into the XOF's internal state
@@ -202,7 +202,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        * @param input  the span to be consumed entirely into the internal state
        * @throws        Invalid_State if input is added after generating output
        */
-      virtual void add_data(std::span<const uint8_t> input) = 0;
+      virtual void add_data(Botan::span<const uint8_t> input) = 0;
 
       /**
        * Fill the entire @p output span with the next bytes in their output
@@ -214,7 +214,7 @@ class BOTAN_PUBLIC_API(3, 2) XOF {
        *
        * @param output  the span to be filled entirely with output bytes
        */
-      virtual void generate_bytes(std::span<uint8_t> output) = 0;
+      virtual void generate_bytes(Botan::span<uint8_t> output) = 0;
 
       /**
        * Clear the XOF's internal state and allow for new input.

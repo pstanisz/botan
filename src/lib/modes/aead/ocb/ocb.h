@@ -30,7 +30,7 @@ class L_computer;
 */
 class BOTAN_TEST_API OCB_Mode : public AEAD_Mode {
    public:
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) override final;
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) override final;
 
       std::string name() const override final;
 
@@ -77,7 +77,7 @@ class BOTAN_TEST_API OCB_Mode : public AEAD_Mode {
    private:
       void start_msg(const uint8_t nonce[], size_t nonce_len) override final;
 
-      void key_schedule(std::span<const uint8_t> key) override final;
+      void key_schedule(Botan::span<const uint8_t> key) override final;
 
       const secure_vector<uint8_t>& update_nonce(const uint8_t nonce[], size_t nonce_len);
 

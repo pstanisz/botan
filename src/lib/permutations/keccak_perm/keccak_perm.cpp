@@ -45,7 +45,7 @@ void Keccak_Permutation::clear() {
    m_S_outpos = 0;
 }
 
-void Keccak_Permutation::absorb(std::span<const uint8_t> input) {
+void Keccak_Permutation::absorb(Botan::span<const uint8_t> input) {
    BufferSlicer input_slicer(input);
 
    // Block-wise incorporation of the input data into the sponge state until
@@ -77,7 +77,7 @@ void Keccak_Permutation::absorb(std::span<const uint8_t> input) {
    }
 }
 
-void Keccak_Permutation::squeeze(std::span<uint8_t> output) {
+void Keccak_Permutation::squeeze(Botan::span<uint8_t> output) {
    BufferStuffer output_stuffer(output);
 
    // Block-wise readout of the sponge state until enough bytes

@@ -139,11 +139,11 @@ class Key_Agreement {
 */
 class KEM_Encryption {
    public:
-      virtual void kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                               std::span<uint8_t> out_shared_key,
+      virtual void kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                               Botan::span<uint8_t> out_shared_key,
                                RandomNumberGenerator& rng,
                                size_t desired_shared_key_len,
-                               std::span<const uint8_t> salt) = 0;
+                               Botan::span<const uint8_t> salt) = 0;
 
       virtual size_t shared_key_length(size_t desired_shared_key_len) const = 0;
 
@@ -154,10 +154,10 @@ class KEM_Encryption {
 
 class KEM_Decryption {
    public:
-      virtual void kem_decrypt(std::span<uint8_t> out_shared_key,
-                               std::span<const uint8_t> encapsulated_key,
+      virtual void kem_decrypt(Botan::span<uint8_t> out_shared_key,
+                               Botan::span<const uint8_t> encapsulated_key,
                                size_t desired_shared_key_len,
-                               std::span<const uint8_t> salt) = 0;
+                               Botan::span<const uint8_t> salt) = 0;
 
       virtual size_t shared_key_length(size_t desired_shared_key_len) const = 0;
 

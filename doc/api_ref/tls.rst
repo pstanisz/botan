@@ -37,7 +37,7 @@ following members. The first three (``tls_emit_data``, ``tls_record_received``,
 ``tls_alert``) are mandatory for using TLS, all others are optional and provide
 additional information about the connection.
 
- .. cpp:function:: void tls_emit_data(std::span<const uint8_t> data)
+ .. cpp:function:: void tls_emit_data(Botan::span<const uint8_t> data)
 
     Mandatory. The TLS stack requests that all bytes of *data* be queued up to send to the
     counterparty. After this function returns, the buffer containing *data* will
@@ -51,7 +51,7 @@ additional information about the connection.
     For TLS all writes must occur *in the order requested*.
     For DTLS this ordering is not strictly required, but is still recommended.
 
- .. cpp:function:: void tls_record_received(uint64_t rec_no, std::span<const uint8_t> data)
+ .. cpp:function:: void tls_record_received(uint64_t rec_no, Botan::span<const uint8_t> data)
 
     Mandatory. Called once for each application_data record which is received, with the
     matching (TLS level) record sequence number.
@@ -212,7 +212,7 @@ available:
 .. cpp:class:: TLS::Channel
 
    .. cpp:function:: size_t received_data(const uint8_t buf[], size_t buf_size)
-   .. cpp:function:: size_t received_data(std::span<const uint8_t> buf)
+   .. cpp:function:: size_t received_data(Botan::span<const uint8_t> buf)
 
      This function is used to provide data sent by the counterparty
      (eg data that you read off the socket layer). Depending on the
@@ -227,7 +227,7 @@ available:
 
    .. cpp:function:: void send(const uint8_t buf[], size_t buf_size)
    .. cpp:function:: void send(std::string_view str)
-   .. cpp:function:: void send(std::span<const uint8_t> vec)
+   .. cpp:function:: void send(Botan::span<const uint8_t> vec)
 
      Create one or more new TLS application records containing the
      provided data and send them. This will eventually result in at
@@ -792,12 +792,12 @@ policy settings from a file.
      The default ordering puts the best performing ECC first.
 
      Default:
-     Group_Params::X25519,
-     Group_Params::SECP256R1, Group_Params::BRAINPOOL256R1,
-     Group_Params::SECP384R1, Group_Params::BRAINPOOL384R1,
-     Group_Params::SECP521R1, Group_Params::BRAINPOOL512R1,
-     Group_Params::FFDHE_2048, Group_Params::FFDHE_3072, Group_Params::FFDHE_4096,
-     Group_Params::FFDHE_6144, Group_Params::FFDHE_8192
+     Group_Params_Code::X25519,
+     Group_Params_Code::SECP256R1, Group_Params_Code::BRAINPOOL256R1,
+     Group_Params_Code::SECP384R1, Group_Params_Code::BRAINPOOL384R1,
+     Group_Params_Code::SECP521R1, Group_Params_Code::BRAINPOOL512R1,
+     Group_Params_Code::FFDHE_2048, Group_Params_Code::FFDHE_3072, Group_Params_Code::FFDHE_4096,
+     Group_Params_Code::FFDHE_6144, Group_Params_Code::FFDHE_8192
 
      No other values are currently defined.
 

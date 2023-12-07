@@ -166,11 +166,11 @@ size_t PK_Ops::KEM_Encryption_with_KDF::shared_key_length(size_t desired_shared_
    }
 }
 
-void PK_Ops::KEM_Encryption_with_KDF::kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                                                  std::span<uint8_t> out_shared_key,
+void PK_Ops::KEM_Encryption_with_KDF::kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                                                  Botan::span<uint8_t> out_shared_key,
                                                   RandomNumberGenerator& rng,
                                                   size_t desired_shared_key_len,
-                                                  std::span<const uint8_t> salt) {
+                                                  Botan::span<const uint8_t> salt) {
    BOTAN_ARG_CHECK(salt.empty() || m_kdf, "PK_KEM_Encryptor::encrypt requires a KDF to use a salt");
    BOTAN_ASSERT_NOMSG(out_encapsulated_key.size() == encapsulated_key_length());
 
@@ -201,10 +201,10 @@ size_t PK_Ops::KEM_Decryption_with_KDF::shared_key_length(size_t desired_shared_
    }
 }
 
-void PK_Ops::KEM_Decryption_with_KDF::kem_decrypt(std::span<uint8_t> out_shared_key,
-                                                  std::span<const uint8_t> encapsulated_key,
+void PK_Ops::KEM_Decryption_with_KDF::kem_decrypt(Botan::span<uint8_t> out_shared_key,
+                                                  Botan::span<const uint8_t> encapsulated_key,
                                                   size_t desired_shared_key_len,
-                                                  std::span<const uint8_t> salt) {
+                                                  Botan::span<const uint8_t> salt) {
    BOTAN_ARG_CHECK(salt.empty() || m_kdf, "PK_KEM_Decryptor::decrypt requires a KDF to use a salt");
 
    if(m_kdf) {

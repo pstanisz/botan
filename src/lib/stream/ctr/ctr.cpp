@@ -66,7 +66,7 @@ bool CTR_BE::has_keying_material() const {
    return m_cipher->has_keying_material();
 }
 
-void CTR_BE::key_schedule(std::span<const uint8_t> key) {
+void CTR_BE::key_schedule(Botan::span<const uint8_t> key) {
    m_cipher->set_key(key);
 
    // Set a default all-zeros IV

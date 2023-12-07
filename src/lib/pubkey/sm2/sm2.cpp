@@ -38,7 +38,7 @@ bool SM2_PrivateKey::check_key(RandomNumberGenerator& rng, bool strong) const {
    return KeyPair::signature_consistency_check(rng, *this, "user@example.com,SM3");
 }
 
-SM2_PrivateKey::SM2_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+SM2_PrivateKey::SM2_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
       EC_PrivateKey(alg_id, key_bits) {
    m_da_inv = domain().inverse_mod_order(m_private_key + 1);
 }

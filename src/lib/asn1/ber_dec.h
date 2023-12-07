@@ -28,7 +28,7 @@ class BOTAN_PUBLIC_API(2, 0) BER_Decoder final {
       /**
       * Set up to BER decode the data in buf of length len
       */
-      BER_Decoder(std::span<const uint8_t> buf) : BER_Decoder(buf.data(), buf.size()) {}
+      BER_Decoder(Botan::span<const uint8_t> buf) : BER_Decoder(buf.data(), buf.size()) {}
 
       /**
       * Set up to BER decode the data in vec
@@ -138,9 +138,9 @@ class BOTAN_PUBLIC_API(2, 0) BER_Decoder final {
       * @return this reference
       */
       template <typename T>
-      BER_Decoder& get_next_value(T& out, ASN1_Type type_tag, ASN1_Class class_tag = ASN1_Class::ContextSpecific)
-         requires std::is_standard_layout<T>::value && std::is_trivial<T>::value
-      {
+      BER_Decoder& get_next_value(T& out, ASN1_Type type_tag, ASN1_Class class_tag = ASN1_Class::ContextSpecific) {
+         static_assert(std::is_standard_layout<T>::value && std::is_trivial<T>::value, "Type must be POD");
+
          BER_Object obj = get_next_object();
          obj.assert_is_a(type_tag, class_tag);
 

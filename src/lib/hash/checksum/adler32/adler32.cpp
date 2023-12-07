@@ -68,7 +68,7 @@ void adler32_update(const uint8_t input[], size_t length, uint16_t& S1, uint16_t
 /*
 * Update an Adler32 Checksum
 */
-void Adler32::add_data(std::span<const uint8_t> input) {
+void Adler32::add_data(Botan::span<const uint8_t> input) {
    const size_t PROCESS_AMOUNT = 5552;
 
    while(input.size() >= PROCESS_AMOUNT) {
@@ -82,7 +82,7 @@ void Adler32::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize an Adler32 Checksum
 */
-void Adler32::final_result(std::span<uint8_t> output) {
+void Adler32::final_result(Botan::span<uint8_t> output) {
    store_be(output.data(), m_S2, m_S1);
    clear();
 }

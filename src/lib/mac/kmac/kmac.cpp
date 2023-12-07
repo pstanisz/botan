@@ -51,14 +51,14 @@ std::string KMAC::provider() const {
    return m_cshake->provider();
 }
 
-void KMAC::start_msg(std::span<const uint8_t> nonce) {
+void KMAC::start_msg(Botan::span<const uint8_t> nonce) {
    assert_key_material_set();
    m_cshake->start(nonce);
    m_cshake->update(m_encoded_key);
    m_message_started = true;
 }
 
-void KMAC::add_data(std::span<const uint8_t> data) {
+void KMAC::add_data(Botan::span<const uint8_t> data) {
    assert_key_material_set(!m_encoded_key.empty());
    if(!m_message_started) {
       start();
@@ -66,7 +66,7 @@ void KMAC::add_data(std::span<const uint8_t> data) {
    m_cshake->update(data);
 }
 
-void KMAC::final_result(std::span<uint8_t> output) {
+void KMAC::final_result(Botan::span<uint8_t> output) {
    assert_key_material_set();
    std::array<uint8_t, keccak_max_int_encoding_size()> encoded_output_length_buffer;
    m_cshake->update(keccak_int_right_encode(encoded_output_length_buffer, m_output_bit_length));
@@ -75,7 +75,7 @@ void KMAC::final_result(std::span<uint8_t> output) {
    m_message_started = false;
 }
 
-void KMAC::key_schedule(std::span<const uint8_t> key) {
+void KMAC::key_schedule(Botan::span<const uint8_t> key) {
    clear();
    keccak_absorb_padded_strings_encoding(m_encoded_key, m_cshake->block_size(), key);
 }

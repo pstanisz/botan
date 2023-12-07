@@ -46,7 +46,7 @@ std::string sha256_provider() {
 /*
 * SHA-224 / SHA-256 compression function
 */
-void SHA_256::compress_digest(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_256::compress_digest(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
 #if defined(BOTAN_HAS_SHA2_32_X86)
    if(CPUID::has_intel_sha()) {
       return SHA_256::compress_digest_x86(digest, input, blocks);
@@ -173,7 +173,7 @@ std::string SHA_224::provider() const {
    return sha256_provider();
 }
 
-void SHA_224::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_224::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    SHA_256::compress_digest(digest, input, blocks);
 }
 
@@ -189,11 +189,11 @@ std::unique_ptr<HashFunction> SHA_224::copy_state() const {
    return std::make_unique<SHA_224>(*this);
 }
 
-void SHA_224::add_data(std::span<const uint8_t> input) {
+void SHA_224::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_224::final_result(std::span<uint8_t> output) {
+void SHA_224::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 
@@ -201,7 +201,7 @@ std::string SHA_256::provider() const {
    return sha256_provider();
 }
 
-void SHA_256::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_256::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    SHA_256::compress_digest(digest, input, blocks);
 }
 
@@ -217,11 +217,11 @@ std::unique_ptr<HashFunction> SHA_256::copy_state() const {
    return std::make_unique<SHA_256>(*this);
 }
 
-void SHA_256::add_data(std::span<const uint8_t> input) {
+void SHA_256::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_256::final_result(std::span<uint8_t> output) {
+void SHA_256::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

@@ -845,7 +845,7 @@ void AES_128::decrypt_n(const uint8_t in[], uint8_t out[], size_t blocks) const 
    aes_decrypt_n(in, out, blocks, m_DK);
 }
 
-void AES_128::key_schedule(std::span<const uint8_t> key) {
+void AES_128::key_schedule(Botan::span<const uint8_t> key) {
 #if defined(BOTAN_HAS_AES_NI)
    if(CPUID::has_aes_ni()) {
       return aesni_key_schedule(key.data(), key.size());
@@ -908,7 +908,7 @@ void AES_192::decrypt_n(const uint8_t in[], uint8_t out[], size_t blocks) const 
    aes_decrypt_n(in, out, blocks, m_DK);
 }
 
-void AES_192::key_schedule(std::span<const uint8_t> key) {
+void AES_192::key_schedule(Botan::span<const uint8_t> key) {
 #if defined(BOTAN_HAS_AES_NI)
    if(CPUID::has_aes_ni()) {
       return aesni_key_schedule(key.data(), key.size());
@@ -971,7 +971,7 @@ void AES_256::decrypt_n(const uint8_t in[], uint8_t out[], size_t blocks) const 
    aes_decrypt_n(in, out, blocks, m_DK);
 }
 
-void AES_256::key_schedule(std::span<const uint8_t> key) {
+void AES_256::key_schedule(Botan::span<const uint8_t> key) {
 #if defined(BOTAN_HAS_AES_NI)
    if(CPUID::has_aes_ni()) {
       return aesni_key_schedule(key.data(), key.size());

@@ -16,11 +16,11 @@
 
 #include <botan/dilithium.h>
 
+#include <botan/span.h>
 #include <botan/internal/dilithium_symmetric_primitives.h>
 #include <botan/internal/shake.h>
 
 #include <array>
-#include <span>
 #include <vector>
 
 namespace Botan::Dilithium {
@@ -158,7 +158,7 @@ class Polynomial {
          size_t ctr = Polynomial::rej_eta(a, 0, DilithiumModeConstants::N, buf, buf.size(), mode);
 
          while(ctr < DilithiumModeConstants::N) {
-            xof->output(std::span(buf).first(mode.stream256_blockbytes()));
+            xof->output(Botan::span(buf).first(mode.stream256_blockbytes()));
             ctr += Polynomial::rej_eta(a, ctr, DilithiumModeConstants::N - ctr, buf, mode.stream256_blockbytes(), mode);
          }
       }
@@ -623,7 +623,7 @@ class Polynomial {
       *              - const uint8_t *a: byte array with bit-packed_t1 polynomial
       *           - const DilithiumModeConstants& mode: reference to dilihtium mode values
       **************************************************/
-      static Polynomial polyeta_unpack(std::span<const uint8_t> a, const DilithiumModeConstants& mode) {
+      static Polynomial polyeta_unpack(Botan::span<const uint8_t> a, const DilithiumModeConstants& mode) {
          Polynomial r;
 
          switch(mode.eta()) {
@@ -709,7 +709,7 @@ class Polynomial {
       * Arguments:   - poly *r: pointer to output polynomial
       *              - const uint8_t *a: byte array with bit-packed_t1 polynomial
       **************************************************/
-      static Polynomial polyt0_unpack(std::span<const uint8_t> a) {
+      static Polynomial polyt0_unpack(Botan::span<const uint8_t> a) {
          Polynomial r;
 
          for(size_t i = 0; i < DilithiumModeConstants::N / 8; ++i) {
@@ -996,7 +996,7 @@ class PolynomialVector {
          std::vector<uint8_t> buf(buflen + 2);
 
          auto xof = mode.XOF_128(seed, nonce);
-         xof->output(std::span(buf).first(buflen));
+         xof->output(Botan::span(buf).first(buflen));
 
          size_t ctr = Polynomial::rej_uniform(sample_poly, 0, DilithiumModeConstants::N, buf.data(), buflen);
          size_t off;
@@ -1006,7 +1006,7 @@ class PolynomialVector {
                buf[i] = buf[buflen - off + i];
             }
 
-            xof->output(std::span(buf).subspan(off, mode.stream128_blockbytes()));
+            xof->output(Botan::span(buf).subspan(off, mode.stream128_blockbytes()));
             buflen = mode.stream128_blockbytes() + off;
             ctr += Polynomial::rej_uniform(sample_poly, ctr, DilithiumModeConstants::N - ctr, buf.data(), buflen);
          }
@@ -1307,7 +1307,7 @@ class PolynomialVector {
          return packed_eta;
       }
 
-      static PolynomialVector unpack_eta(std::span<const uint8_t> buffer,
+      static PolynomialVector unpack_eta(Botan::span<const uint8_t> buffer,
                                          size_t size,
                                          const DilithiumModeConstants& mode) {
          BOTAN_ARG_CHECK(buffer.size() == mode.polyeta_packedbytes() * size, "Invalid buffer size");
@@ -1328,7 +1328,7 @@ class PolynomialVector {
          return packed_t0;
       }
 
-      static PolynomialVector unpack_t0(std::span<const uint8_t> buffer, const DilithiumModeConstants& mode) {
+      static PolynomialVector unpack_t0(Botan::span<const uint8_t> buffer, const DilithiumModeConstants& mode) {
          BOTAN_ARG_CHECK(static_cast<int32_t>(buffer.size()) == DilithiumModeConstants::POLYT0_PACKEDBYTES * mode.k(),
                          "Invalid buffer size");
 
@@ -1348,7 +1348,7 @@ class PolynomialVector {
          return packed_t1;
       }
 
-      static PolynomialVector unpack_t1(std::span<const uint8_t> packed_t1, const DilithiumModeConstants& mode) {
+      static PolynomialVector unpack_t1(Botan::span<const uint8_t> packed_t1, const DilithiumModeConstants& mode) {
          BOTAN_ARG_CHECK(
             static_cast<int32_t>(packed_t1.size()) == DilithiumModeConstants::POLYT1_PACKEDBYTES * mode.k(),
             "Invalid buffer size");

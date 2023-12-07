@@ -98,7 +98,7 @@ void TLS::Callbacks::tls_verify_cert_chain(const std::vector<X509_Certificate>& 
                                                       ocsp_responses);
 
    if(!result.successful_validation()) {
-      throw TLS_Exception(Alert::BadCertificate, "Certificate validation failure: " + result.result_string());
+      throw TLS_Exception(AlertType::BadCertificate, "Certificate validation failure: " + result.result_string());
    }
 }
 
@@ -175,7 +175,7 @@ KEM_Encapsulation TLS::Callbacks::tls_kem_encapsulate(TLS::Group_Params group,
          }
 #endif
 
-         throw TLS_Exception(Alert::IllegalParameter, "KEM is not supported");
+         throw TLS_Exception(AlertType::IllegalParameter, "KEM is not supported");
       }();
 
       return PK_KEM_Encryptor(*kem_pub_key, "Raw").encrypt(rng);
@@ -249,10 +249,10 @@ std::unique_ptr<PK_Key_Agreement_Key> TLS::Callbacks::tls_generate_ephemeral_key
 #endif
 
    if(group_params.is_kem()) {
-      throw TLS_Exception(Alert::IllegalParameter, "cannot generate an ephemeral KEX key for a KEM");
+      throw TLS_Exception(AlertType::IllegalParameter, "cannot generate an ephemeral KEX key for a KEM");
    }
 
-   throw TLS_Exception(Alert::DecodeError, "cannot create a key offering without a group definition");
+   throw TLS_Exception(AlertType::DecodeError, "cannot create a key offering without a group definition");
 }
 
 secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
@@ -280,7 +280,7 @@ secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
        * advantage to bogus keys anyway.
        */
       if(Y <= 1 || Y >= dl_group.get_p() - 1) {
-         throw TLS_Exception(Alert::IllegalParameter, "Server sent bad DH key for DHE exchange");
+         throw TLS_Exception(AlertType::IllegalParameter, "Server sent bad DH key for DHE exchange");
       }
 
       DH_PublicKey peer_key(dl_group, Y);
@@ -303,7 +303,7 @@ secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
 #if defined(BOTAN_HAS_CURVE_25519)
    if(group_params.is_x25519()) {
       if(public_value.size() != 32) {
-         throw TLS_Exception(Alert::HandshakeFailure, "Invalid X25519 key size");
+         throw TLS_Exception(AlertType::HandshakeFailure, "Invalid X25519 key size");
       }
 
       Curve25519_PublicKey peer_key(public_value);
@@ -313,7 +313,7 @@ secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
    }
 #endif
 
-   throw TLS_Exception(Alert::IllegalParameter, "Did not recognize the key exchange group");
+   throw TLS_Exception(AlertType::IllegalParameter, "Did not recognize the key exchange group");
 }
 
 }  // namespace Botan

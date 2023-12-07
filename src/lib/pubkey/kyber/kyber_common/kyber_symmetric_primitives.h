@@ -11,9 +11,9 @@
 
 #include <botan/hash.h>
 #include <botan/secmem.h>
+#include <botan/span.h>
 
 #include <memory>
-#include <span>
 #include <tuple>
 #include <vector>
 
@@ -33,9 +33,9 @@ class Kyber_Symmetric_Primitives {
       virtual std::unique_ptr<HashFunction> H() const = 0;
       virtual std::unique_ptr<HashFunction> KDF() const = 0;
 
-      virtual Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const = 0;
+      virtual Botan::XOF& XOF(Botan::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const = 0;
 
-      virtual secure_vector<uint8_t> PRF(std::span<const uint8_t> seed, uint8_t nonce, size_t outlen) const = 0;
+      virtual secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed, uint8_t nonce, size_t outlen) const = 0;
 };
 
 }  // namespace Botan

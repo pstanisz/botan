@@ -60,7 +60,7 @@ inline void F4(uint32_t A, uint32_t& B, uint32_t C, uint32_t D, uint32_t& E, uin
 /*
 * SHA-1 Compression Function
 */
-void SHA_1::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_1::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    using namespace SHA1_F;
 
 #if defined(BOTAN_HAS_SHA1_X86_SHA_NI)
@@ -230,11 +230,11 @@ std::unique_ptr<HashFunction> SHA_1::copy_state() const {
    return std::make_unique<SHA_1>(*this);
 }
 
-void SHA_1::add_data(std::span<const uint8_t> input) {
+void SHA_1::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_1::final_result(std::span<uint8_t> output) {
+void SHA_1::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

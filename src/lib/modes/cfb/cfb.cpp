@@ -73,7 +73,7 @@ bool CFB_Mode::has_keying_material() const {
    return m_cipher->has_keying_material();
 }
 
-void CFB_Mode::key_schedule(std::span<const uint8_t> key) {
+void CFB_Mode::key_schedule(Botan::span<const uint8_t> key) {
    m_cipher->set_key(key);
    m_keystream.resize(m_cipher->block_size());
 }

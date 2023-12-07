@@ -138,7 +138,7 @@ void BLAKE2b::compress(const uint8_t* input, size_t blocks, uint64_t increment) 
    }
 }
 
-void BLAKE2b::add_data(std::span<const uint8_t> input) {
+void BLAKE2b::add_data(Botan::span<const uint8_t> input) {
    BufferSlicer in(input);
 
    while(!in.empty()) {
@@ -155,7 +155,7 @@ void BLAKE2b::add_data(std::span<const uint8_t> input) {
    }
 }
 
-void BLAKE2b::final_result(std::span<uint8_t> output) {
+void BLAKE2b::final_result(Botan::span<uint8_t> output) {
    const auto pos = m_buffer.elements_in_buffer();
    m_buffer.fill_up_with_zeros();
 
@@ -185,7 +185,7 @@ bool BLAKE2b::has_keying_material() const {
    return m_key_size > 0;
 }
 
-void BLAKE2b::key_schedule(std::span<const uint8_t> key) {
+void BLAKE2b::key_schedule(Botan::span<const uint8_t> key) {
    BOTAN_ASSERT_NOMSG(key.size() <= m_buffer.size());
 
    m_key_size = key.size();

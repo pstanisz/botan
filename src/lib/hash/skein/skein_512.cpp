@@ -115,7 +115,7 @@ void Skein_512::ubi_512(const uint8_t msg[], size_t msg_len) {
    } while(msg_len);
 }
 
-void Skein_512::add_data(std::span<const uint8_t> input) {
+void Skein_512::add_data(Botan::span<const uint8_t> input) {
    BufferSlicer in(input);
 
    while(!in.empty()) {
@@ -132,7 +132,7 @@ void Skein_512::add_data(std::span<const uint8_t> input) {
    }
 }
 
-void Skein_512::final_result(std::span<uint8_t> out) {
+void Skein_512::final_result(Botan::span<uint8_t> out) {
    m_T[1] |= (static_cast<uint64_t>(1) << 63);  // final block flag
 
    const auto pos = m_buffer.elements_in_buffer();

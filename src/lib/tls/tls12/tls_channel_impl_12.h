@@ -73,8 +73,8 @@ class Channel_Impl_12 : public Channel_Impl {
 
       ~Channel_Impl_12() override;
 
-      size_t from_peer(std::span<const uint8_t> data) override;
-      void to_peer(std::span<const uint8_t> data) override;
+      size_t from_peer(Botan::span<const uint8_t> data) override;
+      void to_peer(Botan::span<const uint8_t> data) override;
 
       /**
       * Send a TLS alert message. If the alert is fatal, the internal

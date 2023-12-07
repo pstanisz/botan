@@ -76,12 +76,17 @@ inline void unpoison(T& p) {
 * This must be verified with tooling (eg binary disassembly or using valgrind)
 * since you never know what a compiler might do.
 */
-template <typename T>
-   requires(std::is_unsigned<T>::value && !std::is_same<bool, T>::value)
+template <typename T, typename = std::enable_if_t<std::is_unsigned<T>::value && !std::is_same<bool, T>::value>>
 class Mask final {
    public:
-      Mask(const Mask<T>& other) = default;
-      Mask<T>& operator=(const Mask<T>& other) = default;
+      Mask(const Mask<T>& other) : m_mask(other.m_mask) {}
+
+      Mask<T>& operator=(const Mask<T>& other) {
+         if(&other != this) {
+            m_mask = other.m_mask;
+         }
+         return *this;
+      }
 
       /**
       * Derive a Mask from a Mask of a larger type

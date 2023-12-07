@@ -156,9 +156,9 @@ class TLS_Policy_Unit_Tests final : public Test {
          const std::string two_groups = "key_exchange_groups_to_offer = secp256r1 ffdhe/ietf/4096";
          result.test_eq("list of offerings (size)", TP(two_groups).key_exchange_groups_to_offer().size(), 2);
          result.confirm("list of offerings (0)",
-                        TP(two_groups).key_exchange_groups_to_offer()[0] == Botan::TLS::Group_Params::SECP256R1);
+                        TP(two_groups).key_exchange_groups_to_offer()[0] == Botan::TLS::Group_Params_Code::SECP256R1);
          result.confirm("list of offerings (1)",
-                        TP(two_groups).key_exchange_groups_to_offer()[1] == Botan::TLS::Group_Params::FFDHE_4096);
+                        TP(two_groups).key_exchange_groups_to_offer()[1] == Botan::TLS::Group_Params_Code::FFDHE_4096);
 
          return result;
       }

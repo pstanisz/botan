@@ -49,7 +49,7 @@ class Key_Share_Entry {
       Key_Share_Entry(const TLS::Group_Params group, Callbacks& cb, RandomNumberGenerator& rng) :
             m_group(group), m_private_key(cb.tls_kem_generate_key(group, rng)) {
          if(!m_private_key) {
-            throw TLS_Exception(Alert::InternalError, "Application did not provide a suitable ephemeral key pair");
+            throw TLS_Exception(AlertType::InternalError, "Application did not provide a suitable ephemeral key pair");
          }
 
          if(group.is_kem()) {
@@ -57,7 +57,7 @@ class Key_Share_Entry {
          } else if(group.is_ecdh_named_curve()) {
             auto pkey = dynamic_cast<ECDH_PublicKey*>(m_private_key.get());
             if(!pkey) {
-               throw TLS_Exception(Alert::InternalError, "Application did not provide a ECDH_PublicKey");
+               throw TLS_Exception(AlertType::InternalError, "Application did not provide a ECDH_PublicKey");
             }
 
             // RFC 8446 Ch. 4.2.8.2
@@ -72,14 +72,14 @@ class Key_Share_Entry {
          } else {
             auto pkey = dynamic_cast<PK_Key_Agreement_Key*>(m_private_key.get());
             if(!pkey) {
-               throw TLS_Exception(Alert::InternalError, "Application did not provide a key-agreement key");
+               throw TLS_Exception(AlertType::InternalError, "Application did not provide a key-agreement key");
             }
 
             m_key_exchange = pkey->public_value();
          }
       }
 
-      bool empty() const { return (m_group == Group_Params::NONE) && m_key_exchange.empty(); }
+      bool empty() const { return (m_group == Group_Params_Code::NONE) && m_key_exchange.empty(); }
 
       std::vector<uint8_t> serialize() const {
          std::vector<uint8_t> result;
@@ -125,8 +125,9 @@ class Key_Share_Entry {
          //   With X25519 and X448, a receiving party MUST check whether the
          //   computed premaster secret is the all-zero value and abort the
          //   handshake if so, as described in Section 6 of [RFC7748].
-         if(m_group == Named_Group::X25519 && CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
-            throw TLS_Exception(Alert::DecryptError, "Bad X25519 key exchange");
+         if(m_group == Group_Params_Code::X25519 &&
+            CT::all_zeros(shared_secret.data(), shared_secret.size()).is_set()) {
+            throw TLS_Exception(AlertType::DecryptError, "Bad X25519 key exchange");
          }
 
          return shared_secret;
@@ -202,7 +203,7 @@ class Key_Share_ClientHello {
 
          while(reader.has_remaining() && remaining() > 0) {
             if(remaining() < 4) {
-               throw TLS_Exception(Alert::DecodeError, "Not enough data to read another KeyShareEntry");
+               throw TLS_Exception(AlertType::DecodeError, "Not enough data to read another KeyShareEntry");
             }
 
             Key_Share_Entry new_entry(reader);
@@ -215,7 +216,8 @@ class Key_Share_ClientHello {
             if(std::find_if(m_client_shares.begin(), m_client_shares.end(), [&](const auto& entry) {
                   return entry.group() == new_entry.group();
                }) != m_client_shares.end()) {
-               throw TLS_Exception(Alert::IllegalParameter, "Received multiple key share entries for the same group");
+               throw TLS_Exception(AlertType::IllegalParameter,
+                                   "Received multiple key share entries for the same group");
             }
 
             m_client_shares.emplace_back(std::move(new_entry));
@@ -264,7 +266,7 @@ class Key_Share_ClientHello {
          if(std::find_if(m_client_shares.cbegin(), m_client_shares.cend(), [&](const auto& kse) {
                return kse.group() == to_offer;
             }) != m_client_shares.cend()) {
-            throw TLS_Exception(Alert::IllegalParameter, "group was already offered");
+            throw TLS_Exception(AlertType::IllegalParameter, "group was already offered");
          }
 
          m_client_shares.clear();
@@ -337,7 +339,7 @@ class Key_Share_ClientHello {
          //   as the KeyShareEntry value offered by the client that the server
          //   has selected for the negotiated key exchange.
          if(match == m_client_shares.end()) {
-            throw TLS_Exception(Alert::IllegalParameter, "Server selected a key exchange group we didn't offer.");
+            throw TLS_Exception(AlertType::IllegalParameter, "Server selected a key exchange group we didn't offer.");
          }
 
          return match->decapsulate(server_selected, policy, cb, rng);
@@ -390,7 +392,7 @@ class Key_Share_HelloRetryRequest {
          throw Invalid_Argument("Hello Retry Request never offers any key exchange groups");
       }
 
-      bool empty() const { return m_selected_group == Group_Params::NONE; }
+      bool empty() const { return m_selected_group == Group_Params_Code::NONE; }
 
    private:
       Named_Group m_selected_group;
@@ -500,7 +502,8 @@ void Key_Share::retry_offer(const Key_Share& retry_request_keyshare,
                             //    [T]he selected_group field [MUST correspond] to a group which was provided in
                             //    the "supported_groups" extension in the original ClientHello
                             if(!value_exists(supported_groups, selected)) {
-                               throw TLS_Exception(Alert::IllegalParameter, "group was not advertised as supported");
+                               throw TLS_Exception(AlertType::IllegalParameter,
+                                                   "group was not advertised as supported");
                             }
 
                             return ch.retry_offer(selected, cb, rng);

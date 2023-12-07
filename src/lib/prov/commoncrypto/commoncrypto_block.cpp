@@ -59,7 +59,7 @@ class CommonCrypto_BlockCipher final : public BlockCipher {
          }
       }
 
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       std::string m_cipher_name;
       CommonCryptor_Opts m_opts;
@@ -84,7 +84,7 @@ CommonCrypto_BlockCipher::~CommonCrypto_BlockCipher() {
 /*
 * Set the key
 */
-void CommonCrypto_BlockCipher::key_schedule(std::span<const uint8_t> key) {
+void CommonCrypto_BlockCipher::key_schedule(Botan::span<const uint8_t> key) {
    secure_vector<uint8_t> full_key(key.begin(), key.end());
 
    clear();

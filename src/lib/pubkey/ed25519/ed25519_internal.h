@@ -24,9 +24,8 @@ inline uint64_t load_4(const uint8_t* in) {
    return load_le<uint32_t>(in, 0);
 }
 
-template <size_t S, int64_t MUL = 1>
+template <size_t S, int64_t MUL = 1, typename = std::enable_if_t<(S > 0) && (S < 64)>>
 inline void carry(int64_t& h0, int64_t& h1)
-   requires(S > 0 && S < 64)
 {
    const int64_t X1 = (static_cast<int64_t>(1) << S);
    const int64_t X2 = (static_cast<int64_t>(1) << (S - 1));
@@ -35,9 +34,8 @@ inline void carry(int64_t& h0, int64_t& h1)
    h0 -= c * X1;
 }
 
-template <size_t S>
+template <size_t S, typename = std::enable_if_t<(S > 0) && (S < 64)>>
 inline void carry0(int64_t& h0, int64_t& h1)
-   requires(S > 0 && S < 64)
 {
    const int64_t X1 = (static_cast<int64_t>(1) << S);
    int64_t c = h0 >> S;
@@ -45,9 +43,8 @@ inline void carry0(int64_t& h0, int64_t& h1)
    h0 -= c * X1;
 }
 
-template <size_t S>
+template <size_t S, typename = std::enable_if_t<(S > 0) && (S < 32)>>
 inline void carry0(int32_t& h0, int32_t& h1)
-   requires(S > 0 && S < 32)
 {
    const int32_t X1 = (static_cast<int64_t>(1) << S);
    int32_t c = h0 >> S;

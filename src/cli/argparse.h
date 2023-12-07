@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 
+#include <botan/contains.h>
+
 namespace Botan_CLI {
 
 class Argument_Parser final {
@@ -76,11 +78,11 @@ std::vector<std::string> Argument_Parser::split_on(const std::string& str, char 
 }
 
 bool Argument_Parser::flag_set(const std::string& flag_name) const {
-   return m_user_flags.contains(flag_name);
+   return Botan::contains(m_user_flags, flag_name);
 }
 
 bool Argument_Parser::has_arg(const std::string& opt_name) const {
-   return m_user_args.contains(opt_name);
+   return Botan::contains(m_user_args, opt_name);
 }
 
 std::string Argument_Parser::get_arg(const std::string& opt_name) const {
@@ -128,8 +130,8 @@ void Argument_Parser::parse_args(const std::vector<std::string>& params) {
          if(eq == std::string::npos) {
             const std::string opt_name = param.substr(2, std::string::npos);
 
-            if(!m_spec_flags.contains(opt_name)) {
-               if(m_spec_opts.contains(opt_name)) {
+            if(!Botan::contains(m_spec_flags, opt_name)) {
+               if(Botan::contains(m_spec_opts, opt_name)) {
                   throw CLI_Usage_Error("Invalid usage of option --" + opt_name + " without value");
                } else {
                   throw CLI_Usage_Error("Unknown flag --" + opt_name);
@@ -140,11 +142,11 @@ void Argument_Parser::parse_args(const std::vector<std::string>& params) {
             const std::string opt_name = param.substr(2, eq - 2);
             const std::string opt_val = param.substr(eq + 1, std::string::npos);
 
-            if(!m_spec_opts.contains(opt_name)) {
+            if(!Botan::contains(m_spec_opts, opt_name)) {
                throw CLI_Usage_Error("Unknown option --" + opt_name);
             }
 
-            if(m_user_args.contains(opt_name)) {
+            if(Botan::contains(m_user_args, opt_name)) {
                throw CLI_Usage_Error("Duplicated option --" + opt_name);
             }
 
@@ -191,7 +193,7 @@ void Argument_Parser::parse_args(const std::vector<std::string>& params) {
 
    // Now insert any defaults for options not supplied by the user
    for(const auto& opt : m_spec_opts) {
-      if(!m_user_args.contains(opt.first)) {
+      if(!Botan::contains(m_user_args, opt.first)) {
          m_user_args.insert(opt);
       }
    }

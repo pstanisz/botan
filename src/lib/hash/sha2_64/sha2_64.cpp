@@ -34,7 +34,7 @@ std::string sha512_provider() {
 * SHA-{384,512} Compression Function
 */
 //static
-void SHA_512::compress_digest(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_512::compress_digest(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
 #if defined(BOTAN_HAS_SHA2_64_BMI2)
    if(CPUID::has_bmi2()) {
       return compress_digest_bmi2(digest, input, blocks);
@@ -170,15 +170,15 @@ std::string SHA_512::provider() const {
    return sha512_provider();
 }
 
-void SHA_512_256::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_512_256::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    SHA_512::compress_digest(digest, input, blocks);
 }
 
-void SHA_384::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_384::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    SHA_512::compress_digest(digest, input, blocks);
 }
 
-void SHA_512::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SHA_512::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    SHA_512::compress_digest(digest, input, blocks);
 }
 
@@ -239,27 +239,27 @@ std::unique_ptr<HashFunction> SHA_512_256::copy_state() const {
    return std::make_unique<SHA_512_256>(*this);
 }
 
-void SHA_384::add_data(std::span<const uint8_t> input) {
+void SHA_384::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_512::add_data(std::span<const uint8_t> input) {
+void SHA_512::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_512_256::add_data(std::span<const uint8_t> input) {
+void SHA_512_256::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SHA_384::final_result(std::span<uint8_t> output) {
+void SHA_384::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 
-void SHA_512::final_result(std::span<uint8_t> output) {
+void SHA_512::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 
-void SHA_512_256::final_result(std::span<uint8_t> output) {
+void SHA_512_256::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

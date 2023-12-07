@@ -13,6 +13,7 @@
 #include <botan/pubkey.h>
 #include <botan/internal/emsa.h>
 #include <botan/internal/fmt.h>
+#include <botan/starts_with.h>
 #include <algorithm>
 #include <sstream>
 
@@ -168,7 +169,7 @@ std::string x509_signature_padding_for(const std::string& algo_name,
       }
    } else if(algo_name == "Ed25519") {
       return user_specified_padding.empty() ? "Pure" : std::string(user_specified_padding);
-   } else if(algo_name.starts_with("Dilithium-")) {
+   } else if(starts_with(algo_name, "Dilithium-")) {
       return user_specified_padding.empty() ? "Randomized" : std::string(user_specified_padding);
    } else if(algo_name == "XMSS") {
       // XMSS does not take any padding, but if the user insists, we pass it along

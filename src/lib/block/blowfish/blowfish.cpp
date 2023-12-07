@@ -296,7 +296,7 @@ bool Blowfish::has_keying_material() const {
 /*
 * Blowfish Key Schedule
 */
-void Blowfish::key_schedule(std::span<const uint8_t> key) {
+void Blowfish::key_schedule(Botan::span<const uint8_t> key) {
    m_P.resize(18);
    copy_mem(m_P.data(), P_INIT, 18);
 

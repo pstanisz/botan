@@ -473,7 +473,7 @@ The primary interface for encryption is
          const uint8_t in[], size_t length, RandomNumberGenerator& rng) const
 
    .. cpp:function:: std::vector<uint8_t> encrypt( \
-      std::span<const uint8_t> in, RandomNumberGenerator& rng) const
+      Botan::span<const uint8_t> in, RandomNumberGenerator& rng) const
 
       These encrypt a message, returning the ciphertext.
 
@@ -634,7 +634,7 @@ Signature generation is performed using
      value. This formatting is used in protocols such as TLS and Bitcoin.
 
    .. cpp:function:: void update(const uint8_t* in, size_t length)
-   .. cpp:function:: void update(std::span<const uint8_t> in)
+   .. cpp:function:: void update(Botan::span<const uint8_t> in)
    .. cpp:function:: void update(uint8_t in)
 
       These add more data to be included in the signature computation. Typically, the
@@ -649,7 +649,7 @@ Signature generation is performed using
       const uint8_t* in, size_t length, RandomNumberGenerator& rng)
 
    .. cpp:function:: std::vector<uint8_t> sign_message( \
-       std::span<const uint8_t> in, RandomNumberGenerator& rng)
+       Botan::span<const uint8_t> in, RandomNumberGenerator& rng)
 
       These functions are equivalent to calling :cpp:func:`PK_Signer::update` and then
       :cpp:func:`PK_Signer::signature`. Any data previously provided using ``update`` will
@@ -679,14 +679,14 @@ Signatures are verified using
       *padding* and *format* should be the same as that used by the signer.
 
    .. cpp:function:: void update(const uint8_t* in, size_t length)
-   .. cpp:function:: void update(std::span<const uint8_t> in)
+   .. cpp:function:: void update(Botan::span<const uint8_t> in)
    .. cpp:function:: void update(uint8_t in)
 
       Add further message data that is purportedly associated with the
       signature that will be checked.
 
    .. cpp:function:: bool check_signature(const uint8_t* sig, size_t length)
-   .. cpp:function:: bool check_signature(std::span<const uint8_t> sig)
+   .. cpp:function:: bool check_signature(Botan::span<const uint8_t> sig)
 
       Check to see if *sig* is a valid signature for the message data that was written
       in. Return true if so. This function clears the internal message state, so after
@@ -696,8 +696,8 @@ Signatures are verified using
    .. cpp:function:: bool verify_message(const uint8_t* msg, size_t msg_length, \
                                          const uint8_t* sig, size_t sig_length)
 
-   .. cpp:function:: bool verify_message(std::span<const uint8_t> msg, \
-                                         std::span<const uint8_t> sig)
+   .. cpp:function:: bool verify_message(Botan::span<const uint8_t> msg, \
+                                         Botan::span<const uint8_t> sig)
 
       These are equivalent to calling :cpp:func:`PK_Verifier::update` on *msg* and then
       calling :cpp:func:`PK_Verifier::check_signature` on *sig*. Any data previously
@@ -792,7 +792,7 @@ produce an output of the desired length.
                     size_t params_len) const
 
   .. cpp:function:: SymmetricKey derive_key(size_t key_len, \
-                    std::span<const uint8_t> in, \
+                    Botan::span<const uint8_t> in, \
                     const uint8_t params[], size_t params_len) const
 
   .. cpp:function:: SymmetricKey derive_key(size_t key_len, \
@@ -800,7 +800,7 @@ produce an output of the desired length.
                     const std::string& params = "") const
 
   .. cpp:function:: SymmetricKey derive_key(size_t key_len, \
-                    const std::span<const uint8_t> in, \
+                    const Botan::span<const uint8_t> in, \
                     const std::string& params = "") const
 
      Return a shared key. The *params* will be hashed along with the shared secret by the
@@ -845,16 +845,16 @@ encapsulated key and returns the shared secret.
 
   .. cpp:function:: KEM_Encapsulation encrypt(RandomNumberGenerator& rng, \
                                 size_t desired_shared_key_len = 32, \
-                                std::span<const uint8_t> salt = {})
+                                Botan::span<const uint8_t> salt = {})
 
      Perform a key encapsulation operation with the result being returned
      as a convenient struct.
 
-  .. cpp:function:: void encrypt(std::span<uint8_t> out_encapsulated_key, \
-                   std::span<uint8_t> out_shared_key, \
+  .. cpp:function:: void encrypt(Botan::span<uint8_t> out_encapsulated_key, \
+                   Botan::span<uint8_t> out_shared_key, \
                    RandomNumberGenerator& rng, \
                    size_t desired_shared_key_len = 32, \
-                   std::span<const uint8_t> salt = {})
+                   Botan::span<const uint8_t> salt = {})
 
      Perform a key encapsulation operation by passing in out-buffers of
      the correct output length. Use encapsulated_key_length() and
@@ -864,7 +864,7 @@ encapsulated key and returns the shared secret.
                    secure_vector<uint8_t>& out_shared_key, \
                    size_t desired_shared_key_len, \
                    RandomNumberGenerator& rng, \
-                   std::span<const uint8_t> salt)
+                   Botan::span<const uint8_t> salt)
 
       Perform a key encapsulation operation by passing in out-vectors
       that will be re-allocated to the correct output size.
@@ -891,16 +891,16 @@ encapsulated key and returns the shared secret.
 
      Size in bytes of the shared key being produced by this PK_KEM_Encryptor.
 
-  .. cpp:function:: secure_vector<uint8> decrypt(std::span<const uint8> encapsulated_key, \
+  .. cpp:function:: secure_vector<uint8> decrypt(Botan::span<const uint8> encapsulated_key, \
                     size_t desired_shared_key_len, \
-                    std::span<const uint8_t> salt)
+                    Botan::span<const uint8_t> salt)
 
       Perform a key decapsulation operation
 
-  .. cpp:function:: void decrypt(std::span<uint8_t> out_shared_key, \
-                   std::span<const uint8_t> encap_key, \
+  .. cpp:function:: void decrypt(Botan::span<uint8_t> out_shared_key, \
+                   Botan::span<const uint8_t> encap_key, \
                    size_t desired_shared_key_len = 32, \
-                   std::span<const uint8_t> salt = {})
+                   Botan::span<const uint8_t> salt = {})
 
       Perform a key decapsulation operation by passing in a pre-allocated
       out-buffer. Use shared_key_length() to determine the byte-length required.

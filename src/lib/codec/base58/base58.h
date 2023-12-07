@@ -7,10 +7,10 @@
 #ifndef BOTAN_BASE58_CODEC_H_
 #define BOTAN_BASE58_CODEC_H_
 
+#include <botan/span.h>
 #include <botan/types.h>
 
 #include <cstdint>
-#include <span>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -43,11 +43,11 @@ std::vector<uint8_t> BOTAN_PUBLIC_API(2, 9) base58_check_decode(const char input
 
 // Some convenience wrappers:
 
-inline std::string base58_encode(std::span<const uint8_t> vec) {
+inline std::string base58_encode(Botan::span<const uint8_t> vec) {
    return base58_encode(vec.data(), vec.size());
 }
 
-inline std::string base58_check_encode(std::span<const uint8_t> vec) {
+inline std::string base58_check_encode(Botan::span<const uint8_t> vec) {
    return base58_check_encode(vec.data(), vec.size());
 }
 

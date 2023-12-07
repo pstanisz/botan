@@ -124,7 +124,7 @@ class HTTP_Parser final {
 
       HTTP_Parser(Callbacks& cb) : m_cb(cb) {}
 
-      void consume_input(std::span<const uint8_t> buf) {
+      void consume_input(Botan::span<const uint8_t> buf) {
          m_req_buf.append(reinterpret_cast<const char*>(buf.data()), buf.size());
 
          std::istringstream strm(m_req_buf);
@@ -270,7 +270,7 @@ class TLS_Asio_HTTP_Session final : public std::enable_shared_from_this<TLS_Asio
          return "http/1.1";
       }
 
-      void tls_record_received(uint64_t /*rec_no*/, std::span<const uint8_t> buf) override {
+      void tls_record_received(uint64_t /*rec_no*/, Botan::span<const uint8_t> buf) override {
          if(!m_http_parser) {
             m_http_parser = std::make_unique<HTTP_Parser>(*this);
          }
@@ -325,7 +325,7 @@ class TLS_Asio_HTTP_Session final : public std::enable_shared_from_this<TLS_Asio
          m_tls->close();
       }
 
-      void tls_emit_data(std::span<const uint8_t> buf) override {
+      void tls_emit_data(Botan::span<const uint8_t> buf) override {
          if(!buf.empty()) {
             m_s2c_pending.insert(m_s2c_pending.end(), buf.begin(), buf.end());
          }
@@ -398,7 +398,7 @@ class TLS_Asio_HTTP_Session final : public std::enable_shared_from_this<TLS_Asio
             log_error("Received client data after close");
             return;
          }
-         if(alert.type() == Botan::TLS::Alert::CloseNotify) {
+         if(alert.type() == Botan::TLS::AlertType::CloseNotify) {
             m_tls->close();
          } else {
             std::cout << "Alert " << alert.type_string() << std::endl;

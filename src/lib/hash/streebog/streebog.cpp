@@ -49,7 +49,7 @@ void Streebog::clear() {
 /*
 * Update the hash
 */
-void Streebog::add_data(std::span<const uint8_t> input) {
+void Streebog::add_data(Botan::span<const uint8_t> input) {
    BufferSlicer in(input);
 
    while(!in.empty()) {
@@ -70,7 +70,7 @@ void Streebog::add_data(std::span<const uint8_t> input) {
 /*
 * Finalize a hash
 */
-void Streebog::final_result(std::span<uint8_t> output) {
+void Streebog::final_result(Botan::span<uint8_t> output) {
    const auto pos = m_buffer.elements_in_buffer();
 
    const uint8_t padding = 0x01;

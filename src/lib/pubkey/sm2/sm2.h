@@ -29,7 +29,7 @@ class BOTAN_PUBLIC_API(2, 2) SM2_PublicKey : public virtual EC_PublicKey {
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits DER encoded public key bits
       */
-      SM2_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+      SM2_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
             EC_PublicKey(alg_id, key_bits) {}
 
       /**
@@ -72,7 +72,7 @@ class BOTAN_PUBLIC_API(2, 2) SM2_PrivateKey final : public SM2_PublicKey,
       * @param alg_id the X.509 algorithm identifier
       * @param key_bits ECPrivateKey bits
       */
-      SM2_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits);
+      SM2_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits);
 
       /**
       * Create a private key.

@@ -22,7 +22,7 @@ size_t int_encoding_size(uint64_t x) {
    return ceil_tobytes(std::max(uint8_t(1), ceil_log2(x + 1)));
 }
 
-uint8_t encode(std::span<uint8_t> out, uint64_t x) {
+uint8_t encode(Botan::span<uint8_t> out, uint64_t x) {
    const auto bytes_needed = int_encoding_size(x);
    BOTAN_ASSERT_NOMSG(out.size() >= bytes_needed);
 
@@ -38,13 +38,13 @@ uint8_t encode(std::span<uint8_t> out, uint64_t x) {
 
 }  // namespace
 
-std::span<const uint8_t> keccak_int_left_encode(std::span<uint8_t> out, size_t x) {
+Botan::span<const uint8_t> keccak_int_left_encode(Botan::span<uint8_t> out, size_t x) {
    BOTAN_ASSERT_NOMSG(!out.empty());
    out[0] = encode(out.last(out.size() - 1), x);
    return out.first(out[0] + 1 /* the length tag */);
 }
 
-std::span<const uint8_t> keccak_int_right_encode(std::span<uint8_t> out, size_t x) {
+Botan::span<const uint8_t> keccak_int_right_encode(Botan::span<uint8_t> out, size_t x) {
    const auto bytes_needed = encode(out, x);
    BOTAN_ASSERT_NOMSG(out.size() >= bytes_needed + size_t(1));
    out[bytes_needed] = bytes_needed;

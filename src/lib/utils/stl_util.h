@@ -12,7 +12,6 @@
 #include <functional>
 #include <map>
 #include <set>
-#include <span>
 #include <string>
 #include <tuple>
 #include <variant>
@@ -20,16 +19,18 @@
 
 #include <botan/concepts.h>
 #include <botan/secmem.h>
+#include <botan/span.h>
 #include <botan/strong_type.h>
+#include <botan/type_traits.h>
 
 namespace Botan {
 
-template <concepts::contiguous_container T = std::vector<uint8_t>>
+template <typename T = std::vector<uint8_t>, typename = concepts::contiguous_container<T>>
 inline T to_byte_vector(std::string_view s) {
    return T(s.cbegin(), s.cend());
 }
 
-inline std::string to_string(std::span<const uint8_t> bytes) {
+inline std::string to_string(Botan::span<const uint8_t> bytes) {
    return std::string(bytes.begin(), bytes.end());
 }
 
@@ -42,10 +43,11 @@ inline std::string to_string(std::span<const uint8_t> bytes) {
  *
  * @return the accumulator containing the reduction of @p keys
  */
-template <typename RetT, typename KeyT, typename ReducerT>
-RetT reduce(const std::vector<KeyT>& keys, RetT acc, ReducerT reducer)
-   requires std::is_convertible_v<ReducerT, std::function<RetT(RetT, const KeyT&)>>
-{
+template <typename RetT,
+          typename KeyT,
+          typename ReducerT,
+          typename = std::enable_if_t<std::is_convertible_v<ReducerT, std::function<RetT(RetT, const KeyT&)>>>>
+RetT reduce(const std::vector<KeyT>& keys, RetT acc, ReducerT reducer) {
    for(const KeyT& key : keys) {
       acc = reducer(std::move(acc), key);
    }
@@ -139,9 +141,9 @@ void map_remove_if(Pred pred, T& assoc) {
  */
 class BufferSlicer final {
    public:
-      BufferSlicer(std::span<const uint8_t> buffer) : m_remaining(buffer) {}
+      BufferSlicer(Botan::span<const uint8_t> buffer) : m_remaining(buffer) {}
 
-      template <concepts::contiguous_container ContainerT>
+      template <typename ContainerT, typename = std::enable_if_t<concepts::is_contiguous_container_v<ContainerT>>>
       auto copy(const size_t count) {
          const auto result = take(count);
          return ContainerT(result.begin(), result.end());
@@ -151,21 +153,21 @@ class BufferSlicer final {
 
       auto copy_as_secure_vector(const size_t count) { return copy<secure_vector<uint8_t>>(count); }
 
-      std::span<const uint8_t> take(const size_t count) {
+      Botan::span<const uint8_t> take(const size_t count) {
          BOTAN_STATE_CHECK(remaining() >= count);
          auto result = m_remaining.first(count);
          m_remaining = m_remaining.subspan(count);
          return result;
       }
 
-      template <concepts::contiguous_strong_type T>
+      template <typename T, typename = std::enable_if_t<concepts::is_contiguous_strong_type_v<T>>>
       StrongSpan<const T> take(const size_t count) {
          return StrongSpan<const T>(take(count));
       }
 
       uint8_t take_byte() { return take(1)[0]; }
 
-      void copy_into(std::span<uint8_t> sink) {
+      void copy_into(Botan::span<uint8_t> sink) {
          const auto data = take(sink.size());
          std::copy(data.begin(), data.end(), sink.begin());
       }
@@ -177,7 +179,7 @@ class BufferSlicer final {
       bool empty() const { return m_remaining.empty(); }
 
    private:
-      std::span<const uint8_t> m_remaining;
+      Botan::span<const uint8_t> m_remaining;
 };
 
 /**
@@ -189,13 +191,13 @@ class BufferSlicer final {
  */
 class BufferStuffer {
    public:
-      BufferStuffer(std::span<uint8_t> buffer) : m_buffer(buffer) {}
+      BufferStuffer(Botan::span<uint8_t> buffer) : m_buffer(buffer) {}
 
       /**
        * @returns a span for the next @p bytes bytes in the concatenated buffer.
        *          Checks that the buffer is not exceded.
        */
-      std::span<uint8_t> next(size_t bytes) {
+      Botan::span<uint8_t> next(size_t bytes) {
          BOTAN_STATE_CHECK(m_buffer.size() >= bytes);
 
          auto result = m_buffer.first(bytes);
@@ -203,7 +205,7 @@ class BufferStuffer {
          return result;
       }
 
-      template <concepts::contiguous_strong_type StrongT>
+      template <typename StrongT, typename = std::enable_if_t<concepts::is_contiguous_strong_type_v<StrongT>>>
       StrongSpan<StrongT> next(size_t bytes) {
          return StrongSpan<StrongT>(next(bytes));
       }
@@ -213,7 +215,7 @@ class BufferStuffer {
        */
       uint8_t& next_byte() { return next(1)[0]; }
 
-      void append(std::span<const uint8_t> buffer) {
+      void append(Botan::span<const uint8_t> buffer) {
          auto sink = next(buffer.size());
          std::copy(buffer.begin(), buffer.end(), sink.begin());
       }
@@ -223,7 +225,7 @@ class BufferStuffer {
       size_t remaining_capacity() const { return m_buffer.size(); }
 
    private:
-      std::span<uint8_t> m_buffer;
+      Botan::span<uint8_t> m_buffer;
 };
 
 /**
@@ -234,7 +236,7 @@ template <typename... Ts>
 decltype(auto) concat(Ts&&... buffers) {
    static_assert(sizeof...(buffers) > 0, "concat requires at least one buffer");
 
-   using result_t = std::remove_cvref_t<std::tuple_element_t<0, std::tuple<Ts...>>>;
+   using result_t = Botan::remove_cvref_t<std::tuple_element_t<0, std::tuple<Ts...>>>;
    result_t result;
    result.reserve((buffers.size() + ...));
    (result.insert(result.end(), buffers.begin(), buffers.end()), ...);
@@ -273,10 +275,10 @@ constexpr bool is_generalizable_to(const std::variant<SpecialTs...>&) noexcept {
  * This is useful to convert restricted variant types into more general
  * variants types.
  */
-template <typename GeneralVariantT, typename SpecialT>
-constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept
-   requires(std::is_constructible_v<GeneralVariantT, std::decay_t<SpecialT>>)
-{
+template <typename GeneralVariantT,
+          typename SpecialT,
+          typename = std::enable_if_t<std::is_constructible_v<GeneralVariantT, std::decay_t<SpecialT>>>>
+constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept {
    return std::forward<SpecialT>(specific);
 }
 

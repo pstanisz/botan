@@ -69,7 +69,7 @@ bool SIV_Mode::has_keying_material() const {
    return m_ctr->has_keying_material() && m_mac->has_keying_material();
 }
 
-void SIV_Mode::key_schedule(std::span<const uint8_t> key) {
+void SIV_Mode::key_schedule(Botan::span<const uint8_t> key) {
    const size_t keylen = key.size() / 2;
    m_mac->set_key(key.first(keylen));
    m_ctr->set_key(key.last(keylen));
@@ -80,7 +80,7 @@ size_t SIV_Mode::maximum_associated_data_inputs() const {
    return block_size() * 8 - 2;
 }
 
-void SIV_Mode::set_associated_data_n(size_t n, std::span<const uint8_t> ad) {
+void SIV_Mode::set_associated_data_n(size_t n, Botan::span<const uint8_t> ad) {
    const size_t max_ads = maximum_associated_data_inputs();
    if(n > max_ads) {
       throw Invalid_Argument(name() + " allows no more than " + std::to_string(max_ads) + " ADs");

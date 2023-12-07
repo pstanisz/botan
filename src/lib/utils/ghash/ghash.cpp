@@ -31,7 +31,7 @@ std::string GHASH::provider() const {
    return "base";
 }
 
-void GHASH::ghash_multiply(secure_vector<uint8_t>& x, std::span<const uint8_t> input, size_t blocks) {
+void GHASH::ghash_multiply(secure_vector<uint8_t>& x, Botan::span<const uint8_t> input, size_t blocks) {
 #if defined(BOTAN_HAS_GHASH_CLMUL_CPU)
    if(CPUID::has_carryless_multiply()) {
       BOTAN_ASSERT_NOMSG(!m_H_pow.empty());
@@ -78,7 +78,7 @@ void GHASH::ghash_multiply(secure_vector<uint8_t>& x, std::span<const uint8_t> i
    CT::unpoison(x.data(), x.size());
 }
 
-void GHASH::ghash_update(secure_vector<uint8_t>& ghash, std::span<const uint8_t> input) {
+void GHASH::ghash_update(secure_vector<uint8_t>& ghash, Botan::span<const uint8_t> input) {
    assert_key_material_set(!m_H.empty());
 
    /*
@@ -105,7 +105,7 @@ bool GHASH::has_keying_material() const {
    return !m_ghash.empty();
 }
 
-void GHASH::key_schedule(std::span<const uint8_t> key) {
+void GHASH::key_schedule(Botan::span<const uint8_t> key) {
    m_H.assign(key.begin(), key.end());  // TODO: C++23 - std::vector<>::assign_range()
    m_H_ad.resize(GCM_BS);
    m_ad_len = 0;
@@ -143,13 +143,13 @@ void GHASH::key_schedule(std::span<const uint8_t> key) {
 #endif
 }
 
-void GHASH::start(std::span<const uint8_t> nonce) {
+void GHASH::start(Botan::span<const uint8_t> nonce) {
    BOTAN_ARG_CHECK(nonce.size() == 16, "GHASH requires a 128-bit nonce");
    m_nonce.assign(nonce.begin(), nonce.end());  // TODO: C++23: assign_range
    m_ghash = m_H_ad;
 }
 
-void GHASH::set_associated_data(std::span<const uint8_t> input) {
+void GHASH::set_associated_data(Botan::span<const uint8_t> input) {
    if(m_ghash.empty() == false) {
       throw Invalid_State("Too late to set AD in GHASH");
    }
@@ -160,13 +160,13 @@ void GHASH::set_associated_data(std::span<const uint8_t> input) {
    m_ad_len = input.size();
 }
 
-void GHASH::update_associated_data(std::span<const uint8_t> ad) {
+void GHASH::update_associated_data(Botan::span<const uint8_t> ad) {
    assert_key_material_set();
    m_ad_len += ad.size();
    ghash_update(m_ghash, ad);
 }
 
-void GHASH::update(std::span<const uint8_t> input) {
+void GHASH::update(Botan::span<const uint8_t> input) {
    assert_key_material_set();
    m_text_len += input.size();
    ghash_update(m_ghash, input);
@@ -182,7 +182,7 @@ void GHASH::add_final_block(secure_vector<uint8_t>& hash, size_t ad_len, size_t 
    ghash_update(hash, {final_block, GCM_BS});
 }
 
-void GHASH::final(std::span<uint8_t> mac) {
+void GHASH::final(Botan::span<uint8_t> mac) {
    BOTAN_ARG_CHECK(!mac.empty() && mac.size() <= 16, "GHASH output length");
 
    assert_key_material_set();
@@ -196,7 +196,7 @@ void GHASH::final(std::span<uint8_t> mac) {
    m_text_len = 0;
 }
 
-void GHASH::nonce_hash(secure_vector<uint8_t>& y0, std::span<const uint8_t> nonce) {
+void GHASH::nonce_hash(secure_vector<uint8_t>& y0, Botan::span<const uint8_t> nonce) {
    BOTAN_ASSERT(m_ghash.empty(), "nonce_hash called during wrong time");
 
    ghash_update(y0, nonce);

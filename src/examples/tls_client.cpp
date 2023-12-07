@@ -12,12 +12,12 @@
  */
 class Callbacks : public Botan::TLS::Callbacks {
    public:
-      void tls_emit_data(std::span<const uint8_t> data) override {
+      void tls_emit_data(Botan::span<const uint8_t> data) override {
          // send data to tls server, e.g., using BSD sockets or boost asio
          BOTAN_UNUSED(data);
       }
 
-      void tls_record_received(uint64_t seq_no, std::span<const uint8_t> data) override {
+      void tls_record_received(uint64_t seq_no, Botan::span<const uint8_t> data) override {
          // process full TLS record received by tls server, e.g.,
          // by passing it to the application
          BOTAN_UNUSED(seq_no, data);
@@ -87,7 +87,7 @@ int main() {
                              policy,
                              rng,
                              Botan::TLS::Server_Information("botan.randombit.net", 443),
-                             Botan::TLS::Protocol_Version::TLS_V12);
+                             Botan::TLS::Version_Code::TLS_V12);
 
    while(!client.is_closed()) {
       // read data received from the tls server, e.g., using BSD sockets or boost asio

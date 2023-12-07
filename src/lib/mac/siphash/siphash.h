@@ -28,9 +28,9 @@ class SipHash final : public MessageAuthenticationCode {
       Key_Length_Specification key_spec() const override { return Key_Length_Specification(16); }
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
-      void key_schedule(std::span<const uint8_t>) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
+      void key_schedule(Botan::span<const uint8_t>) override;
 
       const size_t m_C, m_D;
       secure_vector<uint64_t> m_K;

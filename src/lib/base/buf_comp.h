@@ -10,7 +10,7 @@
 
 #include <botan/concepts.h>
 #include <botan/secmem.h>
-#include <span>
+#include <botan/span.h>
 #include <string_view>
 
 namespace Botan {
@@ -37,7 +37,7 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * Add new input to process.
       * @param in the input to process as a contiguous data range
       */
-      void update(std::span<const uint8_t> in) { add_data(in); }
+      void update(Botan::span<const uint8_t> in) { add_data(in); }
 
       void update_be(uint16_t val);
       void update_be(uint32_t val);
@@ -73,7 +73,7 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * final result as a container of your choice.
       * @return a contiguous container holding the result
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T final() {
          T output(output_length());
          final_result(output);
@@ -82,12 +82,12 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
 
       std::vector<uint8_t> final_stdvec() { return final<std::vector<uint8_t>>(); }
 
-      void final(std::span<uint8_t> out) {
+      void final(Botan::span<uint8_t> out) {
          BOTAN_ARG_CHECK(out.size() >= output_length(), "provided output buffer has insufficient capacity");
          final_result(out);
       }
 
-      template <concepts::resizable_byte_buffer T>
+      template <typename T, typename = concepts::resizable_byte_buffer<T>>
       void final(T& out) {
          out.resize(output_length());
          final_result(out);
@@ -100,7 +100,7 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * @param length the length of the byte array
       * @result the result of the call to final()
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T process(const uint8_t in[], size_t length) {
          update(in, length);
          return final<T>();
@@ -112,7 +112,7 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * @param in the input to process as a string
       * @result the result of the call to final()
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T process(std::string_view in) {
          update(in);
          return final<T>();
@@ -124,8 +124,8 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * @param in the input to process as a contiguous container
       * @result the result of the call to final()
       */
-      template <concepts::resizable_byte_buffer T = secure_vector<uint8_t>>
-      T process(std::span<const uint8_t> in) {
+      template <typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
+      T process(Botan::span<const uint8_t> in) {
          update(in);
          return final<T>();
       }
@@ -137,13 +137,13 @@ class BOTAN_PUBLIC_API(2, 0) Buffered_Computation {
       * Add more data to the computation
       * @param input is an input buffer
       */
-      virtual void add_data(std::span<const uint8_t> input) = 0;
+      virtual void add_data(Botan::span<const uint8_t> input) = 0;
 
       /**
       * Write the final output to out
       * @param out is an output buffer of output_length()
       */
-      virtual void final_result(std::span<uint8_t> out) = 0;
+      virtual void final_result(Botan::span<uint8_t> out) = 0;
 };
 
 }  // namespace Botan

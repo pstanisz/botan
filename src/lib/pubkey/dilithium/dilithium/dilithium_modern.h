@@ -23,7 +23,7 @@ namespace Botan {
 
 class Dilithium_Common_Symmetric_Primitives : public Dilithium_Symmetric_Primitives {
    public:
-      std::unique_ptr<Botan::XOF> XOF(XofType type, std::span<const uint8_t> seed, uint16_t nonce) const override {
+      std::unique_ptr<Botan::XOF> XOF(XofType type, Botan::span<const uint8_t> seed, uint16_t nonce) const override {
          const auto xof_type = [&] {
             switch(type) {
                case XofType::k128:

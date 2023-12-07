@@ -72,7 +72,7 @@ class Stream_Cipher_Mode final : public Cipher_Mode {
 
       void finish_msg(secure_vector<uint8_t>& buf, size_t offset) override { return update(buf, offset); }
 
-      void key_schedule(std::span<const uint8_t> key) override { m_cipher->set_key(key); }
+      void key_schedule(Botan::span<const uint8_t> key) override { m_cipher->set_key(key); }
 
       std::unique_ptr<StreamCipher> m_cipher;
 };

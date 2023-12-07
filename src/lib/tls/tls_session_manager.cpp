@@ -211,7 +211,8 @@ std::optional<std::pair<Session, uint16_t>> Session_Manager::choose_from_offered
    // Note that the TLS server currently does not ensure that tickets aren't
    // reused. As a result, no locking is required on this level.
 
-   for(uint16_t i = 0; const auto& ticket : tickets) {
+   uint16_t i = 0U;
+   for(const auto& ticket : tickets) {
       auto session = retrieve(Opaque_Session_Handle(ticket.identity()), callbacks, policy);
       if(session.has_value() && session->ciphersuite().prf_algo() == hash_function &&
          session->version().is_tls_13_or_later()) {

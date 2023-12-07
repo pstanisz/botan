@@ -47,10 +47,10 @@ class GMAC final : public MessageAuthenticationCode {
       ~GMAC() override;
 
    private:
-      void add_data(std::span<const uint8_t>) override;
-      void final_result(std::span<uint8_t>) override;
-      void start_msg(std::span<const uint8_t> nonce) override;
-      void key_schedule(std::span<const uint8_t> key) override;
+      void add_data(Botan::span<const uint8_t>) override;
+      void final_result(Botan::span<uint8_t>) override;
+      void start_msg(Botan::span<const uint8_t> nonce) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 
       static const size_t GCM_BS = 16;
       std::unique_ptr<BlockCipher> m_cipher;

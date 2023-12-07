@@ -27,7 +27,7 @@ class Test_Buf_Comp final : public Botan::Buffered_Computation {
 
       size_t output_length() const override { return sizeof(m_counter); }
 
-      void add_data(std::span<const uint8_t> input) override {
+      void add_data(Botan::span<const uint8_t> input) override {
          if(m_result.test_eq("input length as expected", input.size(), size_t(5))) {
             m_result.confirm("input[0] == 'A'", input[0] == 'A');
             m_result.confirm("input[0] == 'B'", input[1] == 'B');
@@ -39,7 +39,7 @@ class Test_Buf_Comp final : public Botan::Buffered_Computation {
          ++m_counter;
       }
 
-      void final_result(std::span<uint8_t> out) override {
+      void final_result(Botan::span<uint8_t> out) override {
          const uint8_t* counter = reinterpret_cast<const uint8_t*>(&m_counter);
          std::copy(counter, counter + sizeof(m_counter), out.begin());
       }
@@ -51,7 +51,7 @@ class Test_Buf_Comp final : public Botan::Buffered_Computation {
       size_t m_counter;
 };
 
-void check(Test::Result& result, std::span<const uint8_t> produced, size_t expected) {
+void check(Test::Result& result, Botan::span<const uint8_t> produced, size_t expected) {
    const uint8_t* eptr = reinterpret_cast<const uint8_t*>(&expected);
    result.confirm("result is correct", Botan::same_mem(produced.data(), eptr, sizeof(size_t)));
 }

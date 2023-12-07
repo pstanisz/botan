@@ -212,11 +212,11 @@ class KyberConstants {
 
       std::unique_ptr<HashFunction> KDF() const { return m_symmetric_primitives->KDF(); }
 
-      Botan::XOF& XOF(std::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const {
+      Botan::XOF& XOF(Botan::span<const uint8_t> seed, std::tuple<uint8_t, uint8_t> matrix_position) const {
          return m_symmetric_primitives->XOF(seed, matrix_position);
       }
 
-      secure_vector<uint8_t> PRF(std::span<const uint8_t> seed, const uint8_t nonce, const size_t outlen) const {
+      secure_vector<uint8_t> PRF(Botan::span<const uint8_t> seed, const uint8_t nonce, const size_t outlen) const {
          return m_symmetric_primitives->PRF(seed, nonce, outlen);
       }
 
@@ -270,7 +270,7 @@ class Polynomial {
        * Given an array of uniformly random bytes, compute polynomial with coefficients
        * distributed according to a centered binomial distribution with parameter eta=2
        */
-      static Polynomial cbd2(std::span<const uint8_t> buf) {
+      static Polynomial cbd2(Botan::span<const uint8_t> buf) {
          Polynomial r;
 
          BOTAN_ASSERT(buf.size() == (2 * r.size() / 4), "wrong input buffer size for cbd2");
@@ -296,7 +296,7 @@ class Polynomial {
        *
        * This function is only needed for Kyber-512
        */
-      static Polynomial cbd3(std::span<const uint8_t> buf) {
+      static Polynomial cbd3(Botan::span<const uint8_t> buf) {
          Polynomial r;
 
          BOTAN_ASSERT(buf.size() == (3 * r.size() / 4), "wrong input buffer size for cbd3");
@@ -326,7 +326,7 @@ class Polynomial {
        * Sample a polynomial deterministically from a seed and a nonce, with output
        * polynomial close to centered binomial distribution with parameter eta=2.
        */
-      static Polynomial getnoise_eta2(std::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static Polynomial getnoise_eta2(Botan::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
          const auto eta2 = mode.eta2();
          BOTAN_ASSERT(eta2 == 2, "Invalid eta2 value");
 
@@ -338,7 +338,7 @@ class Polynomial {
        * Sample a polynomial deterministically from a seed and a nonce, with output
        * polynomial close to centered binomial distribution with parameter mode.eta1()
        */
-      static Polynomial getnoise_eta1(std::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static Polynomial getnoise_eta1(Botan::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
          const auto eta1 = mode.eta1();
          BOTAN_ASSERT(eta1 == 2 || eta1 == 3, "Invalid eta1 value");
 
@@ -347,7 +347,7 @@ class Polynomial {
                             : Polynomial::cbd3(mode.PRF(seed, nonce, outlen));
       }
 
-      static Polynomial from_bytes(std::span<const uint8_t> a) {
+      static Polynomial from_bytes(Botan::span<const uint8_t> a) {
          Polynomial r;
          for(size_t i = 0; i < r.size() / 2; ++i) {
             r.m_coeffs[2 * i] = ((a[3 * i + 0] >> 0) | (static_cast<uint16_t>(a[3 * i + 1]) << 8)) & 0xFFF;
@@ -356,7 +356,7 @@ class Polynomial {
          return r;
       }
 
-      static Polynomial from_message(std::span<const uint8_t> msg) {
+      static Polynomial from_message(Botan::span<const uint8_t> msg) {
          BOTAN_ASSERT(msg.size() == KyberConstants::N / 8, "message length must be Kyber_N/8 bytes");
 
          Polynomial r;
@@ -564,7 +564,7 @@ class PolynomialVector {
 
       explicit PolynomialVector(const size_t k) : m_vec(k) {}
 
-      static PolynomialVector from_bytes(std::span<const uint8_t> a, const KyberConstants& mode) {
+      static PolynomialVector from_bytes(Botan::span<const uint8_t> a, const KyberConstants& mode) {
          BOTAN_ASSERT(a.size() == mode.polynomial_vector_byte_length(), "wrong byte length for frombytes");
 
          PolynomialVector r(mode.k());
@@ -592,7 +592,9 @@ class PolynomialVector {
          return r;
       }
 
-      static PolynomialVector getnoise_eta2(std::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static PolynomialVector getnoise_eta2(Botan::span<const uint8_t> seed,
+                                            uint8_t nonce,
+                                            const KyberConstants& mode) {
          PolynomialVector r(mode.k());
 
          for(auto& p : r.m_vec) {
@@ -602,7 +604,9 @@ class PolynomialVector {
          return r;
       }
 
-      static PolynomialVector getnoise_eta1(std::span<const uint8_t> seed, uint8_t nonce, const KyberConstants& mode) {
+      static PolynomialVector getnoise_eta1(Botan::span<const uint8_t> seed,
+                                            uint8_t nonce,
+                                            const KyberConstants& mode) {
          PolynomialVector r(mode.k());
 
          for(auto& p : r.m_vec) {
@@ -681,7 +685,7 @@ class PolynomialMatrix {
    public:
       PolynomialMatrix() = delete;
 
-      static PolynomialMatrix generate(std::span<const uint8_t> seed,
+      static PolynomialMatrix generate(Botan::span<const uint8_t> seed,
                                        const bool transposed,
                                        const KyberConstants& mode) {
          BOTAN_ASSERT(seed.size() == KyberConstants::kSymBytes, "unexpected seed size");
@@ -725,7 +729,7 @@ class Ciphertext {
       Ciphertext(PolynomialVector b, const Polynomial& v, KyberConstants mode) :
             m_mode(std::move(mode)), m_b(std::move(b)), m_v(v) {}
 
-      static Ciphertext from_bytes(std::span<const uint8_t> buffer, const KyberConstants& mode) {
+      static Ciphertext from_bytes(Botan::span<const uint8_t> buffer, const KyberConstants& mode) {
          const size_t pvb = polynomial_vector_compressed_bytes(mode);
          const size_t pcb = polynomial_compressed_bytes(mode);
 
@@ -862,7 +866,7 @@ class Ciphertext {
          return r;
       }
 
-      static PolynomialVector decompress_polynomial_vector(std::span<const uint8_t> buffer,
+      static PolynomialVector decompress_polynomial_vector(Botan::span<const uint8_t> buffer,
                                                            const KyberConstants& mode) {
          BOTAN_ASSERT(buffer.size() == polynomial_vector_compressed_bytes(mode),
                       "unexpected length of compressed polynomial vector");
@@ -909,7 +913,7 @@ class Ciphertext {
          return r;
       }
 
-      static Polynomial decompress_polynomial(std::span<const uint8_t> buffer, const KyberConstants& mode) {
+      static Polynomial decompress_polynomial(Botan::span<const uint8_t> buffer, const KyberConstants& mode) {
          BOTAN_ASSERT(buffer.size() == polynomial_compressed_bytes(mode), "unexpected length of compressed polynomial");
 
          Polynomial r;
@@ -953,7 +957,7 @@ class Ciphertext {
 
 class Kyber_PublicKeyInternal {
    public:
-      Kyber_PublicKeyInternal(KyberConstants mode, std::span<const uint8_t> polynomials, std::vector<uint8_t> seed) :
+      Kyber_PublicKeyInternal(KyberConstants mode, Botan::span<const uint8_t> polynomials, std::vector<uint8_t> seed) :
             m_mode(std::move(mode)),
             m_polynomials(PolynomialVector::from_bytes(polynomials, m_mode)),
             m_seed(std::move(seed)),
@@ -1013,7 +1017,7 @@ class Kyber_KEM_Cryptor {
             m_mode(m_public_key->mode()),
             m_at(PolynomialMatrix::generate(m_public_key->seed(), true, m_mode)) {}
 
-      secure_vector<uint8_t> indcpa_enc(std::span<const uint8_t> m, std::span<const uint8_t> coins) {
+      secure_vector<uint8_t> indcpa_enc(Botan::span<const uint8_t> m, Botan::span<const uint8_t> coins) {
          auto sp = PolynomialVector::getnoise_eta1(coins, 0, m_mode);
          auto ep = PolynomialVector::getnoise_eta2(coins, m_mode.k(), m_mode);
          auto epp = Polynomial::getnoise_eta2(coins, 2 * m_mode.k(), m_mode);
@@ -1075,8 +1079,8 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
          return kyber_key_length_to_encap_key_length(m_key.key_length());
       }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> out_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> out_shared_key,
                            RandomNumberGenerator& rng) override {
          // naming from kyber spec
          auto H = mode().H();
@@ -1093,12 +1097,12 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
 
          BOTAN_ASSERT_EQUAL(g_out.size(), 64, "Expected output length of Kyber G");
 
-         const auto lower_g_out = std::span(g_out).subspan(0, 32);
-         const auto upper_g_out = std::span(g_out).subspan(32, 32);
+         const auto lower_g_out = Botan::span(g_out).subspan(0, 32);
+         const auto upper_g_out = Botan::span(g_out).subspan(32, 32);
 
          const auto encapsulation = indcpa_enc(shared_secret, upper_g_out);
 
-         // TODO: avoid copy by letting Ciphertext write straight into std::span<>
+         // TODO: avoid copy by letting Ciphertext write straight into Botan::span<>
          BOTAN_ASSERT_NOMSG(encapsulation.size() == out_encapsulated_key.size());
          std::copy(encapsulation.begin(), encapsulation.end(), out_encapsulated_key.begin());
 
@@ -1123,7 +1127,7 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
          return kyber_key_length_to_encap_key_length(m_key.key_length());
       }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encapsulated_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encapsulated_key) override {
          // naming from kyber spec
          auto H = mode().H();
          auto G = mode().G();
@@ -1139,8 +1143,8 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
 
          BOTAN_ASSERT_EQUAL(g_out.size(), 64, "Expected output length of Kyber G");
 
-         const auto lower_g_out = std::span(g_out).subspan(0, 32);
-         const auto upper_g_out = std::span(g_out).subspan(32, 32);
+         const auto lower_g_out = Botan::span(g_out).subspan(0, 32);
+         const auto upper_g_out = Botan::span(g_out).subspan(32, 32);
 
          H->update(encapsulated_key);
 
@@ -1164,7 +1168,7 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
       }
 
    private:
-      secure_vector<uint8_t> indcpa_dec(std::span<const uint8_t> c) {
+      secure_vector<uint8_t> indcpa_dec(Botan::span<const uint8_t> c) {
          auto ct = Ciphertext::from_bytes(c, mode());
          return ct.indcpa_decrypt(m_key.m_private->polynomials());
       }
@@ -1193,7 +1197,7 @@ size_t Kyber_PublicKey::estimated_strength() const {
    return m_public->mode().estimated_strength();
 }
 
-std::shared_ptr<Kyber_PublicKeyInternal> Kyber_PublicKey::initialize_from_encoding(std::span<const uint8_t> pub_key,
+std::shared_ptr<Kyber_PublicKeyInternal> Kyber_PublicKey::initialize_from_encoding(Botan::span<const uint8_t> pub_key,
                                                                                    KyberMode m) {
    KyberConstants mode(m);
 
@@ -1210,10 +1214,10 @@ std::shared_ptr<Kyber_PublicKeyInternal> Kyber_PublicKey::initialize_from_encodi
    return std::make_shared<Kyber_PublicKeyInternal>(std::move(mode), poly_vec, std::move(seed));
 }
 
-Kyber_PublicKey::Kyber_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+Kyber_PublicKey::Kyber_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
       Kyber_PublicKey(key_bits, KyberMode(alg_id.oid())) {}
 
-Kyber_PublicKey::Kyber_PublicKey(std::span<const uint8_t> pub_key, KyberMode m) :
+Kyber_PublicKey::Kyber_PublicKey(Botan::span<const uint8_t> pub_key, KyberMode m) :
       m_public(initialize_from_encoding(pub_key, m)) {}
 
 Kyber_PublicKey::Kyber_PublicKey(const Kyber_PublicKey& other) :
@@ -1269,10 +1273,10 @@ Kyber_PrivateKey::Kyber_PrivateKey(RandomNumberGenerator& rng, KyberMode m) {
       std::move(mode), std::move(skpv), rng.random_vec(KyberConstants::kZLength));
 }
 
-Kyber_PrivateKey::Kyber_PrivateKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) :
+Kyber_PrivateKey::Kyber_PrivateKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) :
       Kyber_PrivateKey(key_bits, KyberMode(alg_id.oid())) {}
 
-Kyber_PrivateKey::Kyber_PrivateKey(std::span<const uint8_t> sk, KyberMode m) {
+Kyber_PrivateKey::Kyber_PrivateKey(Botan::span<const uint8_t> sk, KyberMode m) {
    KyberConstants mode(m);
 
    if(mode.private_key_byte_length() != sk.size()) {

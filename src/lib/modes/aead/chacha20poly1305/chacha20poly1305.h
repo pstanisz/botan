@@ -24,7 +24,7 @@ namespace Botan {
 */
 class ChaCha20Poly1305_Mode : public AEAD_Mode {
    public:
-      void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) final;
+      void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) final;
 
       bool associated_data_requires_key() const override { return false; }
 
@@ -63,7 +63,7 @@ class ChaCha20Poly1305_Mode : public AEAD_Mode {
    private:
       void start_msg(const uint8_t nonce[], size_t nonce_len) override;
 
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
 };
 
 /**

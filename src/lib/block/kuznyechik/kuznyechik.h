@@ -30,7 +30,7 @@ class Kuznyechik final : public Botan::Block_Cipher_Fixed_Params<16, 32> {
       ~Kuznyechik() override;
 
    private:
-      void key_schedule(std::span<const uint8_t> key) override;
+      void key_schedule(Botan::span<const uint8_t> key) override;
       uint64_t m_rke[10][2];
       uint64_t m_rkd[10][2];
       bool m_has_keying_material;

@@ -37,8 +37,8 @@ class SHAKE_XOF : public XOF {
       bool accepts_input() const final { return !m_output_generated; }
 
    private:
-      void add_data(std::span<const uint8_t> input) final;
-      void generate_bytes(std::span<uint8_t> output) final;
+      void add_data(Botan::span<const uint8_t> input) final;
+      void generate_bytes(Botan::span<uint8_t> output) final;
       void reset() final;
 
    private:

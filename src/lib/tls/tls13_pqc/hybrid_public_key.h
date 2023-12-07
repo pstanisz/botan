@@ -39,8 +39,8 @@ namespace Botan::TLS {
  */
 class BOTAN_TEST_API Hybrid_KEM_PublicKey : public virtual Public_Key {
    public:
-      static std::unique_ptr<Hybrid_KEM_PublicKey> load_for_group(Group_Params group,
-                                                                  std::span<const uint8_t> concatenated_public_values);
+      static std::unique_ptr<Hybrid_KEM_PublicKey> load_for_group(
+         Group_Params group, Botan::span<const uint8_t> concatenated_public_values);
 
    public:
       explicit Hybrid_KEM_PublicKey(std::vector<std::unique_ptr<Public_Key>> pks);

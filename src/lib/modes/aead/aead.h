@@ -9,8 +9,7 @@
 #define BOTAN_AEAD_MODE_H_
 
 #include <botan/cipher_mode.h>
-
-#include <span>
+#include <botan/span.h>
 
 namespace Botan {
 
@@ -56,9 +55,9 @@ class BOTAN_PUBLIC_API(2, 0) AEAD_Mode : public Cipher_Mode {
       *
       * @param ad the associated data
       */
-      void set_associated_data(std::span<const uint8_t> ad) { set_associated_data_n(0, ad); }
+      void set_associated_data(Botan::span<const uint8_t> ad) { set_associated_data_n(0, ad); }
 
-      void set_associated_data(const uint8_t ad[], size_t ad_len) { set_associated_data(std::span(ad, ad_len)); }
+      void set_associated_data(const uint8_t ad[], size_t ad_len) { set_associated_data(Botan::span(ad, ad_len)); }
 
       /**
       * Set associated data that is not included in the ciphertext but
@@ -80,7 +79,7 @@ class BOTAN_PUBLIC_API(2, 0) AEAD_Mode : public Cipher_Mode {
       * @param idx which associated data to set
       * @param ad the associated data
       */
-      virtual void set_associated_data_n(size_t idx, std::span<const uint8_t> ad) = 0;
+      virtual void set_associated_data_n(size_t idx, Botan::span<const uint8_t> ad) = 0;
 
       /**
       * Returns the maximum supported number of associated data inputs which
@@ -123,7 +122,7 @@ class BOTAN_PUBLIC_API(2, 0) AEAD_Mode : public Cipher_Mode {
       */
       BOTAN_DEPRECATED("Please use set_associated_data")
 
-      void set_ad(std::span<const uint8_t> ad) { set_associated_data(ad); }
+      void set_ad(Botan::span<const uint8_t> ad) { set_associated_data(ad); }
 
       /**
       * @return default AEAD nonce size (a commonly supported value among AEAD

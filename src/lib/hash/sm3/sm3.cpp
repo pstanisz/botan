@@ -78,7 +78,7 @@ inline uint32_t SM3_E(uint32_t W0, uint32_t W7, uint32_t W13, uint32_t W3, uint3
 /*
 * SM3 Compression Function
 */
-void SM3::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void SM3::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    uint32_t A = digest[0], B = digest[1], C = digest[2], D = digest[3], E = digest[4], F = digest[5], G = digest[6],
             H = digest[7];
 
@@ -245,11 +245,11 @@ std::unique_ptr<HashFunction> SM3::copy_state() const {
    return std::make_unique<SM3>(*this);
 }
 
-void SM3::add_data(std::span<const uint8_t> input) {
+void SM3::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void SM3::final_result(std::span<uint8_t> output) {
+void SM3::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

@@ -87,7 +87,7 @@ uint64_t whirl(uint64_t x0, uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4, 
 /*
 * Whirlpool Compression Function
 */
-void Whirlpool::compress_n(digest_type& digest, std::span<const uint8_t> input, size_t blocks) {
+void Whirlpool::compress_n(digest_type& digest, Botan::span<const uint8_t> input, size_t blocks) {
    static const uint64_t RC[10] = {0x1823C6E887B8014F,
                                    0x36A6D2F5796F9152,
                                    0x60BC9B8EA30C7B35,
@@ -192,11 +192,11 @@ std::unique_ptr<HashFunction> Whirlpool::copy_state() const {
    return std::make_unique<Whirlpool>(*this);
 }
 
-void Whirlpool::add_data(std::span<const uint8_t> input) {
+void Whirlpool::add_data(Botan::span<const uint8_t> input) {
    m_md.update(input);
 }
 
-void Whirlpool::final_result(std::span<uint8_t> output) {
+void Whirlpool::final_result(Botan::span<uint8_t> output) {
    m_md.final(output);
 }
 

@@ -10,6 +10,7 @@
 #include <botan/ber_dec.h>
 #include <botan/der_enc.h>
 #include <botan/reducer.h>
+#include <botan/starts_with.h>
 #include <botan/internal/blinding.h>
 #include <botan/internal/divide.h>
 #include <botan/internal/emsa.h>
@@ -144,7 +145,7 @@ void RSA_PublicKey::init(BigInt&& n, BigInt&& e) {
    m_public = std::make_shared<RSA_Public_Data>(std::move(n), std::move(e));
 }
 
-RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+RSA_PublicKey::RSA_PublicKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    BigInt n, e;
    BER_Decoder(key_bits).start_sequence().decode(n).decode(e).end_cons();
 
@@ -241,7 +242,7 @@ void RSA_PrivateKey::init(BigInt&& d, BigInt&& p, BigInt&& q, BigInt&& d1, BigIn
       std::move(d), std::move(p), std::move(q), std::move(d1), std::move(d2), std::move(c));
 }
 
-RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/, std::span<const uint8_t> key_bits) {
+RSA_PrivateKey::RSA_PrivateKey(const AlgorithmIdentifier& /*unused*/, Botan::span<const uint8_t> key_bits) {
    BigInt n, e, d, p, q, d1, d2, c;
 
    BER_Decoder(key_bits)
@@ -445,7 +446,7 @@ class RSA_Private_Operation {
             m_max_d1_bits(m_private->p_bits() + m_blinding_bits),
             m_max_d2_bits(m_private->q_bits() + m_blinding_bits) {}
 
-      void raw_op(std::span<uint8_t> out, std::span<const uint8_t> input) {
+      void raw_op(Botan::span<uint8_t> out, Botan::span<const uint8_t> input) {
          if(input.size() > public_modulus_bytes()) {
             throw Decoding_Error("RSA input is too long for this key");
          }
@@ -575,7 +576,7 @@ AlgorithmIdentifier RSA_Signature_Operation::algorithm_identifier() const {
       return AlgorithmIdentifier(oid, AlgorithmIdentifier::USE_EMPTY_PARAM);
    } catch(Lookup_Error&) {}
 
-   if(emsa_name.starts_with("EMSA4(")) {
+   if(starts_with(emsa_name, "EMSA4(")) {
       auto parameters = PSS_Params::from_emsa_name(m_emsa->name()).serialize();
       return AlgorithmIdentifier("RSA/EMSA4", parameters);
    }
@@ -606,7 +607,7 @@ class RSA_KEM_Decryption_Operation final : public PK_Ops::KEM_Decryption_with_KD
 
       size_t encapsulated_key_length() const override { return public_modulus_bytes(); }
 
-      void raw_kem_decrypt(std::span<uint8_t> out_shared_key, std::span<const uint8_t> encapsulated_key) override {
+      void raw_kem_decrypt(Botan::span<uint8_t> out_shared_key, Botan::span<const uint8_t> encapsulated_key) override {
          raw_op(out_shared_key, encapsulated_key);
       }
 };
@@ -694,8 +695,8 @@ class RSA_KEM_Encryption_Operation final : public PK_Ops::KEM_Encryption_with_KD
 
       size_t encapsulated_key_length() const override { return public_modulus_bytes(); }
 
-      void raw_kem_encrypt(std::span<uint8_t> out_encapsulated_key,
-                           std::span<uint8_t> raw_shared_key,
+      void raw_kem_encrypt(Botan::span<uint8_t> out_encapsulated_key,
+                           Botan::span<uint8_t> raw_shared_key,
                            RandomNumberGenerator& rng) override {
          const BigInt r = BigInt::random_integer(rng, 1, get_n());
          const BigInt c = public_op(r);

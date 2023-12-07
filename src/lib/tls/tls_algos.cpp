@@ -136,75 +136,75 @@ Auth_Method auth_method_from_string(std::string_view str) {
 
 std::optional<Group_Params> Group_Params::from_string(std::string_view group_name) {
    if(group_name == "secp256r1") {
-      return Group_Params::SECP256R1;
+      return Group_Params_Code::SECP256R1;
    }
    if(group_name == "secp384r1") {
-      return Group_Params::SECP384R1;
+      return Group_Params_Code::SECP384R1;
    }
    if(group_name == "secp521r1") {
-      return Group_Params::SECP521R1;
+      return Group_Params_Code::SECP521R1;
    }
    if(group_name == "brainpool256r1") {
-      return Group_Params::BRAINPOOL256R1;
+      return Group_Params_Code::BRAINPOOL256R1;
    }
    if(group_name == "brainpool384r1") {
-      return Group_Params::BRAINPOOL384R1;
+      return Group_Params_Code::BRAINPOOL384R1;
    }
    if(group_name == "brainpool512r1") {
-      return Group_Params::BRAINPOOL512R1;
+      return Group_Params_Code::BRAINPOOL512R1;
    }
    if(group_name == "x25519") {
-      return Group_Params::X25519;
+      return Group_Params_Code::X25519;
    }
 
    if(group_name == "ffdhe/ietf/2048") {
-      return Group_Params::FFDHE_2048;
+      return Group_Params_Code::FFDHE_2048;
    }
    if(group_name == "ffdhe/ietf/3072") {
-      return Group_Params::FFDHE_3072;
+      return Group_Params_Code::FFDHE_3072;
    }
    if(group_name == "ffdhe/ietf/4096") {
-      return Group_Params::FFDHE_4096;
+      return Group_Params_Code::FFDHE_4096;
    }
    if(group_name == "ffdhe/ietf/6144") {
-      return Group_Params::FFDHE_6144;
+      return Group_Params_Code::FFDHE_6144;
    }
    if(group_name == "ffdhe/ietf/8192") {
-      return Group_Params::FFDHE_8192;
+      return Group_Params_Code::FFDHE_8192;
    }
 
    if(group_name == "Kyber-512-r3") {
-      return Group_Params::KYBER_512_R3_OQS;
+      return Group_Params_Code::KYBER_512_R3_OQS;
    }
    if(group_name == "Kyber-768-r3") {
-      return Group_Params::KYBER_768_R3_OQS;
+      return Group_Params_Code::KYBER_768_R3_OQS;
    }
    if(group_name == "Kyber-1024-r3") {
-      return Group_Params::KYBER_1024_R3_OQS;
+      return Group_Params_Code::KYBER_1024_R3_OQS;
    }
 
    if(group_name == "x25519/Kyber-512-r3/cloudflare") {
-      return Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE;
+      return Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE;
    }
 
    if(group_name == "x25519/Kyber-512-r3") {
-      return Group_Params::HYBRID_X25519_KYBER_512_R3_OQS;
+      return Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS;
    }
    if(group_name == "x25519/Kyber-768-r3") {
-      return Group_Params::HYBRID_X25519_KYBER_768_R3_OQS;
+      return Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS;
    }
 
    if(group_name == "secp256r1/Kyber-512-r3") {
-      return Group_Params::HYBRID_SECP256R1_KYBER_512_R3_OQS;
+      return Group_Params_Code::HYBRID_SECP256R1_KYBER_512_R3_OQS;
    }
    if(group_name == "secp256r1/Kyber-768-r3") {
-      return Group_Params::HYBRID_SECP256R1_KYBER_768_R3_OQS;
+      return Group_Params_Code::HYBRID_SECP256R1_KYBER_768_R3_OQS;
    }
    if(group_name == "secp384r1/Kyber-768-r3") {
-      return Group_Params::HYBRID_SECP384R1_KYBER_768_R3_OQS;
+      return Group_Params_Code::HYBRID_SECP384R1_KYBER_768_R3_OQS;
    }
    if(group_name == "secp521r1/Kyber-1024-r3") {
-      return Group_Params::HYBRID_SECP521R1_KYBER_1024_R3_OQS;
+      return Group_Params_Code::HYBRID_SECP521R1_KYBER_1024_R3_OQS;
    }
 
    return std::nullopt;
@@ -212,54 +212,54 @@ std::optional<Group_Params> Group_Params::from_string(std::string_view group_nam
 
 std::optional<std::string> Group_Params::to_string() const {
    switch(m_code) {
-      case Group_Params::SECP256R1:
+      case Group_Params_Code::SECP256R1:
          return "secp256r1";
-      case Group_Params::SECP384R1:
+      case Group_Params_Code::SECP384R1:
          return "secp384r1";
-      case Group_Params::SECP521R1:
+      case Group_Params_Code::SECP521R1:
          return "secp521r1";
-      case Group_Params::BRAINPOOL256R1:
+      case Group_Params_Code::BRAINPOOL256R1:
          return "brainpool256r1";
-      case Group_Params::BRAINPOOL384R1:
+      case Group_Params_Code::BRAINPOOL384R1:
          return "brainpool384r1";
-      case Group_Params::BRAINPOOL512R1:
+      case Group_Params_Code::BRAINPOOL512R1:
          return "brainpool512r1";
-      case Group_Params::X25519:
+      case Group_Params_Code::X25519:
          return "x25519";
 
-      case Group_Params::FFDHE_2048:
+      case Group_Params_Code::FFDHE_2048:
          return "ffdhe/ietf/2048";
-      case Group_Params::FFDHE_3072:
+      case Group_Params_Code::FFDHE_3072:
          return "ffdhe/ietf/3072";
-      case Group_Params::FFDHE_4096:
+      case Group_Params_Code::FFDHE_4096:
          return "ffdhe/ietf/4096";
-      case Group_Params::FFDHE_6144:
+      case Group_Params_Code::FFDHE_6144:
          return "ffdhe/ietf/6144";
-      case Group_Params::FFDHE_8192:
+      case Group_Params_Code::FFDHE_8192:
          return "ffdhe/ietf/8192";
 
-      case Group_Params::KYBER_512_R3_OQS:
+      case Group_Params_Code::KYBER_512_R3_OQS:
          return "Kyber-512-r3";
-      case Group_Params::KYBER_768_R3_OQS:
+      case Group_Params_Code::KYBER_768_R3_OQS:
          return "Kyber-768-r3";
-      case Group_Params::KYBER_1024_R3_OQS:
+      case Group_Params_Code::KYBER_1024_R3_OQS:
          return "Kyber-1024-r3";
 
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_CLOUDFLARE:
          return "x25519/Kyber-512-r3/cloudflare";
 
-      case Group_Params::HYBRID_X25519_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_512_R3_OQS:
          return "x25519/Kyber-512-r3";
-      case Group_Params::HYBRID_X25519_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS:
          return "x25519/Kyber-768-r3";
 
-      case Group_Params::HYBRID_SECP256R1_KYBER_512_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_512_R3_OQS:
          return "secp256r1/Kyber-512-r3";
-      case Group_Params::HYBRID_SECP256R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP256R1_KYBER_768_R3_OQS:
          return "secp256r1/Kyber-768-r3";
-      case Group_Params::HYBRID_SECP384R1_KYBER_768_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP384R1_KYBER_768_R3_OQS:
          return "secp384r1/Kyber-768-r3";
-      case Group_Params::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
+      case Group_Params_Code::HYBRID_SECP521R1_KYBER_1024_R3_OQS:
          return "secp521r1/Kyber-1024-r3";
 
       default:

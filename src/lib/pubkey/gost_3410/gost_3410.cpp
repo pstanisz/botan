@@ -61,7 +61,7 @@ AlgorithmIdentifier GOST_3410_PublicKey::algorithm_identifier() const {
    return AlgorithmIdentifier(gost_oid, params);
 }
 
-GOST_3410_PublicKey::GOST_3410_PublicKey(const AlgorithmIdentifier& alg_id, std::span<const uint8_t> key_bits) {
+GOST_3410_PublicKey::GOST_3410_PublicKey(const AlgorithmIdentifier& alg_id, Botan::span<const uint8_t> key_bits) {
    OID ecc_param_id;
 
    // The parameters also includes hash and cipher OIDs

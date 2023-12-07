@@ -12,6 +12,7 @@
 
 #include <botan/base64.h>
 #include <botan/chacha_rng.h>
+#include <botan/contains.h>
 #include <botan/data_src.h>
 #include <botan/hex.h>
 #include <botan/mem_ops.h>
@@ -518,24 +519,24 @@ class Shim_Arguments final {
       void parse_args(char* argv[]);
 
       bool flag_set(const std::string& flag) const {
-         if(!m_flags.contains(flag)) {
+         if(!Botan::contains(m_flags, flag)) {
             throw Shim_Exception("Unknown bool flag " + flag);
          }
 
-         return m_parsed_flags.contains(flag);
+         return Botan::contains(m_parsed_flags, flag);
       }
 
       std::string test_name() const { return get_string_opt("test-name"); }
 
       std::string get_string_opt(const std::string& key) const {
-         if(!m_string_opts.contains(key)) {
+         if(!Botan::contains(m_string_opts, key)) {
             throw Shim_Exception("Unknown string key " + key);
          }
          return get_opt(key);
       }
 
       std::string get_string_opt_or_else(const std::string& key, const std::string& def) const {
-         if(!m_string_opts.contains(key)) {
+         if(!Botan::contains(m_string_opts, key)) {
             throw Shim_Exception("Unknown string key " + key);
          }
          if(!option_used(key)) {
@@ -545,21 +546,21 @@ class Shim_Arguments final {
       }
 
       std::vector<uint8_t> get_b64_opt(const std::string& key) const {
-         if(!m_base64_opts.contains(key)) {
+         if(!Botan::contains(m_base64_opts, key)) {
             throw Shim_Exception("Unknown base64 key " + key);
          }
          return Botan::unlock(Botan::base64_decode(get_opt(key)));
       }
 
       size_t get_int_opt(const std::string& key) const {
-         if(!m_int_opts.contains(key)) {
+         if(!Botan::contains(m_int_opts, key)) {
             throw Shim_Exception("Unknown int key " + key);
          }
          return Botan::to_u32bit(get_opt(key));
       }
 
       size_t get_int_opt_or_else(const std::string& key, size_t def) const {
-         if(!m_int_opts.contains(key)) {
+         if(!Botan::contains(m_int_opts, key)) {
             throw Shim_Exception("Unknown int key " + key);
          }
          if(!option_used(key)) {
@@ -570,7 +571,7 @@ class Shim_Arguments final {
       }
 
       std::vector<size_t> get_int_vec_opt(const std::string& key) const {
-         if(!m_int_vec_opts.contains(key)) {
+         if(!Botan::contains(m_int_vec_opts, key)) {
             throw Shim_Exception("Unknown int vec key " + key);
          }
 
@@ -594,7 +595,7 @@ class Shim_Arguments final {
       }
 
       bool option_used(const std::string& key) const {
-         if(!m_all_options.contains(key)) {
+         if(!Botan::contains(m_all_options, key)) {
             throw Shim_Exception("Invalid option " + key);
          }
          if(m_parsed_opts.find(key) != m_parsed_opts.end()) {
@@ -636,18 +637,18 @@ void Shim_Arguments::parse_args(char* argv[]) {
       if(param.find('-') == 0) {
          const std::string flag_name = param.substr(1, std::string::npos);
 
-         if(m_flags.contains(flag_name)) {
+         if(Botan::contains(m_flags, flag_name)) {
             shim_log("flag " + flag_name);
             m_parsed_flags.insert(flag_name);
             i += 1;
-         } else if(m_all_options.contains(flag_name)) {
+         } else if(Botan::contains(m_all_options, flag_name)) {
             if(argv[i + 1] == nullptr) {
                throw Shim_Exception("Expected argument following " + param);
             }
             std::string val(argv[i + 1]);
             shim_log(Botan::fmt("param {}={}", flag_name, val));
 
-            if(m_int_vec_opts.contains(flag_name)) {
+            if(Botan::contains(m_int_vec_opts, flag_name)) {
                const size_t v = Botan::to_u32bit(val);
                m_parsed_int_vec_opts[flag_name].push_back(v);
             } else {
@@ -991,7 +992,7 @@ class Shim_Policy final : public Botan::TLS::Policy {
                //
                // TODO: once `TLS::Policy::key_exchange_groups()` contains it by
                //       default, remove this explicit check.
-               if(group == Botan::TLS::Group_Params::HYBRID_X25519_KYBER_768_R3_OQS) {
+               if(group == Botan::TLS::Group_Params_Code::HYBRID_X25519_KYBER_768_R3_OQS) {
                   groups.push_back(group);
                }
             }
@@ -1018,7 +1019,7 @@ class Shim_Policy final : public Botan::TLS::Policy {
             }
          }
 
-         return Botan::TLS::Group_Params::NONE;
+         return Botan::TLS::Group_Params_Code::NONE;
       }
 
       bool require_client_certificate_authentication() const override {
@@ -1078,17 +1079,17 @@ class Shim_Policy final : public Botan::TLS::Policy {
 
       bool allow_tls12() const override {
          return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") &&
-                allow_version(Botan::TLS::Protocol_Version::TLS_V12);
+                allow_version(Botan::TLS::Version_Code::TLS_V12);
       }
 
       bool allow_tls13() const override {
          return !m_args.flag_set("dtls") && !m_args.flag_set("no-tls13") &&
-                allow_version(Botan::TLS::Protocol_Version::TLS_V13);
+                allow_version(Botan::TLS::Version_Code::TLS_V13);
       }
 
       bool allow_dtls12() const override {
          return m_args.flag_set("dtls") && !m_args.flag_set("no-tls12") &&
-                allow_version(Botan::TLS::Protocol_Version::DTLS_V12);
+                allow_version(Botan::TLS::Version_Code::DTLS_V12);
       }
 
       //Botan::TLS::Group_Params default_dh_group() const override;
@@ -1390,7 +1391,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
 
       bool saw_close_notify() const { return m_got_close; }
 
-      void tls_emit_data(std::span<const uint8_t> data) override {
+      void tls_emit_data(Botan::span<const uint8_t> data) override {
          shim_log("sending record of len " + std::to_string(data.size()));
 
          if(m_args.option_used("write-settings")) {
@@ -1430,7 +1431,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
          return {};
       }
 
-      void tls_record_received(uint64_t /*seq_no*/, std::span<const uint8_t> data) override {
+      void tls_record_received(uint64_t /*seq_no*/, Botan::span<const uint8_t> data) override {
          if(data.empty()) {
             m_empty_records += 1;
             if(m_empty_records > 32) {
@@ -1481,14 +1482,14 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
                                  const Botan::TLS::Policy& /*policy*/) override {
          if(m_args.flag_set("enable-ocsp-stapling") && m_args.flag_set("use-ocsp-callback") &&
             m_args.flag_set("fail-ocsp-callback")) {
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::BadCertificateStatusResponse,
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::BadCertificateStatusResponse,
                                             "Simulated OCSP callback failure");
          }
 
          if(m_args.flag_set("verify-fail")) {
-            auto alert = Botan::TLS::Alert::HandshakeFailure;
+            auto alert = Botan::TLS::AlertType::HandshakeFailure;
             if(m_args.flag_set("use-custom-verify-callback")) {
-               alert = Botan::TLS::Alert::CertificateUnknown;
+               alert = Botan::TLS::AlertType::CertificateUnknown;
             }
 
             throw Botan::TLS::TLS_Exception(alert, "Test requires rejecting cert");
@@ -1511,7 +1512,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
          }
 
          if(m_args.flag_set("reject-alpn")) {
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::NoApplicationProtocol,
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::NoApplicationProtocol,
                                             "Rejecting ALPN request with alert");
          }
 
@@ -1541,11 +1542,11 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
             shim_log("Got a warning alert " + alert.type_string());
          }
 
-         if(alert.type() == Botan::TLS::Alert::RecordOverflow) {
+         if(alert.type() == Botan::TLS::AlertType::RecordOverflow) {
             shim_exit_with_error(":TLSV1_ALERT_RECORD_OVERFLOW:");
          }
 
-         if(alert.type() == Botan::TLS::Alert::DecompressionFailure) {
+         if(alert.type() == Botan::TLS::AlertType::DecompressionFailure) {
             shim_exit_with_error(":SSLV3_ALERT_DECOMPRESSION_FAILURE:");
          }
 
@@ -1556,7 +1557,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
             }
          }
 
-         if(alert.type() == Botan::TLS::Alert::CloseNotify) {
+         if(alert.type() == Botan::TLS::AlertType::CloseNotify) {
             if(m_got_close == false && !m_args.flag_set("shim-shuts-down")) {
                shim_log("Sending return close notify");
                m_channel->send_alert(alert);
@@ -1610,7 +1611,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
 
       void tls_session_activated() override {
          if(m_args.flag_set("send-alert")) {
-            m_channel->send_fatal_alert(Botan::TLS::Alert::DecompressionFailure);
+            m_channel->send_fatal_alert(Botan::TLS::AlertType::DecompressionFailure);
             return;
          }
 
@@ -1631,7 +1632,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks {
          }
 
          if(alpn == "baz" && !m_args.flag_set("allow-unknown-alpn-protos")) {
-            throw Botan::TLS::TLS_Exception(Botan::TLS::Alert::IllegalParameter, "Unexpected ALPN protocol");
+            throw Botan::TLS::TLS_Exception(Botan::TLS::AlertType::IllegalParameter, "Unexpected ALPN protocol");
          }
 
          if(m_args.flag_set("shim-shuts-down")) {
