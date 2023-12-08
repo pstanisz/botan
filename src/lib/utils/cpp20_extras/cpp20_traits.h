@@ -5,8 +5,8 @@
 * Botan is released under the Simplified BSD License (see license.txt)
 */
 
-#ifndef BOTAN_TYPE_TRAITS_H_
-#define BOTAN_TYPE_TRAITS_H_
+#ifndef BOTAN_CPP20_TRAITS_H_
+#define BOTAN_CPP20_TRAITS_H_
 
 #include <type_traits>
 

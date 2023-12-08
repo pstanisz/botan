@@ -9,7 +9,7 @@ brief -> "C++20 features which are provided by Botan to allow compilation with l
 
 <header:public>
 span.h
-type_traits.h
+cpp20_traits.h
 contains.h
 starts_with.h
 erase_if.h

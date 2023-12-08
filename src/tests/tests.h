@@ -156,7 +156,7 @@ constexpr bool has_Botan_to_string = false;
 template <typename T>
 constexpr bool has_Botan_to_string<
     T,
-    std::void_t<decltype(Botan::to_string(std::declval<T>()))>
+    Botan::void_t<decltype(Botan::to_string(std::declval<T>()))>
 > = true;
 
 template <typename, typename = void>
@@ -164,7 +164,7 @@ constexpr bool has_std_to_string = false;
 template <typename T>
 constexpr bool has_std_to_string<
     T,
-    std::void_t<decltype(std::to_string(std::declval<T>()))>
+    Botan::void_t<decltype(std::to_string(std::declval<T>()))>
 > = true;
 
 template <typename, typename = void>
@@ -172,7 +172,7 @@ constexpr bool has_ostream_operator = false;
 template <typename T>
 constexpr bool has_ostream_operator<
     T,
-    std::void_t<decltype(operator<<(std::declval<std::ostringstream&>(), std::declval<T>()))>
+    Botan::void_t<decltype(operator<<(std::declval<std::ostringstream&>(), std::declval<T>()))>
 > = true;
 
 template <typename T>

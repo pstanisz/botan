@@ -16,6 +16,8 @@ namespace Botan {
 template< typename T>
 using optional = std::optional<T>;
 
+constexpr std::nullopt_t nullopt = std::nullopt;
+
 }
 
 #endif

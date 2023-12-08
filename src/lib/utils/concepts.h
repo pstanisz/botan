@@ -10,6 +10,8 @@
 #ifndef BOTAN_CONCEPTS_H_
 #define BOTAN_CONCEPTS_H_
 
+#include <botan/cpp17_traits.h>
+
 #include <compare>
 #include <concepts>
 #include <type_traits>
@@ -131,7 +133,7 @@ concept streamable = requires(std::ostream& os, T a)
 // TODO: C++20 use std::convertible_to<> that was not available in Android NDK
 //       as of this writing. Tested with API Level up to 33.
 template <class FromT, class ToT>
-using convertible_to = typename std::void_t<decltype(std::is_convertible_v<FromT, ToT>), decltype(static_cast<ToT>(std::declval<FromT>()))>;
+using convertible_to = typename Botan::void_t<decltype(std::is_convertible_v<FromT, ToT>), decltype(static_cast<ToT>(std::declval<FromT>()))>;
 
 template <class FromT, class ToT, typename = void>
 struct is_convertible_to : std::false_type {};
@@ -176,7 +178,7 @@ template <class T, class... Args>
 constexpr bool is_constructible_from_v = is_destructible_v<T> && std::is_constructible_v<T, Args...>;
 
 template <typename T>
-using default_initializable = typename std::void_t<std::enable_if_t<is_constructible_from_v<T>>, decltype(T{}), decltype(::new (static_cast<void *>(nullptr)) T)>;
+using default_initializable = typename Botan::void_t<std::enable_if_t<is_constructible_from_v<T>>, decltype(T{}), decltype(::new (static_cast<void *>(nullptr)) T)>;
 
 template <class T, typename = void>
 struct is_default_initializable : std::false_type {};
@@ -269,7 +271,7 @@ template <typename T>
 constexpr bool has_empty_v = has_empty<T>::value;
 
 template <typename T>
-using resizable_container = typename std::void_t<
+using resizable_container = typename Botan::void_t<
     std::enable_if_t<is_container_v<T>>,
     decltype(T(typename T::size_type{})),
     decltype(std::declval<T &>().resize(typename T::size_type{}))>;
@@ -298,7 +300,7 @@ template <typename T>
 constexpr bool is_resizable_byte_buffer_v = is_resizable_byte_buffer<T>::value;
 
 template <typename T>
-using streamable = typename std::void_t<decltype(std::declval<std::ostream &>() << std::declval<T &>())>;
+using streamable = typename Botan::void_t<decltype(std::declval<std::ostream &>() << std::declval<T &>())>;
 
 template <typename T, typename = void>
 struct is_streamable : std::false_type {};

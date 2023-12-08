@@ -12,7 +12,7 @@
 #include <limits>
 #include <array>
 
-#include <botan/type_traits.h>
+#include <botan/cpp20_traits.h>
 
 namespace Botan {
 

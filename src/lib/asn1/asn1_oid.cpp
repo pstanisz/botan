@@ -72,7 +72,7 @@ Botan::optional<OID> OID::from_name(Botan::string_view name)
    if(o.has_value())
       return Botan::optional<OID>(o);
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 //static
