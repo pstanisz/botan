@@ -8,6 +8,7 @@
 #ifndef BOTAN_BCRYPT_H_
 #define BOTAN_BCRYPT_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 
@@ -31,7 +32,7 @@ class RandomNumberGenerator;
 *
 * @see https://www.usenix.org/events/usenix99/provos/provos_html/
 */
-std::string BOTAN_PUBLIC_API(2,0) generate_bcrypt(std::string_view password,
+std::string BOTAN_PUBLIC_API(2,0) generate_bcrypt(Botan::string_view password,
                                                   RandomNumberGenerator& rng,
                                                   uint16_t work_factor = 12,
                                                   char version = 'a');
@@ -41,8 +42,8 @@ std::string BOTAN_PUBLIC_API(2,0) generate_bcrypt(std::string_view password,
 * @param password the password to check against
 * @param hash the stored hash to check against
 */
-bool BOTAN_PUBLIC_API(2,0) check_bcrypt(std::string_view password,
-                                        std::string_view hash);
+bool BOTAN_PUBLIC_API(2,0) check_bcrypt(Botan::string_view password,
+                                        Botan::string_view hash);
 
 }
 

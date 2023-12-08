@@ -113,14 +113,14 @@ class BOTAN_PUBLIC_API(3, 0) Session_Handle
        * 32 bytes long), this returns the handle as a Session_ID. Otherwise,
        * std::nullopt is returned.
        */
-      std::optional<Session_ID> id() const;
+      Botan::optional<Session_ID> id() const;
 
       /**
        * If the Session_Handle was constructed with a Session_Ticket or an
        * Opaque_Session_Handle this returns the handle as a Session_ID.
        * Otherwise, std::nullopt is returned.
        */
-      std::optional<Session_Ticket> ticket() const;
+      Botan::optional<Session_Ticket> ticket() const;
 
       decltype(auto) get() const { return m_handle; }
 
@@ -253,7 +253,7 @@ class BOTAN_PUBLIC_API(3,0) Session_Summary : public Session_Base
        * Note that this may be set in TLS 1.2 clients only. It is _not_ the
        * ticket used to establish this session.
        */
-      const std::optional<Session_Ticket>& session_ticket() const { return m_session_ticket; }
+      const Botan::optional<Session_Ticket>& session_ticket() const { return m_session_ticket; }
 
       bool psk_used() const { return m_psk_used; }
       bool was_resumption() const { return m_was_resumption; }
@@ -283,7 +283,7 @@ class BOTAN_PUBLIC_API(3,0) Session_Summary : public Session_Base
 
    private:
       Session_ID m_session_id;
-      std::optional<Session_Ticket> m_session_ticket;
+      Botan::optional<Session_Ticket> m_session_ticket;
 
       bool m_psk_used;
       bool m_was_resumption;
@@ -319,7 +319,7 @@ class BOTAN_PUBLIC_API(3,0) Session final : public Session_Base
       * New TLS 1.3 session (sets session start time)
       */
       Session(const secure_vector<uint8_t>& session_psk,
-              const std::optional<uint32_t>& max_early_data_bytes,
+              const Botan::optional<uint32_t>& max_early_data_bytes,
               uint32_t ticket_age_add,
               std::chrono::seconds lifetime_hint,
               Protocol_Version version,
@@ -334,7 +334,7 @@ class BOTAN_PUBLIC_API(3,0) Session final : public Session_Base
        * after a successful handshake with a TLS 1.3 client
        */
       Session(secure_vector<uint8_t>&& session_psk,
-              const std::optional<uint32_t>& max_early_data_bytes,
+              const Botan::optional<uint32_t>& max_early_data_bytes,
               std::chrono::seconds lifetime_hint,
               const std::vector<X509_Certificate>& peer_certs,
               const Client_Hello_13& client_hello,
@@ -354,7 +354,7 @@ class BOTAN_PUBLIC_API(3,0) Session final : public Session_Base
       * Load a session from PEM representation (created by PEM_encode)
       * @param pem PEM representation
       */
-      explicit Session(std::string_view pem);
+      explicit Session(Botan::string_view pem);
 
       /**
       * Encode this session data for storage

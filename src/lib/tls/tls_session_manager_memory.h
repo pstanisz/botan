@@ -57,7 +57,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_In_Memory : public Session_Manager
       bool emits_session_tickets() override { return false; }
 
    protected:
-      std::optional<Session> retrieve_one(const Session_Handle& handle) override;
+      Botan::optional<Session> retrieve_one(const Session_Handle& handle) override;
       std::vector<Session_with_Handle> find_some(const Server_Information& info, const size_t max_sessions_hint) override;
 
    private:
@@ -67,7 +67,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_In_Memory : public Session_Manager
       size_t m_max_sessions;
 
       std::map<Session_ID, Session_with_Handle> m_sessions;
-      std::optional<std::deque<Session_ID>> m_fifo;
+      Botan::optional<std::deque<Session_ID>> m_fifo;
    };
 
 }

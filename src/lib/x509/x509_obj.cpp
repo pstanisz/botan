@@ -37,7 +37,7 @@ void X509_Object::load_data(DataSource& in)
          if(got_label != PEM_label())
             {
             bool is_alternate = false;
-            for(std::string_view alt_label : alternate_PEM_labels())
+            for(Botan::string_view alt_label : alternate_PEM_labels())
                {
                if(got_label == alt_label)
                   {
@@ -166,8 +166,8 @@ namespace {
 
 std::string x509_signature_padding_for(
    const std::string& algo_name,
-   std::string_view hash_fn,
-   std::string_view user_specified_padding)
+   Botan::string_view hash_fn,
+   Botan::string_view user_specified_padding)
    {
    if(algo_name == "DSA" ||
       algo_name == "ECDSA" ||
@@ -215,11 +215,11 @@ std::string x509_signature_padding_for(
       }
    }
 
-std::string format_padding_error_message(std::string_view key_name,
-                                         std::string_view signer_hash_fn,
-                                         std::string_view user_hash_fn,
-                                         std::string_view chosen_padding,
-                                         std::string_view user_specified_padding)
+std::string format_padding_error_message(Botan::string_view key_name,
+                                         Botan::string_view signer_hash_fn,
+                                         Botan::string_view user_hash_fn,
+                                         Botan::string_view chosen_padding,
+                                         Botan::string_view user_specified_padding)
    {
    std::ostringstream oss;
 
@@ -245,8 +245,8 @@ std::string format_padding_error_message(std::string_view key_name,
 std::unique_ptr<PK_Signer> X509_Object::choose_sig_format(
    const Private_Key& key,
    RandomNumberGenerator& rng,
-   std::string_view hash_fn,
-   std::string_view user_specified_padding)
+   Botan::string_view hash_fn,
+   Botan::string_view user_specified_padding)
    {
    const Signature_Format format = key.default_x509_signature_format();
 

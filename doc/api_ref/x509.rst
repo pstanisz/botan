@@ -323,7 +323,7 @@ store would be one that looked up the certificates in a SQL database,
 or by contacting a CGI script running on a HTTP server. There are
 currently three mechanisms for looking up a certificate, and one for
 retrieving CRLs. By default, most of these mechanisms will return an
-empty ``std::optional`` of ``X509_Certificate``. This storage mechanism
+empty ``Botan::optional`` of ``X509_Certificate``. This storage mechanism
 is *only* queried when doing certificate validation: it allows you to
 distribute only the root key with an application, and let some online
 method handle getting all the other certificates that are needed to
@@ -340,7 +340,7 @@ mandatory to implement.
 
 Finally, there is a method for finding a CRL, called ``find_crl_for``,
 that takes an ``X509_Certificate`` object, and returns a
-``std::optional`` of ``X509_CRL``. The ``std::optional`` return
+``Botan::optional`` of ``X509_CRL``. The ``Botan::optional`` return
 type makes it easy to return no CRLs by returning ``nullopt``
 (eg, if the certificate store doesn't support retrieving CRLs).
 Implementing the function is optional, and by default will return
@@ -487,7 +487,7 @@ set of functions in ``x509path.h`` named ``x509_path_validate``:
    Usage_Type usage = Usage_Type::UNSPECIFIED, \
    std::chrono::system_clock::time_point validation_time = std::chrono::system_clock::now(), \
    std::chrono::milliseconds ocsp_timeout = std::chrono::milliseconds(0), \
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp = std::vector<std::optional<OCSP::Response>>())
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp = std::vector<Botan::optional<OCSP::Response>>())
 
    The last five parameters are optional. ``hostname`` specifies a hostname which is
    matched against the subject DN in ``end_cert`` according to RFC 6125.

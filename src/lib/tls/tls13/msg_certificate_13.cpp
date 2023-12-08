@@ -92,11 +92,11 @@ const X509_Certificate& Certificate_13::leaf() const
 void Certificate_13::verify(Callbacks& callbacks,
                             const Policy& policy,
                             Credentials_Manager& creds,
-                            std::string_view hostname,
+                            Botan::string_view hostname,
                             bool use_ocsp) const
    {
    std::vector<X509_Certificate> certs;
-   std::vector<std::optional<OCSP::Response>> ocsp_responses;
+   std::vector<Botan::optional<OCSP::Response>> ocsp_responses;
    for(const auto& entry : m_entries)
       {
       certs.push_back(entry.certificate);
@@ -174,7 +174,7 @@ void Certificate_13::setup_entries(std::vector<X509_Certificate> cert_chain,
  * Create a Client Certificate message
  */
 Certificate_13::Certificate_13(const Certificate_Request_13& cert_request,
-                               std::string_view hostname,
+                               Botan::string_view hostname,
                                Credentials_Manager& credentials_manager,
                                Callbacks& callbacks) :
    m_request_context(cert_request.context()),

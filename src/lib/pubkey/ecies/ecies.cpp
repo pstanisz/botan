@@ -56,8 +56,8 @@ class ECIES_PrivateKey final : public EC_PrivateKey, public PK_Key_Agreement_Key
 
       std::unique_ptr<PK_Ops::Key_Agreement>
          create_key_agreement_op(RandomNumberGenerator& rng,
-                                 std::string_view params,
-                                 std::string_view provider) const override;
+                                 Botan::string_view params,
+                                 Botan::string_view provider) const override;
 
    private:
       ECDH_PrivateKey m_key;
@@ -103,8 +103,8 @@ class ECIES_ECDH_KA_Operation final : public PK_Ops::Key_Agreement_with_KDF
 
 std::unique_ptr<PK_Ops::Key_Agreement>
 ECIES_PrivateKey::create_key_agreement_op(RandomNumberGenerator& rng,
-                                          std::string_view /*params*/,
-                                          std::string_view /*provider*/) const
+                                          Botan::string_view /*params*/,
+                                          Botan::string_view /*provider*/) const
    {
    return std::make_unique<ECIES_ECDH_KA_Operation>(*this, rng);
    }
@@ -196,7 +196,7 @@ SymmetricKey ECIES_KA_Operation::derive_secret(const std::vector<uint8_t>& eph_p
 
 
 ECIES_KA_Params::ECIES_KA_Params(const EC_Group& domain,
-                                 std::string_view kdf_spec,
+                                 Botan::string_view kdf_spec,
                                  size_t length,
                                  EC_Point_Format compression_type,
                                  ECIES_Flags flags) :
@@ -209,10 +209,10 @@ ECIES_KA_Params::ECIES_KA_Params(const EC_Group& domain,
    }
 
 ECIES_System_Params::ECIES_System_Params(const EC_Group& domain,
-                                         std::string_view kdf_spec,
-                                         std::string_view dem_algo_spec,
+                                         Botan::string_view kdf_spec,
+                                         Botan::string_view dem_algo_spec,
                                          size_t dem_key_len,
-                                         std::string_view mac_spec,
+                                         Botan::string_view mac_spec,
                                          size_t mac_key_len,
                                          EC_Point_Format compression_type,
                                          ECIES_Flags flags) :
@@ -230,10 +230,10 @@ ECIES_System_Params::ECIES_System_Params(const EC_Group& domain,
    }
 
 ECIES_System_Params::ECIES_System_Params(const EC_Group& domain,
-                                         std::string_view kdf_spec,
-                                         std::string_view dem_algo_spec,
+                                         Botan::string_view kdf_spec,
+                                         Botan::string_view dem_algo_spec,
                                          size_t dem_key_len,
-                                         std::string_view mac_spec,
+                                         Botan::string_view mac_spec,
                                          size_t mac_key_len) :
    ECIES_System_Params(domain, kdf_spec, dem_algo_spec, dem_key_len, mac_spec, mac_key_len,
                        EC_Point_Format::Uncompressed, ECIES_Flags::None)

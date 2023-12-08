@@ -25,14 +25,14 @@ class TestSummary final
 
    public:
       const std::string name;
-      const std::optional<CodeLocation> code_location;
+      const Botan::optional<CodeLocation> code_location;
 
       const size_t assertions;
       const std::vector<std::string> notes;
       const std::vector<std::string> failures;
 
       const std::chrono::system_clock::time_point timestamp;
-      const std::optional<std::chrono::nanoseconds> elapsed_time;
+      const Botan::optional<std::chrono::nanoseconds> elapsed_time;
    };
 
 
@@ -54,7 +54,7 @@ class Testsuite final
       std::chrono::system_clock::time_point timestamp() const;
 
       /// Returns the cumulative elapsed time of all contained test cases
-      std::optional<std::chrono::nanoseconds> elapsed_time() const;
+      Botan::optional<std::chrono::nanoseconds> elapsed_time() const;
 
       const std::string& name() const { return m_name; }
       const std::vector<TestSummary>& results() const { return m_results; }

@@ -39,7 +39,7 @@ class Response final
    public:
       Response() : m_status_code(0), m_status_message("Uninitialized") {}
 
-      Response(unsigned int status_code, std::string_view status_message,
+      Response(unsigned int status_code, Botan::string_view status_message,
                const std::vector<uint8_t>& body,
                const std::map<std::string, std::string>& headers) :
          m_status_code(status_code),
@@ -70,33 +70,33 @@ class Response final
 
 BOTAN_TEST_API std::ostream& operator<<(std::ostream& o, const Response& resp);
 
-typedef std::function<std::string (std::string_view, std::string_view, std::string_view)> http_exch_fn;
+typedef std::function<std::string (Botan::string_view, Botan::string_view, Botan::string_view)> http_exch_fn;
 
 Response http_sync(const http_exch_fn& fn,
-                   std::string_view verb,
-                   std::string_view url,
-                   std::string_view content_type,
+                   Botan::string_view verb,
+                   Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects);
 
-Response http_sync(std::string_view verb,
-                   std::string_view url,
-                   std::string_view content_type,
+Response http_sync(Botan::string_view verb,
+                   Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects,
                    std::chrono::milliseconds timeout = std::chrono::milliseconds(3000));
 
-Response BOTAN_TEST_API GET_sync(std::string_view url,
+Response BOTAN_TEST_API GET_sync(Botan::string_view url,
                                  size_t allowable_redirects = 1,
                                  std::chrono::milliseconds timeout = std::chrono::milliseconds(3000));
 
-Response POST_sync(std::string_view url,
-                   std::string_view content_type,
+Response POST_sync(Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects = 1,
                    std::chrono::milliseconds timeout = std::chrono::milliseconds(3000));
 
-std::string url_encode(std::string_view url);
+std::string url_encode(Botan::string_view url);
 
 }
 

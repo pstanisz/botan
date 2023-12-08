@@ -13,7 +13,7 @@
 #include <botan/asn1_obj.h>
 #include <botan/pk_keys.h>
 
-#include <optional>
+#include <botan/optional.h>
 #include <string>
 
 namespace Botan::TLS {
@@ -84,7 +84,7 @@ class BOTAN_PUBLIC_API(3,0) Signature_Scheme
       std::string algorithm_name() const noexcept;
       AlgorithmIdentifier key_algorithm_identifier() const noexcept;
       AlgorithmIdentifier algorithm_identifier() const noexcept;
-      std::optional<Signature_Format> format() const noexcept;
+      Botan::optional<Signature_Format> format() const noexcept;
 
       bool is_compatible_with(const Protocol_Version& protocol_version) const noexcept;
       bool is_suitable_for(const Private_Key& private_key) const noexcept;

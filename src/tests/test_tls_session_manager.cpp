@@ -154,7 +154,7 @@ std::vector<Test::Result> test_session_manager_in_memory()
    {
    const Botan::TLS::Session_ID default_id = random_id();
 
-   std::optional<Botan::TLS::Session_Manager_In_Memory> mgr;
+   Botan::optional<Botan::TLS::Session_Manager_In_Memory> mgr;
 
    Session_Manager_Callbacks cbs;
    Session_Manager_Policy plcy;

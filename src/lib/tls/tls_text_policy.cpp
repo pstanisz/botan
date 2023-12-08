@@ -9,7 +9,7 @@
 #include <botan/tls_policy.h>
 #include <botan/exceptn.h>
 #include <botan/internal/parsing.h>
-#include <optional>
+#include <botan/optional.h>
 #include <sstream>
 
 namespace Botan::TLS {
@@ -94,7 +94,7 @@ bool Text_Policy::negotiate_encrypt_then_mac() const
    return get_bool("negotiate_encrypt_then_mac", Policy::negotiate_encrypt_then_mac());
    }
 
-std::optional<uint16_t> Text_Policy::record_size_limit() const
+Botan::optional<uint16_t> Text_Policy::record_size_limit() const
    {
    const auto limit = get_len("record_size_limit", 0);
    // RFC 8449 4.
@@ -241,7 +241,7 @@ void Text_Policy::set(const std::string& key, const std::string& value)
    m_kv[key] = value;
    }
 
-Text_Policy::Text_Policy(std::string_view s)
+Text_Policy::Text_Policy(Botan::string_view s)
    {
    std::istringstream iss{std::string(s)}; // FIXME C++23 avoid copy
    m_kv = read_cfg(iss);
@@ -265,7 +265,7 @@ Text_Policy::get_list(const std::string& key,
    }
 
 std::vector<Group_Params>
-Text_Policy::read_group_list(std::string_view group_str) const
+Text_Policy::read_group_list(Botan::string_view group_str) const
 {
    std::vector<Group_Params> groups;
    for(const auto& group_name : split_on(group_str, ' '))
@@ -372,7 +372,7 @@ std::string Text_Policy::get_str(const std::string& key, const std::string& def)
    return i->second;
    }
 
-bool Text_Policy::set_value(const std::string& key, std::string_view val, bool overwrite)
+bool Text_Policy::set_value(const std::string& key, Botan::string_view val, bool overwrite)
    {
    auto i = m_kv.find(key);
 

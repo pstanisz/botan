@@ -302,7 +302,7 @@ std::string map_to_bogo_error(const std::string& e)
 class Shim_Exception final : public std::exception
    {
    public:
-      Shim_Exception(std::string_view msg, int rc = 1) :
+      Shim_Exception(Botan::string_view msg, int rc = 1) :
          m_msg(msg), m_rc(rc) {}
 
       const char* what() const noexcept override { return m_msg.c_str(); }
@@ -1437,7 +1437,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
          }
 
       bool tls_verify_message(const Botan::Public_Key& key,
-                              std::string_view padding,
+                              Botan::string_view padding,
                               Botan::Signature_Format format,
                               const std::vector<uint8_t>& msg,
                               const std::vector<uint8_t>& sig) override
@@ -1459,10 +1459,10 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
          }
 
       void tls_verify_cert_chain(const std::vector<Botan::X509_Certificate>& /*cert_chain*/,
-                                 const std::vector<std::optional<Botan::OCSP::Response>>& /*ocsp_responses*/,
+                                 const std::vector<Botan::optional<Botan::OCSP::Response>>& /*ocsp_responses*/,
                                  const std::vector<Botan::Certificate_Store*>& /*trusted_roots*/,
                                  Botan::Usage_Type /*usage*/,
-                                 std::string_view /*hostname*/,
+                                 Botan::string_view /*hostname*/,
                                  const Botan::TLS::Policy& /*policy*/) override
          {
          if(m_args.flag_set("enable-ocsp-stapling") &&
@@ -1483,7 +1483,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
             }
          }
 
-      std::optional<Botan::OCSP::Response> tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response) override
+      Botan::optional<Botan::OCSP::Response> tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response) override
          {
          if(m_args.option_used("expect-ocsp-response") &&
             m_args.get_b64_opt("expect-ocsp-response") != raw_response)

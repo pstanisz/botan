@@ -73,7 +73,7 @@ void pgp_s2k(HashFunction& hash,
 }
 
 size_t OpenPGP_S2K::pbkdf(uint8_t output_buf[], size_t output_len,
-                          std::string_view password,
+                          Botan::string_view password,
                           const uint8_t salt[], size_t salt_len,
                           size_t iterations,
                           std::chrono::milliseconds msec) const

@@ -12,7 +12,7 @@
 #include <botan/exceptn.h>
 #include <botan/secmem.h>
 #include <botan/data_src.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <functional>
 #include <chrono>
 #include <memory>
@@ -28,7 +28,7 @@ class RandomNumberGenerator;
 class BOTAN_PUBLIC_API(2,0) PKCS8_Exception final : public Decoding_Error
    {
    public:
-      explicit PKCS8_Exception(std::string_view error) :
+      explicit PKCS8_Exception(Botan::string_view error) :
          Decoding_Error("PKCS #8", error) {}
    };
 
@@ -68,9 +68,9 @@ BOTAN_PUBLIC_API(2,0) std::string PEM_encode(const Private_Key& key);
 BOTAN_PUBLIC_API(2,0) std::vector<uint8_t>
 BER_encode(const Private_Key& key,
            RandomNumberGenerator& rng,
-           std::string_view pass,
+           Botan::string_view pass,
            std::chrono::milliseconds msec = std::chrono::milliseconds(300),
-           std::string_view pbe_algo = "");
+           Botan::string_view pbe_algo = "");
 
 /**
 * Get a string containing a PEM encoded private key, encrypting it with a
@@ -87,9 +87,9 @@ BER_encode(const Private_Key& key,
 BOTAN_PUBLIC_API(2,0) std::string
 PEM_encode(const Private_Key& key,
            RandomNumberGenerator& rng,
-           std::string_view pass,
+           Botan::string_view pass,
            std::chrono::milliseconds msec = std::chrono::milliseconds(300),
-           std::string_view pbe_algo = "");
+           Botan::string_view pbe_algo = "");
 
 /**
 * Encrypt a key using PKCS #8 encryption and a fixed iteration count
@@ -107,10 +107,10 @@ PEM_encode(const Private_Key& key,
 BOTAN_PUBLIC_API(2,1) std::vector<uint8_t>
 BER_encode_encrypted_pbkdf_iter(const Private_Key& key,
                                 RandomNumberGenerator& rng,
-                                std::string_view pass,
+                                Botan::string_view pass,
                                 size_t pbkdf_iter,
-                                std::string_view cipher = "",
-                                std::string_view pbkdf_hash = "");
+                                Botan::string_view cipher = "",
+                                Botan::string_view pbkdf_hash = "");
 
 /**
 * Get a string containing a PEM encoded private key, encrypting it with a
@@ -129,10 +129,10 @@ BER_encode_encrypted_pbkdf_iter(const Private_Key& key,
 BOTAN_PUBLIC_API(2,1) std::string
 PEM_encode_encrypted_pbkdf_iter(const Private_Key& key,
                                 RandomNumberGenerator& rng,
-                                std::string_view pass,
+                                Botan::string_view pass,
                                 size_t pbkdf_iter,
-                                std::string_view cipher = "",
-                                std::string_view pbkdf_hash = "");
+                                Botan::string_view cipher = "",
+                                Botan::string_view pbkdf_hash = "");
 
 /**
 * Encrypt a key using PKCS #8 encryption and a variable iteration count
@@ -151,11 +151,11 @@ PEM_encode_encrypted_pbkdf_iter(const Private_Key& key,
 BOTAN_PUBLIC_API(2,1) std::vector<uint8_t>
 BER_encode_encrypted_pbkdf_msec(const Private_Key& key,
                                 RandomNumberGenerator& rng,
-                                std::string_view pass,
+                                Botan::string_view pass,
                                 std::chrono::milliseconds pbkdf_msec,
                                 size_t* pbkdf_iterations,
-                                std::string_view cipher = "",
-                                std::string_view pbkdf_hash = "");
+                                Botan::string_view cipher = "",
+                                Botan::string_view pbkdf_hash = "");
 
 /**
 * Get a string containing a PEM encoded private key, encrypting it with a
@@ -176,11 +176,11 @@ BER_encode_encrypted_pbkdf_msec(const Private_Key& key,
 BOTAN_PUBLIC_API(2,1) std::string
 PEM_encode_encrypted_pbkdf_msec(const Private_Key& key,
                                 RandomNumberGenerator& rng,
-                                std::string_view pass,
+                                Botan::string_view pass,
                                 std::chrono::milliseconds pbkdf_msec,
                                 size_t* pbkdf_iterations,
-                                std::string_view cipher = "",
-                                std::string_view pbkdf_hash = "");
+                                Botan::string_view cipher = "",
+                                Botan::string_view pbkdf_hash = "");
 
 /**
 * Load an encrypted key from a data source.
@@ -199,7 +199,7 @@ std::unique_ptr<Private_Key> load_key(DataSource& source,
 */
 BOTAN_PUBLIC_API(2,3)
 std::unique_ptr<Private_Key> load_key(DataSource& source,
-                                      std::string_view pass);
+                                      Botan::string_view pass);
 
 /** Load an unencrypted key from a data source.
 * @param source the data source providing the encoded key
@@ -225,7 +225,7 @@ std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
 */
 BOTAN_PUBLIC_API(3,0)
 std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
-                                      std::string_view pass);
+                                      Botan::string_view pass);
 
 /** Load an unencrypted key from memory.
 * @param source the byte buffer containing the encoded key

@@ -37,9 +37,9 @@
 
 namespace Botan {
 
-std::unique_ptr<Cipher_Mode> Cipher_Mode::create_or_throw(std::string_view algo,
+std::unique_ptr<Cipher_Mode> Cipher_Mode::create_or_throw(Botan::string_view algo,
                                                           Cipher_Dir direction,
-                                                          std::string_view provider)
+                                                          Botan::string_view provider)
    {
    if(auto mode = Cipher_Mode::create(algo, direction, provider))
       return mode;
@@ -47,9 +47,9 @@ std::unique_ptr<Cipher_Mode> Cipher_Mode::create_or_throw(std::string_view algo,
    throw Lookup_Error("Cipher mode", algo, provider);
    }
 
-std::unique_ptr<Cipher_Mode> Cipher_Mode::create(std::string_view algo,
+std::unique_ptr<Cipher_Mode> Cipher_Mode::create(Botan::string_view algo,
                                                  Cipher_Dir direction,
-                                                 std::string_view provider)
+                                                 Botan::string_view provider)
    {
 #if defined(BOTAN_HAS_COMMONCRYPTO)
    if(provider.empty() || provider == "commoncrypto")
@@ -81,7 +81,7 @@ std::unique_ptr<Cipher_Mode> Cipher_Mode::create(std::string_view algo,
    if(algo.find('/') != std::string::npos)
       {
       const std::vector<std::string> algo_parts = split_on(algo, '/');
-      std::string_view cipher_name = algo_parts[0];
+      Botan::string_view cipher_name = algo_parts[0];
       const std::vector<std::string> mode_info = parse_algorithm_name(algo_parts[1]);
 
       if(mode_info.empty())
@@ -169,7 +169,7 @@ std::unique_ptr<Cipher_Mode> Cipher_Mode::create(std::string_view algo,
    }
 
 //static
-std::vector<std::string> Cipher_Mode::providers(std::string_view algo_spec)
+std::vector<std::string> Cipher_Mode::providers(Botan::string_view algo_spec)
    {
    const std::vector<std::string>& possible = { "base", "commoncrypto" };
    std::vector<std::string> providers;

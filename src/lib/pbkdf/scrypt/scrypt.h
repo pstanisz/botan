@@ -114,7 +114,7 @@ inline void scrypt(uint8_t output[], size_t output_len,
 */
 BOTAN_DEPRECATED("Use PasswordHashFamily+PasswordHash")
 inline void scrypt(uint8_t output[], size_t output_len,
-                   std::string_view password,
+                   Botan::string_view password,
                    const uint8_t salt[], size_t salt_len,
                    size_t N, size_t r, size_t p)
    {

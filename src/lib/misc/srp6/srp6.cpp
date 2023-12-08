@@ -27,8 +27,8 @@ BigInt hash_seq(HashFunction& hash_fn,
    }
 
 BigInt compute_x(HashFunction& hash_fn,
-                 std::string_view identifier,
-                 std::string_view password,
+                 Botan::string_view identifier,
+                 Botan::string_view password,
                  const std::vector<uint8_t>& salt)
    {
    hash_fn.update(identifier);
@@ -71,10 +71,10 @@ std::string srp6_group_identifier(const BigInt& N, const BigInt& g)
    }
 
 std::pair<BigInt, SymmetricKey>
-srp6_client_agree(std::string_view identifier,
-                  std::string_view password,
-                  std::string_view group_id,
-                  std::string_view hash_id,
+srp6_client_agree(Botan::string_view identifier,
+                  Botan::string_view password,
+                  Botan::string_view group_id,
+                  Botan::string_view hash_id,
                   const std::vector<uint8_t>& salt,
                   const BigInt& B,
                   RandomNumberGenerator& rng)
@@ -86,10 +86,10 @@ srp6_client_agree(std::string_view identifier,
    }
 
 std::pair<BigInt, SymmetricKey>
-srp6_client_agree(std::string_view identifier,
-                  std::string_view password,
+srp6_client_agree(Botan::string_view identifier,
+                  Botan::string_view password,
                   const DL_Group& group,
-                  std::string_view hash_id,
+                  Botan::string_view hash_id,
                   const std::vector<uint8_t>& salt,
                   const BigInt& B,
                   const size_t a_bits,
@@ -138,21 +138,21 @@ srp6_client_agree(std::string_view identifier,
    return std::make_pair(A, Sk);
    }
 
-BigInt srp6_generate_verifier(std::string_view identifier,
-                              std::string_view password,
+BigInt srp6_generate_verifier(Botan::string_view identifier,
+                              Botan::string_view password,
                               const std::vector<uint8_t>& salt,
-                              std::string_view group_id,
-                              std::string_view hash_id)
+                              Botan::string_view group_id,
+                              Botan::string_view hash_id)
    {
    DL_Group group(group_id);
    return srp6_generate_verifier(identifier, password, salt, group, hash_id);
    }
 
-BigInt srp6_generate_verifier(std::string_view identifier,
-                              std::string_view password,
+BigInt srp6_generate_verifier(Botan::string_view identifier,
+                              Botan::string_view password,
                               const std::vector<uint8_t>& salt,
                               const DL_Group& group,
-                              std::string_view hash_id)
+                              Botan::string_view hash_id)
    {
    auto hash_fn = HashFunction::create_or_throw(hash_id);
    if(8*hash_fn->output_length() >= group.p_bits())
@@ -164,8 +164,8 @@ BigInt srp6_generate_verifier(std::string_view identifier,
    }
 
 BigInt SRP6_Server_Session::step1(const BigInt& v,
-                                  std::string_view group_id,
-                                  std::string_view hash_id,
+                                  Botan::string_view group_id,
+                                  Botan::string_view hash_id,
                                   RandomNumberGenerator& rng)
    {
    DL_Group group(group_id);
@@ -175,7 +175,7 @@ BigInt SRP6_Server_Session::step1(const BigInt& v,
 
 BigInt SRP6_Server_Session::step1(const BigInt& v,
                                   const DL_Group& group,
-                                  std::string_view hash_id,
+                                  Botan::string_view hash_id,
                                   size_t b_bits,
                                   RandomNumberGenerator& rng)
    {

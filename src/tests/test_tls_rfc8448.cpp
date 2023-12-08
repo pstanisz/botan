@@ -210,10 +210,10 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks
 
       void tls_verify_cert_chain(
          const std::vector<Botan::X509_Certificate>& cert_chain,
-         const std::vector<std::optional<Botan::OCSP::Response>>&,
+         const std::vector<Botan::optional<Botan::OCSP::Response>>&,
          const std::vector<Botan::Certificate_Store*>&,
          Botan::Usage_Type,
-         std::string_view,
+         Botan::string_view,
          const Botan::TLS::Policy&) override
          {
          count_callback_invocation("tls_verify_cert_chain");
@@ -236,7 +236,7 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks
       std::vector<uint8_t> tls_sign_message(
          const Private_Key& key,
          RandomNumberGenerator& rng,
-         std::string_view padding,
+         Botan::string_view padding,
          Signature_Format format,
          const std::vector<uint8_t>& msg) override
          {
@@ -287,7 +287,7 @@ class Test_TLS_13_Callbacks : public Botan::TLS::Callbacks
 
       bool tls_verify_message(
          const Public_Key& key,
-         std::string_view padding,
+         Botan::string_view padding,
          Signature_Format format,
          const std::vector<uint8_t>& msg,
          const std::vector<uint8_t>& sig) override
@@ -576,7 +576,7 @@ class RFC8448_Session_Manager : public Botan::TLS::Session_Manager
          m_sessions.push_back({session, handle});
          }
 
-      std::optional<Session_Handle> establish(const Session& session, const std::optional<Session_ID>&, bool) override
+      Botan::optional<Session_Handle> establish(const Session& session, const Botan::optional<Session_ID>&, bool) override
          {
          // we assume that the 'mocked' session is already stored in the manager,
          // verify that it is equivalent to the one created by the testee and
@@ -592,7 +592,7 @@ class RFC8448_Session_Manager : public Botan::TLS::Session_Manager
          return handle;
          }
 
-      std::optional<Session> retrieve_one(const Session_Handle& handle) override
+      Botan::optional<Session> retrieve_one(const Session_Handle& handle) override
          {
          auto itr = std::find_if(m_sessions.begin(), m_sessions.end(), find_by_handle(handle));
          if(itr == m_sessions.end())
@@ -655,7 +655,7 @@ class TLS_Context
                   Modify_Exts_Fn modify_exts_cb,
                   std::vector<MockSignature> mock_signatures,
                   uint64_t timestamp,
-                  std::optional<std::pair<Session, Session_Ticket>> session_and_ticket,
+                  Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket,
                   bool use_alternative_server_certificate)
          : m_callbacks(std::make_shared<Test_TLS_13_Callbacks>(std::move(modify_exts_cb), std::move(mock_signatures), timestamp))
          , m_creds(std::make_shared<Test_Credentials>(use_alternative_server_certificate))
@@ -752,7 +752,7 @@ class Client_Context : public TLS_Context
                      std::shared_ptr<const RFC8448_Text_Policy> policy,
                      uint64_t timestamp,
                      Modify_Exts_Fn modify_exts_cb,
-                     std::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt,
+                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt,
                      std::vector<MockSignature> mock_signatures = {})
          : TLS_Context(std::move(rng_in), std::move(policy), std::move(modify_exts_cb), std::move(mock_signatures), timestamp, std::move(session_and_ticket), false)
          , client(m_callbacks, m_session_mgr, m_creds, m_policy, m_rng,
@@ -777,7 +777,7 @@ class Server_Context : public TLS_Context
                      Modify_Exts_Fn modify_exts_cb,
                      std::vector<MockSignature> mock_signatures,
                      bool use_alternative_server_certificate = false,
-                     std::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt)
+                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt)
          : TLS_Context(std::move(rng), std::move(policy),
             std::move(modify_exts_cb),
             std::move(mock_signatures),

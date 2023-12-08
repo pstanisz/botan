@@ -227,7 +227,7 @@ TPM_PrivateKey::TPM_PrivateKey(TPM_Context& ctx, size_t bits,
    }
 
 // reference a registered TPM key
-TPM_PrivateKey::TPM_PrivateKey(TPM_Context& ctx, std::string_view uuid_str,
+TPM_PrivateKey::TPM_PrivateKey(TPM_Context& ctx, Botan::string_view uuid_str,
                                TPM_Storage_Type storage_type) :
    m_ctx(ctx),
    m_uuid(uuid_str),
@@ -390,7 +390,7 @@ class TPM_Signing_Operation final : public PK_Ops::Signature
    {
    public:
       TPM_Signing_Operation(const TPM_PrivateKey& key,
-                            std::string_view hash_name) :
+                            Botan::string_view hash_name) :
          m_key(key),
          m_hash(HashFunction::create_or_throw(hash_name)),
          m_hash_id(pkcs_hash_id(hash_name))
@@ -464,8 +464,8 @@ class TPM_Signing_Operation final : public PK_Ops::Signature
 
 std::unique_ptr<PK_Ops::Signature>
 TPM_PrivateKey::create_signature_op(RandomNumberGenerator& /*rng*/,
-                                    std::string_view params,
-                                    std::string_view /*provider*/) const
+                                    Botan::string_view params,
+                                    Botan::string_view /*provider*/) const
    {
    return std::make_unique<TPM_Signing_Operation>(*this, params);
    }

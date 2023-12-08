@@ -11,7 +11,7 @@
 #include <botan/secmem.h>
 #include <botan/span.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -98,7 +98,7 @@ size_t BOTAN_PUBLIC_API(2, 7) base32_decode(uint8_t output[],
 * @return number of bytes written to output
 */
 size_t BOTAN_PUBLIC_API(2, 7) base32_decode(uint8_t output[],
-      std::string_view input,
+      Botan::string_view input,
       bool ignore_ws = true);
 
 /**
@@ -120,7 +120,7 @@ secure_vector<uint8_t> BOTAN_PUBLIC_API(2, 7) base32_decode(const char input[],
                    exception if whitespace is encountered
 * @return decoded base32 output
 */
-secure_vector<uint8_t> BOTAN_PUBLIC_API(2, 7) base32_decode(std::string_view input,
+secure_vector<uint8_t> BOTAN_PUBLIC_API(2, 7) base32_decode(Botan::string_view input,
       bool ignore_ws = true);
 
 } // namespace Botan

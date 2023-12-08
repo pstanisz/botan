@@ -60,7 +60,7 @@ SCAN_Name::SCAN_Name(const char* algo_spec) : SCAN_Name(std::string(algo_spec))
    {
    }
 
-SCAN_Name::SCAN_Name(std::string_view algo_spec) :
+SCAN_Name::SCAN_Name(Botan::string_view algo_spec) :
    m_orig_algo_spec(algo_spec),
    m_alg_name(),
    m_args(),
@@ -134,7 +134,7 @@ std::string SCAN_Name::arg(size_t i) const
    return m_args[i];
    }
 
-std::string SCAN_Name::arg(size_t i, std::string_view def_value) const
+std::string SCAN_Name::arg(size_t i, Botan::string_view def_value) const
    {
    if(i >= arg_count())
       return std::string(def_value);

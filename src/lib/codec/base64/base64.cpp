@@ -209,7 +209,7 @@ size_t base64_decode(uint8_t output[],
    }
 
 size_t base64_decode(uint8_t output[],
-                     std::string_view input,
+                     Botan::string_view input,
                      bool ignore_ws)
    {
    return base64_decode(output, input.data(), input.length(), ignore_ws);
@@ -217,7 +217,7 @@ size_t base64_decode(uint8_t output[],
 
 
 size_t base64_decode(Botan::span<uint8_t> output,
-                     std::string_view input,
+                     Botan::string_view input,
                      bool ignore_ws)
    {
    if(output.size() < base64_decode_max_output(input.size()))
@@ -232,7 +232,7 @@ secure_vector<uint8_t> base64_decode(const char input[],
    return base_decode_to_vec<secure_vector<uint8_t>>(Base64(), input, input_length, ignore_ws);
    }
 
-secure_vector<uint8_t> base64_decode(std::string_view input,
+secure_vector<uint8_t> base64_decode(Botan::string_view input,
                                      bool ignore_ws)
    {
    return base64_decode(input.data(), input.size(), ignore_ws);

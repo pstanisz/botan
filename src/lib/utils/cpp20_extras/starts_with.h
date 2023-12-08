@@ -8,7 +8,7 @@
 #define BOTAN_STARTS_WITH_H_
 
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -18,8 +18,8 @@ constexpr unsigned long ZERO_POS = 0UL;
 
 }
 
-// Replaces C++20 member method starts_with available in std::string or std::string_view
-inline bool starts_with(std::string_view str, std::string_view what)
+// Replaces C++20 member method starts_with available in std::string or Botan::string_view
+inline bool starts_with(Botan::string_view str, Botan::string_view what)
     { return (str.find(what) == ZERO_POS); }
 
 }

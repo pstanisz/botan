@@ -19,7 +19,7 @@
 
 #include <vector>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 #include <botan/span.h>
 
 namespace Botan::TLS {
@@ -62,7 +62,7 @@ class BOTAN_PUBLIC_API(2,0) Channel
       * Inject plaintext intended for counterparty
       * Throws an exception if is_active() is false
       */
-      void send(std::string_view val)
+      void send(Botan::string_view val)
          { this->send(Botan::span(cast_char_ptr_to_uint8(val.data()), val.size())); }
 
       /**
@@ -132,8 +132,8 @@ class BOTAN_PUBLIC_API(2,0) Channel
       * @param length the length of the desired key in bytes
       * @return key of length bytes
       */
-      virtual SymmetricKey key_material_export(std::string_view label,
-                                       std::string_view context,
+      virtual SymmetricKey key_material_export(Botan::string_view label,
+                                       Botan::string_view context,
                                        size_t length) const = 0;
 
       /**

@@ -19,8 +19,8 @@
 
 namespace Botan {
 
-std::unique_ptr<PBKDF> PBKDF::create(std::string_view algo_spec,
-                                     std::string_view provider)
+std::unique_ptr<PBKDF> PBKDF::create(Botan::string_view algo_spec,
+                                     Botan::string_view provider)
    {
    const SCAN_Name req(algo_spec);
 
@@ -58,8 +58,8 @@ std::unique_ptr<PBKDF> PBKDF::create(std::string_view algo_spec,
 
 //static
 std::unique_ptr<PBKDF>
-PBKDF::create_or_throw(std::string_view algo,
-                             std::string_view provider)
+PBKDF::create_or_throw(Botan::string_view algo,
+                             Botan::string_view provider)
    {
    if(auto pbkdf = PBKDF::create(algo, provider))
       {
@@ -68,13 +68,13 @@ PBKDF::create_or_throw(std::string_view algo,
    throw Lookup_Error("PBKDF", algo, provider);
    }
 
-std::vector<std::string> PBKDF::providers(std::string_view algo_spec)
+std::vector<std::string> PBKDF::providers(Botan::string_view algo_spec)
    {
    return probe_providers_of<PBKDF>(algo_spec);
    }
 
 void PBKDF::pbkdf_timed(uint8_t out[], size_t out_len,
-                        std::string_view passphrase,
+                        Botan::string_view passphrase,
                         const uint8_t salt[], size_t salt_len,
                         std::chrono::milliseconds msec,
                         size_t& iterations) const
@@ -83,7 +83,7 @@ void PBKDF::pbkdf_timed(uint8_t out[], size_t out_len,
    }
 
 void PBKDF::pbkdf_iterations(uint8_t out[], size_t out_len,
-                             std::string_view passphrase,
+                             Botan::string_view passphrase,
                              const uint8_t salt[], size_t salt_len,
                              size_t iterations) const
    {
@@ -97,7 +97,7 @@ void PBKDF::pbkdf_iterations(uint8_t out[], size_t out_len,
    }
 
 secure_vector<uint8_t> PBKDF::pbkdf_iterations(size_t out_len,
-                                            std::string_view passphrase,
+                                            Botan::string_view passphrase,
                                             const uint8_t salt[], size_t salt_len,
                                             size_t iterations) const
    {
@@ -107,7 +107,7 @@ secure_vector<uint8_t> PBKDF::pbkdf_iterations(size_t out_len,
    }
 
 secure_vector<uint8_t> PBKDF::pbkdf_timed(size_t out_len,
-                                       std::string_view passphrase,
+                                       Botan::string_view passphrase,
                                        const uint8_t salt[], size_t salt_len,
                                        std::chrono::milliseconds msec,
                                        size_t& iterations) const

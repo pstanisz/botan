@@ -23,13 +23,13 @@ specified with all parameters (say "Scrypt" with ``N`` = 8192, ``r`` = 64, and
 .. cpp:class:: PasswordHash
 
    .. cpp:function:: void hash(Botan::span<uint8_t> out, \
-                               std::string_view password, \
+                               Botan::string_view password, \
                                Botan::span<uint8> salt)
 
       Derive a key from the specified *password* and *salt*, placing it into *out*.
 
    .. cpp:function:: void hash(Botan::span<uint8_t> out, \
-                               std::string_view password, \
+                               Botan::string_view password, \
                                Botan::span<const uint8> salt, \
                                Botan::span<const uint8> ad, \
                                Botan::span<const uint8> key)

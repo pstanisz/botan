@@ -32,7 +32,7 @@ namespace Botan {
 CertificatePathStatusCodes
 PKIX::check_chain(const std::vector<X509_Certificate>& cert_path,
                   std::chrono::system_clock::time_point ref_time,
-                  std::string_view hostname,
+                  Botan::string_view hostname,
                   Usage_Type usage,
                   const Path_Validation_Restrictions& restrictions)
    {
@@ -287,7 +287,7 @@ Certificate_Status_Code verify_ocsp_signing_cert(
 
 CertificatePathStatusCodes
 PKIX::check_ocsp(const std::vector<X509_Certificate>& cert_path,
-                 const std::vector<std::optional<OCSP::Response>>& ocsp_responses,
+                 const std::vector<Botan::optional<OCSP::Response>>& ocsp_responses,
                  const std::vector<Certificate_Store*>& certstores,
                  std::chrono::system_clock::time_point ref_time,
                  const Path_Validation_Restrictions& restrictions)
@@ -347,7 +347,7 @@ PKIX::check_ocsp(const std::vector<X509_Certificate>& cert_path,
 
 CertificatePathStatusCodes
 PKIX::check_crl(const std::vector<X509_Certificate>& cert_path,
-                const std::vector<std::optional<X509_CRL>>& crls,
+                const std::vector<Botan::optional<X509_CRL>>& crls,
                 std::chrono::system_clock::time_point ref_time)
    {
    if(cert_path.empty())
@@ -427,7 +427,7 @@ PKIX::check_crl(const std::vector<X509_Certificate>& cert_path,
    if(certstores.empty())
       throw Invalid_Argument("PKIX::check_crl certstores empty");
 
-   std::vector<std::optional<X509_CRL>> crls(cert_path.size());
+   std::vector<Botan::optional<X509_CRL>> crls(cert_path.size());
 
    for(size_t i = 0; i != cert_path.size(); ++i)
       {
@@ -454,7 +454,7 @@ PKIX::check_ocsp_online(const std::vector<X509_Certificate>& cert_path,
    if(cert_path.empty())
       throw Invalid_Argument("PKIX::check_ocsp_online cert_path empty");
 
-   std::vector<std::future<std::optional<OCSP::Response>>> ocsp_response_futures;
+   std::vector<std::future<Botan::optional<OCSP::Response>>> ocsp_response_futures;
 
    size_t to_ocsp = 1;
 
@@ -470,13 +470,13 @@ PKIX::check_ocsp_online(const std::vector<X509_Certificate>& cert_path,
 
       if(subject.ocsp_responder().empty())
          {
-         ocsp_response_futures.emplace_back(std::async(std::launch::deferred, [&]() -> std::optional<OCSP::Response> {
+         ocsp_response_futures.emplace_back(std::async(std::launch::deferred, [&]() -> Botan::optional<OCSP::Response> {
                   return OCSP::Response(Certificate_Status_Code::OCSP_NO_REVOCATION_URL);
                   }));
          }
       else
          {
-         ocsp_response_futures.emplace_back(std::async(std::launch::async, [&]() -> std::optional<OCSP::Response> {
+         ocsp_response_futures.emplace_back(std::async(std::launch::async, [&]() -> Botan::optional<OCSP::Response> {
                OCSP::Request req(issuer, BigInt::decode(subject.serial_number()));
 
                HTTP::Response http;
@@ -501,7 +501,7 @@ PKIX::check_ocsp_online(const std::vector<X509_Certificate>& cert_path,
          }
       }
 
-   std::vector<std::optional<OCSP::Response>> ocsp_responses;
+   std::vector<Botan::optional<OCSP::Response>> ocsp_responses;
    ocsp_responses.reserve(ocsp_response_futures.size());
 
    for(auto& ocsp_response_future : ocsp_response_futures)
@@ -524,12 +524,12 @@ PKIX::check_crl_online(const std::vector<X509_Certificate>& cert_path,
    if(certstores.empty())
       throw Invalid_Argument("PKIX::check_crl_online certstores empty");
 
-   std::vector<std::future<std::optional<X509_CRL>>> future_crls;
-   std::vector<std::optional<X509_CRL>> crls(cert_path.size());
+   std::vector<std::future<Botan::optional<X509_CRL>>> future_crls;
+   std::vector<Botan::optional<X509_CRL>> crls(cert_path.size());
 
    for(size_t i = 0; i != cert_path.size(); ++i)
       {
-      const std::optional<X509_Certificate>& cert = cert_path.at(i);
+      const Botan::optional<X509_Certificate>& cert = cert_path.at(i);
       for(auto certstore : certstores)
          {
          crls[i] = certstore->find_crl_for(*cert);
@@ -546,18 +546,18 @@ PKIX::check_crl_online(const std::vector<X509_Certificate>& cert_path,
          We already have a CRL, so just insert this empty one to hold a place in the vector
          so that indexes match up
          */
-         future_crls.emplace_back(std::future<std::optional<X509_CRL>>());
+         future_crls.emplace_back(std::future<Botan::optional<X509_CRL>>());
          }
       else if(cert->crl_distribution_point().empty())
          {
          // Avoid creating a thread for this case
-         future_crls.emplace_back(std::async(std::launch::deferred, [&]() -> std::optional<X509_CRL> {
+         future_crls.emplace_back(std::async(std::launch::deferred, [&]() -> Botan::optional<X509_CRL> {
                throw Not_Implemented("No CRL distribution point for this certificate");
                }));
          }
       else
          {
-         future_crls.emplace_back(std::async(std::launch::async, [&]() -> std::optional<X509_CRL> {
+         future_crls.emplace_back(std::async(std::launch::async, [&]() -> Botan::optional<X509_CRL> {
                auto http = HTTP::GET_sync(cert->crl_distribution_point(),
                                           /*redirects*/ 1, timeout);
 
@@ -637,7 +637,7 @@ PKIX::build_certificate_path(std::vector<X509_Certificate>& cert_path,
       const X509_DN issuer_dn = last.issuer_dn();
       const std::vector<uint8_t> auth_key_id = last.authority_key_id();
 
-      std::optional<X509_Certificate> issuer;
+      Botan::optional<X509_Certificate> issuer;
       bool trusted_issuer = false;
 
       for(Certificate_Store* store : trusted_certstores)
@@ -689,7 +689,7 @@ PKIX::build_certificate_path(std::vector<X509_Certificate>& cert_path,
 namespace
 {
 // <certificate, trusted?>
-using cert_maybe_trusted = std::pair<std::optional<X509_Certificate>,bool>;
+using cert_maybe_trusted = std::pair<Botan::optional<X509_Certificate>,bool>;
 }
 
 /**
@@ -712,7 +712,7 @@ using cert_maybe_trusted = std::pair<std::optional<X509_Certificate>,bool>;
 Certificate_Status_Code
 PKIX::build_all_certificate_paths(std::vector<std::vector<X509_Certificate>>& cert_paths_out,
                                   const std::vector<Certificate_Store*>& trusted_certstores,
-                                  const std::optional<X509_Certificate>& end_entity,
+                                  const Botan::optional<X509_Certificate>& end_entity,
                                   const std::vector<X509_Certificate>& end_entity_extra)
    {
    if(!cert_paths_out.empty())
@@ -753,7 +753,7 @@ PKIX::build_all_certificate_paths(std::vector<std::vector<X509_Certificate>>& ce
 
    while(!stack.empty())
       {
-      std::optional<X509_Certificate> last = stack.back().first;
+      Botan::optional<X509_Certificate> last = stack.back().first;
       // found a deletion marker that guides the DFS, backtracing
       if(last == std::nullopt)
          {
@@ -823,7 +823,7 @@ PKIX::build_all_certificate_paths(std::vector<std::vector<X509_Certificate>>& ce
          certs_seen.emplace(fprint);
 
          // push a deletion marker on the stack for backtracing later
-         stack.push_back({std::optional<X509_Certificate>(), false});
+         stack.push_back({Botan::optional<X509_Certificate>(), false});
 
          for(const auto& trusted_cert : trusted_issuers)
             {
@@ -930,11 +930,11 @@ Path_Validation_Result x509_path_validate(
    const std::vector<X509_Certificate>& end_certs,
    const Path_Validation_Restrictions& restrictions,
    const std::vector<Certificate_Store*>& trusted_roots,
-   std::string_view hostname,
+   Botan::string_view hostname,
    Usage_Type usage,
    std::chrono::system_clock::time_point ref_time,
    std::chrono::milliseconds ocsp_timeout,
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp)
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp)
    {
    if(end_certs.empty())
       {
@@ -1005,11 +1005,11 @@ Path_Validation_Result x509_path_validate(
    const X509_Certificate& end_cert,
    const Path_Validation_Restrictions& restrictions,
    const std::vector<Certificate_Store*>& trusted_roots,
-   std::string_view hostname,
+   Botan::string_view hostname,
    Usage_Type usage,
    std::chrono::system_clock::time_point when,
    std::chrono::milliseconds ocsp_timeout,
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp)
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp)
    {
    std::vector<X509_Certificate> certs;
    certs.push_back(end_cert);
@@ -1020,11 +1020,11 @@ Path_Validation_Result x509_path_validate(
    const std::vector<X509_Certificate>& end_certs,
    const Path_Validation_Restrictions& restrictions,
    const Certificate_Store& store,
-   std::string_view hostname,
+   Botan::string_view hostname,
    Usage_Type usage,
    std::chrono::system_clock::time_point when,
    std::chrono::milliseconds ocsp_timeout,
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp)
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp)
    {
    std::vector<Certificate_Store*> trusted_roots;
    trusted_roots.push_back(const_cast<Certificate_Store*>(&store));
@@ -1036,11 +1036,11 @@ Path_Validation_Result x509_path_validate(
    const X509_Certificate& end_cert,
    const Path_Validation_Restrictions& restrictions,
    const Certificate_Store& store,
-   std::string_view hostname,
+   Botan::string_view hostname,
    Usage_Type usage,
    std::chrono::system_clock::time_point when,
    std::chrono::milliseconds ocsp_timeout,
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp)
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp)
    {
    std::vector<X509_Certificate> certs;
    certs.push_back(end_cert);

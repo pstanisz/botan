@@ -13,7 +13,7 @@
 
 namespace Botan {
 
-void expand_message_xmd(std::string_view hash_fn,
+void expand_message_xmd(Botan::string_view hash_fn,
                         uint8_t output[],
                         size_t output_len,
                         const uint8_t input[],
@@ -79,7 +79,7 @@ namespace {
 std::vector<BigInt>
 hash_to_field(const EC_Group& group,
               const Modular_Reducer& mod_p,
-              std::string_view hash_fn,
+              Botan::string_view hash_fn,
               uint8_t count,
               const uint8_t input[], size_t input_len,
               const uint8_t domain_sep[], size_t domain_sep_len)
@@ -183,7 +183,7 @@ EC_Point map_to_curve_sswu(const EC_Group& group, const Modular_Reducer& mod_p, 
 }
 
 EC_Point hash_to_curve_sswu(const EC_Group& group,
-                            std::string_view hash_fn,
+                            Botan::string_view hash_fn,
                             const uint8_t input[],
                             size_t input_len,
                             const uint8_t domain_sep[],

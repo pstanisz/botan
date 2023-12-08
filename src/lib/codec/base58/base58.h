@@ -11,7 +11,7 @@
 
 #include <botan/span.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 #include <vector>
 #include <cstdint>
 
@@ -63,12 +63,12 @@ inline std::string base58_check_encode(Botan::span<const uint8_t> vec)
    return base58_check_encode(vec.data(), vec.size());
    }
 
-inline std::vector<uint8_t> base58_decode(std::string_view s)
+inline std::vector<uint8_t> base58_decode(Botan::string_view s)
    {
    return base58_decode(s.data(), s.size());
    }
 
-inline std::vector<uint8_t> base58_check_decode(std::string_view s)
+inline std::vector<uint8_t> base58_check_decode(Botan::string_view s)
    {
    return base58_check_decode(s.data(), s.size());
    }

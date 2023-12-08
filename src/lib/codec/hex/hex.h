@@ -11,7 +11,7 @@
 #include <botan/secmem.h>
 #include <botan/span.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -92,7 +92,7 @@ size_t BOTAN_PUBLIC_API(2,0) hex_decode(uint8_t output[],
 * @return number of bytes written to output
 */
 size_t BOTAN_PUBLIC_API(3,0) hex_decode(uint8_t output[],
-                                        std::string_view input,
+                                        Botan::string_view input,
                                         bool ignore_ws = true);
 
 /**
@@ -102,7 +102,7 @@ size_t BOTAN_PUBLIC_API(3,0) hex_decode(uint8_t output[],
 * @return number of bytes written to output
 */
 size_t BOTAN_PUBLIC_API(3,0) hex_decode(Botan::span<uint8_t> output,
-                                        std::string_view input,
+                                        Botan::string_view input,
                                         bool ignore_ws = true);
 
 /**
@@ -126,7 +126,7 @@ hex_decode(const char input[],
 * @return decoded hex output
 */
 std::vector<uint8_t> BOTAN_PUBLIC_API(3,0)
-hex_decode(std::string_view input,
+hex_decode(Botan::string_view input,
            bool ignore_ws = true);
 
 
@@ -151,7 +151,7 @@ hex_decode_locked(const char input[],
 * @return decoded hex output
 */
 secure_vector<uint8_t> BOTAN_PUBLIC_API(3,0)
-hex_decode_locked(std::string_view input,
+hex_decode_locked(Botan::string_view input,
                   bool ignore_ws = true);
 
 }

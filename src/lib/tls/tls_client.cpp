@@ -123,8 +123,8 @@ std::vector<X509_Certificate> Client::peer_cert_chain() const
    return m_impl->peer_cert_chain();
    }
 
-SymmetricKey Client::key_material_export(std::string_view label,
-      std::string_view context,
+SymmetricKey Client::key_material_export(Botan::string_view label,
+      Botan::string_view context,
       size_t length) const
    {
    return m_impl->key_material_export(label, context, length);

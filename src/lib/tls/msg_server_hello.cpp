@@ -254,7 +254,7 @@ Server_Hello_12::Server_Hello_12(Handshake_IO& io,
                                  const std::vector<uint8_t>& reneg_info,
                                  const Client_Hello_12& client_hello,
                                  const Server_Hello_12::Settings& server_settings,
-                                 std::string_view next_protocol) :
+                                 Botan::string_view next_protocol) :
    Server_Hello(std::make_unique<Server_Hello_Internal>(
                    server_settings.protocol_version(),
                    server_settings.session_id(),
@@ -338,7 +338,7 @@ Server_Hello_12::Server_Hello_12(Handshake_IO& io,
                                  const Client_Hello_12& client_hello,
                                  const Session& resumed_session,
                                  bool offer_session_ticket,
-                                 std::string_view next_protocol) :
+                                 Botan::string_view next_protocol) :
    Server_Hello(std::make_unique<Server_Hello_Internal>(
                    resumed_session.version(),
                    client_hello.session_id(),
@@ -467,7 +467,7 @@ bool Server_Hello_12::prefers_compressed_ec_points() const
    return false;
    }
 
-std::optional<Protocol_Version> Server_Hello_12::random_signals_downgrade() const
+Botan::optional<Protocol_Version> Server_Hello_12::random_signals_downgrade() const
    {
    const uint64_t last8 = load_be<uint64_t>(m_data->random().data(), 3);
    if(last8 == DOWNGRADE_TLS11)
@@ -766,7 +766,7 @@ uint16_t choose_ciphersuite(const Client_Hello_13& ch, const Policy& policy)
 }
 
 Server_Hello_13::Server_Hello_13(const Client_Hello_13& ch,
-                                 std::optional<Named_Group> key_exchange_group,
+                                 Botan::optional<Named_Group> key_exchange_group,
                                  Session_Manager& session_mgr,
                                  RandomNumberGenerator& rng,
                                  Callbacks& cb,
@@ -824,7 +824,7 @@ Server_Hello_13::Server_Hello_13(const Client_Hello_13& ch,
    cb.tls_modify_extensions(m_data->extensions(), Connection_Side::Server, type());
    }
 
-std::optional<Protocol_Version> Server_Hello_13::random_signals_downgrade() const
+Botan::optional<Protocol_Version> Server_Hello_13::random_signals_downgrade() const
    {
    const uint64_t last8 = load_be<uint64_t>(m_data->random().data(), 3);
    if(last8 == DOWNGRADE_TLS11)

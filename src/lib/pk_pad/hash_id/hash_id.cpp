@@ -70,7 +70,7 @@ const uint8_t SM3_PKCS_ID[] = {
 /*
 * HashID as specified by PKCS
 */
-std::vector<uint8_t> pkcs_hash_id(std::string_view name)
+std::vector<uint8_t> pkcs_hash_id(Botan::string_view name)
    {
    // Special case for SSL/TLS RSA signatures
    if(name == "Parallel(MD5,SHA-1)")
@@ -135,7 +135,7 @@ std::vector<uint8_t> pkcs_hash_id(std::string_view name)
 /*
 * HashID as specified by IEEE 1363/X9.31
 */
-uint8_t ieee1363_hash_id(std::string_view name)
+uint8_t ieee1363_hash_id(Botan::string_view name)
    {
    if(name == "SHA-1")      return 0x33;
 

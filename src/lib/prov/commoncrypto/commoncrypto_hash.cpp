@@ -94,7 +94,7 @@ class CommonCrypto_HashFunction final : public HashFunction
 }
 
 std::unique_ptr<HashFunction>
-make_commoncrypto_hash(std::string_view name)
+make_commoncrypto_hash(Botan::string_view name)
    {
 #define MAKE_COMMONCRYPTO_HASH_3(name, hash, ctx)               \
    std::unique_ptr<HashFunction>(                               \

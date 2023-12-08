@@ -9,7 +9,7 @@
 #define BOTAN_DL_PARAM_H_
 
 #include <botan/bigint.h>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -66,12 +66,12 @@ class BOTAN_PUBLIC_API(2,0) DL_Group final
       * deprecated and will be removed in a future major release. Instead
       * use DL_Group_from_PEM function
       */
-      explicit DL_Group(std::string_view name);
+      explicit DL_Group(Botan::string_view name);
 
       /*
       * Read a PEM representation
       */
-      static DL_Group DL_Group_from_PEM(std::string_view pem);
+      static DL_Group DL_Group_from_PEM(Botan::string_view pem);
 
       /**
       * Create a new group randomly.
@@ -356,7 +356,7 @@ class BOTAN_PUBLIC_API(2,0) DL_Group final
       /*
       * For internal use only
       */
-      static std::shared_ptr<DL_Group_Data> DL_group_info(std::string_view name);
+      static std::shared_ptr<DL_Group_Data> DL_group_info(Botan::string_view name);
 
    private:
       static std::shared_ptr<DL_Group_Data> load_DL_group_info(const char* p_str,

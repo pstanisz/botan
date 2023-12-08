@@ -99,7 +99,7 @@ tls_verify_cert_chain()
 """""""""""""""""""""""
 
 The parameter `ocsp_responses`, which was previously
-`std::shared_ptr<OCSP::Response>`, is now `std::optional<OCSP::Response>`.
+`std::shared_ptr<OCSP::Response>`, is now `Botan::optional<OCSP::Response>`.
 
 tls_modify_extensions() / tls_examine_extensions()
 """"""""""""""""""""""""""""""""""""""""""""""""""

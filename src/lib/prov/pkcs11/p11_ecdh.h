@@ -121,8 +121,8 @@ class BOTAN_PUBLIC_API(2,0) PKCS11_ECDH_PrivateKey final : public virtual PKCS11
 
       std::unique_ptr<PK_Ops::Key_Agreement>
          create_key_agreement_op(RandomNumberGenerator& rng,
-                                 std::string_view params,
-                                 std::string_view provider) const override;
+                                 Botan::string_view params,
+                                 Botan::string_view provider) const override;
    };
 
 BOTAN_DIAGNOSTIC_POP

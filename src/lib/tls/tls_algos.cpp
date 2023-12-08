@@ -49,7 +49,7 @@ std::string kex_method_to_string(Kex_Algo method)
    throw Invalid_State("kex_method_to_string unknown enum value");
    }
 
-Kex_Algo kex_method_from_string(std::string_view str)
+Kex_Algo kex_method_from_string(Botan::string_view str)
    {
    if(str == "RSA")
       return Kex_Algo::STATIC_RSA;
@@ -92,7 +92,7 @@ std::string auth_method_to_string(Auth_Method method)
     throw Invalid_State("auth_method_to_string unknown enum value");
    }
 
-Auth_Method auth_method_from_string(std::string_view str)
+Auth_Method auth_method_from_string(Botan::string_view str)
    {
    if(str == "RSA")
       return Auth_Method::RSA;
@@ -112,7 +112,7 @@ bool group_param_is_dh(Group_Params group)
    return (group_id >= 256 && group_id < 512);
    }
 
-Group_Params group_param_from_string(std::string_view group_name)
+Group_Params group_param_from_string(Botan::string_view group_name)
    {
    if(group_name == "secp256r1")
       return Group_Params::SECP256R1;

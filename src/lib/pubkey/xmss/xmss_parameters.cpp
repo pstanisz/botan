@@ -17,7 +17,7 @@
 
 namespace Botan {
 
-XMSS_Parameters::xmss_algorithm_t XMSS_Parameters::xmss_id_from_string(std::string_view param_set)
+XMSS_Parameters::xmss_algorithm_t XMSS_Parameters::xmss_id_from_string(Botan::string_view param_set)
    {
    if(param_set == "XMSS-SHA2_10_256")
       { return XMSS_SHA2_10_256; }
@@ -65,7 +65,7 @@ XMSS_Parameters::xmss_algorithm_t XMSS_Parameters::xmss_id_from_string(std::stri
    throw Lookup_Error(fmt("Unknown XMSS algorithm param '{}'", param_set));
    }
 
-XMSS_Parameters::XMSS_Parameters(std::string_view param_set)
+XMSS_Parameters::XMSS_Parameters(Botan::string_view param_set)
    : XMSS_Parameters(XMSS_Parameters::xmss_id_from_string(param_set))
    {
    }

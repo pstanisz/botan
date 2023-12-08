@@ -15,7 +15,7 @@
 #include <botan/internal/tls_client_impl_12.h>
 
 #include <sstream>
-#include <optional>
+#include <botan/optional.h>
 
 namespace Botan::TLS {
 
@@ -53,7 +53,7 @@ class Client_Handshake_State_12 final : public Handshake_State
 
       std::unique_ptr<Public_Key> server_public_key;
       // Used during session resumption
-      std::optional<Session> resumed_session;
+      Botan::optional<Session> resumed_session;
       bool m_is_reneg = false;
    };
 }
@@ -150,7 +150,7 @@ void Client_Impl_12::initiate_handshake(Handshake_State& state,
 void Client_Impl_12::send_client_hello(Handshake_State& state_base,
                                        bool force_full_renegotiation,
                                        Protocol_Version version,
-                                       std::optional<Session_with_Handle> session_and_handle,
+                                       Botan::optional<Session_with_Handle> session_and_handle,
                                        const std::vector<std::string>& next_protocols)
    {
    Client_Handshake_State_12& state = dynamic_cast<Client_Handshake_State_12&>(state_base);
@@ -650,7 +650,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
             {
             auto trusted_CAs = m_creds->trusted_certificate_authorities("tls-client", m_info.hostname());
 
-            std::vector<std::optional<OCSP::Response>> ocsp;
+            std::vector<Botan::optional<OCSP::Response>> ocsp;
             if(state.server_cert_status() != nullptr)
                {
                ocsp.emplace_back(callbacks().tls_parse_ocsp_response(state.server_cert_status()->response()));
@@ -788,7 +788,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
       // RFC 5077 3.4
       //    If the client receives a session ticket from the server, then it
       //    discards any Session ID that was sent in the ServerHello.
-      const auto handle = [&]() -> std::optional<Session_Handle>
+      const auto handle = [&]() -> Botan::optional<Session_Handle>
          {
          if(const auto& session_ticket = state.session_ticket(); !session_ticket.empty())
             { return session_ticket; }

@@ -102,7 +102,7 @@ class BOTAN_PUBLIC_API(2,0) PKCS10_Request final : public X509_Object
       * @param filename the name of the file containing the DER or PEM
       * encoded request file
       */
-      explicit PKCS10_Request(std::string_view filename);
+      explicit PKCS10_Request(Botan::string_view filename);
 #endif
 
       /**
@@ -126,10 +126,10 @@ class BOTAN_PUBLIC_API(2,0) PKCS10_Request final : public X509_Object
       static PKCS10_Request create(const Private_Key& key,
                                    const X509_DN& subject_dn,
                                    const Extensions& extensions,
-                                   std::string_view hash_fn,
+                                   Botan::string_view hash_fn,
                                    RandomNumberGenerator& rng,
-                                   std::string_view padding_scheme = "",
-                                   std::string_view challenge = "");
+                                   Botan::string_view padding_scheme = "",
+                                   Botan::string_view challenge = "");
 
    private:
       std::string PEM_label() const override;

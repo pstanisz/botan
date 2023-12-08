@@ -38,7 +38,7 @@ size_t DH_PublicKey::key_length() const
    return m_public_key->p_bits();
    }
 
-const BigInt& DH_PublicKey::get_int_field(std::string_view field) const
+const BigInt& DH_PublicKey::get_int_field(Botan::string_view field) const
    {
    return m_public_key->get_int_field(algo_name(), field);
    }
@@ -101,7 +101,7 @@ secure_vector<uint8_t> DH_PrivateKey::raw_private_key_bits() const
    return m_private_key->raw_private_key_bits();
    }
 
-const BigInt& DH_PrivateKey::get_int_field(std::string_view field) const
+const BigInt& DH_PrivateKey::get_int_field(Botan::string_view field) const
    {
    return m_private_key->get_int_field(algo_name(), field);
    }
@@ -116,7 +116,7 @@ class DH_KA_Operation final : public PK_Ops::Key_Agreement_with_KDF
    public:
 
       DH_KA_Operation(const std::shared_ptr<const DL_PrivateKey>& key,
-                      std::string_view kdf,
+                      Botan::string_view kdf,
                       RandomNumberGenerator& rng) :
          PK_Ops::Key_Agreement_with_KDF(kdf),
          m_key(key),
@@ -169,8 +169,8 @@ secure_vector<uint8_t> DH_KA_Operation::raw_agree(const uint8_t w[], size_t w_le
 
 std::unique_ptr<PK_Ops::Key_Agreement>
 DH_PrivateKey::create_key_agreement_op(RandomNumberGenerator& rng,
-                                       std::string_view params,
-                                       std::string_view provider) const
+                                       Botan::string_view params,
+                                       Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<DH_KA_Operation>(this->m_private_key, params, rng);

@@ -109,7 +109,7 @@ HMAC_DRBG::HMAC_DRBG(std::unique_ptr<MessageAuthenticationCode> prf) :
    clear();
    }
 
-HMAC_DRBG::HMAC_DRBG(std::string_view hmac_hash) :
+HMAC_DRBG::HMAC_DRBG(Botan::string_view hmac_hash) :
    Stateful_RNG(),
    m_mac(MessageAuthenticationCode::create_or_throw(fmt("HMAC({})", hmac_hash))),
    m_max_number_of_bytes_per_request(64 * 1024),

@@ -102,7 +102,7 @@ class Fixed_Output_RNG : public Botan::RandomNumberGenerator
 
    private:
       std::deque<uint8_t> m_buf;
-      std::optional<RandomNumberGenerator*> m_fallback;
+      Botan::optional<RandomNumberGenerator*> m_fallback;
    };
 
 /**

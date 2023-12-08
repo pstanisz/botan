@@ -18,7 +18,7 @@ namespace Botan {
 
 #if defined(BOTAN_HAS_COMPRESSION)
 
-Compression_Filter::Compression_Filter(std::string_view type, size_t level, size_t bs) :
+Compression_Filter::Compression_Filter(Botan::string_view type, size_t level, size_t bs) :
    m_comp(Compression_Algorithm::create(type)),
    m_buffersize(std::max<size_t>(bs, 256)),
    m_level(level)
@@ -72,7 +72,7 @@ void Compression_Filter::end_msg()
    send(m_buffer);
    }
 
-Decompression_Filter::Decompression_Filter(std::string_view type, size_t bs) :
+Decompression_Filter::Decompression_Filter(Botan::string_view type, size_t bs) :
    m_comp(Decompression_Algorithm::create(type)),
    m_buffersize(std::max<size_t>(bs, 256))
    {

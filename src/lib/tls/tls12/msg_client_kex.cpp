@@ -30,7 +30,7 @@ Client_Key_Exchange::Client_Key_Exchange(Handshake_IO& io,
                                          const Policy& policy,
                                          Credentials_Manager& creds,
                                          const Public_Key* server_public_key,
-                                         std::string_view hostname,
+                                         Botan::string_view hostname,
                                          RandomNumberGenerator& rng)
    {
    const Kex_Algo kex_algo = state.ciphersuite().kex_method();

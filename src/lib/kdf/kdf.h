@@ -12,7 +12,7 @@
 #include <botan/concepts.h>
 #include <botan/exceptn.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 #include <botan/span.h>
 
 namespace Botan {
@@ -33,8 +33,8 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * @return a null pointer if the algo/provider combination cannot be found
       */
       static std::unique_ptr<KDF>
-         create(std::string_view algo_spec,
-                std::string_view provider = "");
+         create(Botan::string_view algo_spec,
+                Botan::string_view provider = "");
 
       /**
       * Create an instance based on a name, or throw if the
@@ -42,13 +42,13 @@ class BOTAN_PUBLIC_API(2,0) KDF
       * empty then best available is chosen.
       */
       static std::unique_ptr<KDF>
-         create_or_throw(std::string_view algo_spec,
-                         std::string_view provider = "");
+         create_or_throw(Botan::string_view algo_spec,
+                         Botan::string_view provider = "");
 
       /**
       * @return list of available providers for this algorithm, empty if not available
       */
-      static std::vector<std::string> providers(std::string_view algo_spec);
+      static std::vector<std::string> providers(Botan::string_view algo_spec);
 
       /**
       * @return KDF name
@@ -104,8 +104,8 @@ class BOTAN_PUBLIC_API(2,0) KDF
       template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    Botan::span<const uint8_t> secret,
-                   std::string_view salt = "",
-                   std::string_view label = "") const
+                   Botan::string_view salt = "",
+                   Botan::string_view label = "") const
          {
          return derive_key<T>(key_len, secret.data(), secret.size(),
                               cast_char_ptr_to_uint8(salt.data()),
@@ -148,7 +148,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
       T derive_key(size_t key_len,
                    Botan::span<const uint8_t> secret,
                    const uint8_t salt[], size_t salt_len,
-                   std::string_view label = "") const
+                   Botan::string_view label = "") const
          {
          return derive_key<T>(key_len,
                               secret.data(), secret.size(),
@@ -169,8 +169,8 @@ class BOTAN_PUBLIC_API(2,0) KDF
       template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
       T derive_key(size_t key_len,
                    const uint8_t secret[], size_t secret_len,
-                   std::string_view salt = "",
-                   std::string_view label = "") const
+                   Botan::string_view salt = "",
+                   Botan::string_view label = "") const
          {
          return derive_key<T>(key_len, secret, secret_len,
                               cast_char_ptr_to_uint8(salt.data()),
@@ -201,7 +201,7 @@ class BOTAN_PUBLIC_API(2,0) KDF
 * Prefer KDF::create
 */
 BOTAN_DEPRECATED("Use KDF::create")
-inline KDF* get_kdf(std::string_view algo_spec)
+inline KDF* get_kdf(Botan::string_view algo_spec)
    {
    auto kdf = KDF::create(algo_spec);
    if(kdf)

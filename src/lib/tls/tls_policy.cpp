@@ -14,7 +14,7 @@
 #include <botan/tls_exceptn.h>
 #include <botan/internal/stl_util.h>
 #include <botan/pk_keys.h>
-#include <optional>
+#include <botan/optional.h>
 #include <sstream>
 
 namespace Botan::TLS {
@@ -42,7 +42,7 @@ std::vector<Signature_Scheme> Policy::acceptable_signature_schemes() const
    return this->allowed_signature_schemes();
    }
 
-std::optional<std::vector<Signature_Scheme>> Policy::acceptable_certificate_signature_schemes() const
+Botan::optional<std::vector<Signature_Scheme>> Policy::acceptable_certificate_signature_schemes() const
    {
    // the restrictions of ::acceptable_signature_schemes() shall apply
    return std::nullopt;
@@ -113,12 +113,12 @@ std::vector<std::string> Policy::allowed_signature_methods() const
       };
    }
 
-bool Policy::allowed_signature_method(std::string_view sig_method) const
+bool Policy::allowed_signature_method(Botan::string_view sig_method) const
    {
    return value_exists(allowed_signature_methods(), sig_method);
    }
 
-bool Policy::allowed_signature_hash(std::string_view sig_hash) const
+bool Policy::allowed_signature_hash(Botan::string_view sig_hash) const
    {
    return value_exists(allowed_signature_hashes(), sig_hash);
    }
@@ -370,7 +370,7 @@ bool Policy::include_time_in_hello_random() const { return true; }
 bool Policy::hide_unknown_users() const { return false; }
 bool Policy::server_uses_own_ciphersuite_preferences() const { return true; }
 bool Policy::negotiate_encrypt_then_mac() const { return true; }
-std::optional<uint16_t> Policy::record_size_limit() const { return std::nullopt; }
+Botan::optional<uint16_t> Policy::record_size_limit() const { return std::nullopt; }
 bool Policy::support_cert_status_message() const { return true; }
 bool Policy::allow_resumption_for_renegotiation() const { return true; }
 bool Policy::tls_13_middlebox_compatibility_mode() const { return true; }

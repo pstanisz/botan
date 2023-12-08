@@ -61,7 +61,7 @@ class Server_Handshake_State final : public Handshake_State
 
 namespace {
 
-std::optional<Session> check_for_resume(const Session_Handle& handle_to_resume,
+Botan::optional<Session> check_for_resume(const Session_Handle& handle_to_resume,
                                         Session_Manager& session_manager,
                                         Callbacks& cb,
                                         const Policy& policy,
@@ -214,7 +214,7 @@ uint16_t choose_ciphersuite(
    }
 
 std::map<std::string, std::vector<X509_Certificate>>
-get_server_certs(std::string_view hostname,
+get_server_certs(Botan::string_view hostname,
                  const std::vector<Signature_Scheme>& cert_sig_schemes,
                  Credentials_Manager& creds)
    {
@@ -473,7 +473,7 @@ void Server_Impl_12::process_client_hello_msg(const Handshake_State* active_stat
 
    const auto session_handle = pending_state.client_hello()->session_handle();
 
-   std::optional<Session> session_info;
+   Botan::optional<Session> session_info;
    if(pending_state.allow_session_resumption() && session_handle.has_value())
       {
       session_info = check_for_resume(session_handle.value(),
@@ -748,7 +748,7 @@ void Server_Impl_12::session_resume(Server_Handshake_State& pending_state,
       return summary;
       }());
 
-   auto new_handle = [&, this]() -> std::optional<Session_Handle>
+   auto new_handle = [&, this]() -> Botan::optional<Session_Handle>
       {
       if(!callbacks().tls_should_persist_resumption_information(session.session))
          {

@@ -24,7 +24,7 @@ namespace Botan {
 class BOTAN_PUBLIC_API(2,0) TPM_Error final : public Exception
    {
    public:
-      TPM_Error(std::string_view err) : Exception(err) {}
+      TPM_Error(Botan::string_view err) : Exception(err) {}
       ErrorType error_type() const noexcept override { return ErrorType::TPMError; }
    };
 
@@ -119,10 +119,10 @@ class BOTAN_PUBLIC_API(2,0) TPM_PrivateKey final : public Private_Key
 
       // reference an existing TPM key using URL syntax from GnuTLS
       // "tpmkey:uuid=79f07ca9-73ac-478a-9093-11ca6702e774;storage=user"
-      //TPM_PrivateKey(TPM_Context& ctx, std::string_view tpm_url);
+      //TPM_PrivateKey(TPM_Context& ctx, Botan::string_view tpm_url);
 
       TPM_PrivateKey(TPM_Context& ctx,
-                     std::string_view uuid,
+                     Botan::string_view uuid,
                      TPM_Storage_Type storage_type);
 
       TPM_PrivateKey(TPM_Context& ctx,
@@ -176,8 +176,8 @@ class BOTAN_PUBLIC_API(2,0) TPM_PrivateKey final : public Private_Key
 
       std::unique_ptr<PK_Ops::Signature>
          create_signature_op(RandomNumberGenerator& rng,
-                             std::string_view params,
-                             std::string_view provider) const override;
+                             Botan::string_view params,
+                             Botan::string_view provider) const override;
 
    private:
       TPM_Context& m_ctx;

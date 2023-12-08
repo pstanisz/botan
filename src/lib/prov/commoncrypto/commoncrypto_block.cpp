@@ -19,7 +19,7 @@ namespace {
 class CommonCrypto_BlockCipher final : public BlockCipher
    {
    public:
-      CommonCrypto_BlockCipher(std::string_view name, const CommonCryptor_Opts& opts);
+      CommonCrypto_BlockCipher(Botan::string_view name, const CommonCryptor_Opts& opts);
 
       ~CommonCrypto_BlockCipher();
 
@@ -72,7 +72,7 @@ class CommonCrypto_BlockCipher final : public BlockCipher
       bool m_key_set;
    };
 
-CommonCrypto_BlockCipher::CommonCrypto_BlockCipher(std::string_view algo_name,
+CommonCrypto_BlockCipher::CommonCrypto_BlockCipher(Botan::string_view algo_name,
       const CommonCryptor_Opts& opts) :
    m_cipher_name(algo_name),
    m_opts(opts),
@@ -149,7 +149,7 @@ void CommonCrypto_BlockCipher::clear()
 }
 
 std::unique_ptr<BlockCipher>
-make_commoncrypto_block_cipher(std::string_view name)
+make_commoncrypto_block_cipher(Botan::string_view name)
    {
    try
       {

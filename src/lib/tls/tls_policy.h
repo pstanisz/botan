@@ -14,7 +14,7 @@
 #include <botan/tls_ciphersuite.h>
 #include <botan/tls_signature_scheme.h>
 #include <chrono>
-#include <optional>
+#include <botan/optional.h>
 #include <vector>
 #include <map>
 
@@ -69,7 +69,7 @@ class BOTAN_PUBLIC_API(2,0) Policy
       */
       virtual std::vector<Signature_Scheme> acceptable_signature_schemes() const;
 
-      virtual std::optional<std::vector<Signature_Scheme>> acceptable_certificate_signature_schemes() const;
+      virtual Botan::optional<std::vector<Signature_Scheme>> acceptable_certificate_signature_schemes() const;
 
       /**
       * The minimum signature strength we will accept
@@ -87,8 +87,8 @@ class BOTAN_PUBLIC_API(2,0) Policy
       */
       virtual bool require_cert_revocation_info() const;
 
-      bool allowed_signature_method(std::string_view sig_method) const;
-      bool allowed_signature_hash(std::string_view hash) const;
+      bool allowed_signature_method(Botan::string_view sig_method) const;
+      bool allowed_signature_hash(Botan::string_view hash) const;
 
       /**
       * Return list of ECC curves and FFDHE groups we are willing to
@@ -346,7 +346,7 @@ class BOTAN_PUBLIC_API(2,0) Policy
        *       won't be negotiated by TLS 1.3 clients that support downgrading
        *       to TLS 1.2 (i.e. ::allow_tls12() returning true).
        */
-      virtual std::optional<uint16_t> record_size_limit() const;
+      virtual Botan::optional<uint16_t> record_size_limit() const;
 
       /**
       * Indicates whether certificate status messages should be supported
@@ -641,7 +641,7 @@ class BOTAN_PUBLIC_API(2,0) Text_Policy : public Policy
 
       bool negotiate_encrypt_then_mac() const override;
 
-      std::optional<uint16_t> record_size_limit() const override;
+      Botan::optional<uint16_t> record_size_limit() const override;
 
       bool support_cert_status_message() const override;
 
@@ -683,7 +683,7 @@ class BOTAN_PUBLIC_API(2,0) Text_Policy : public Policy
 
       void set(const std::string& key, const std::string& value);
 
-      explicit Text_Policy(std::string_view s);
+      explicit Text_Policy(Botan::string_view s);
 
       explicit Text_Policy(std::istream& in);
 
@@ -692,7 +692,7 @@ class BOTAN_PUBLIC_API(2,0) Text_Policy : public Policy
       std::vector<std::string> get_list(const std::string& key,
                                         const std::vector<std::string>& def) const;
 
-      std::vector<Group_Params> read_group_list(std::string_view group_str) const;
+      std::vector<Group_Params> read_group_list(Botan::string_view group_str) const;
 
       size_t get_len(const std::string& key, size_t def) const;
 
@@ -702,7 +702,7 @@ class BOTAN_PUBLIC_API(2,0) Text_Policy : public Policy
 
       std::string get_str(const std::string& key, const std::string& def = "") const;
 
-      bool set_value(const std::string& key, std::string_view val, bool overwrite);
+      bool set_value(const std::string& key, Botan::string_view val, bool overwrite);
 
    private:
       std::map<std::string, std::string> m_kv;

@@ -14,7 +14,7 @@
 #include <botan/bigint.h>
 
 #include <chrono>
-#include <optional>
+#include <botan/optional.h>
 
 namespace Botan {
 
@@ -170,7 +170,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
       *
       * @return the certificate that signed this response or std::nullopt if not found
       */
-      std::optional<X509_Certificate>
+      Botan::optional<X509_Certificate>
       find_signing_certificate(const X509_Certificate& issuer_certificate,
                                const Certificate_Store* trusted_ocsp_responders = nullptr) const;
 
@@ -238,7 +238,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
       /**
       * @return the dummy response if this is a 'fake' OCSP response otherwise std::nullopt
       */
-      std::optional<Certificate_Status_Code> dummy_status() const { return m_dummy_response_status; }
+      Botan::optional<Certificate_Status_Code> dummy_status() const { return m_dummy_response_status; }
 
    private:
       bool is_issued_by(const X509_Certificate& candidate) const
@@ -260,7 +260,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
 
       std::vector<SingleResponse> m_responses;
 
-      std::optional<Certificate_Status_Code> m_dummy_response_status;
+      Botan::optional<Certificate_Status_Code> m_dummy_response_status;
    };
 
 #if defined(BOTAN_HAS_HTTP_UTIL)
@@ -276,7 +276,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
 BOTAN_PUBLIC_API(3,0)
 Response online_check(const X509_Certificate& issuer,
                       const BigInt& subject_serial,
-                      std::string_view ocsp_responder,
+                      Botan::string_view ocsp_responder,
                       std::chrono::milliseconds timeout = std::chrono::milliseconds(3000));
 
 /**

@@ -117,8 +117,8 @@ class BOTAN_PUBLIC_API(2,0) X509_Object : public ASN1_Object
       static std::unique_ptr<PK_Signer>
          choose_sig_format(const Private_Key& key,
                            RandomNumberGenerator& rng,
-                           std::string_view hash_fn,
-                           std::string_view padding_algo);
+                           Botan::string_view hash_fn,
+                           Botan::string_view padding_algo);
 
    protected:
 

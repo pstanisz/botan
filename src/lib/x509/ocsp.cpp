@@ -180,7 +180,7 @@ Certificate_Status_Code Response::verify_signature(const X509_Certificate& issue
    }
 
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Response::find_signing_certificate(const X509_Certificate& issuer_certificate,
                                    const Certificate_Store* trusted_ocsp_responders) const
    {
@@ -263,7 +263,7 @@ Certificate_Status_Code Response::status_for(const X509_Certificate& issuer,
 
 Response online_check(const X509_Certificate& issuer,
                       const BigInt& subject_serial,
-                      std::string_view ocsp_responder,
+                      Botan::string_view ocsp_responder,
                       std::chrono::milliseconds timeout)
    {
    if(ocsp_responder.empty())

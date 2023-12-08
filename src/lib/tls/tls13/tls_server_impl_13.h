@@ -58,7 +58,7 @@ class Server_Impl_13 : public Channel_Impl_13
       Server_Handshake_State_13 m_handshake_state;
       Handshake_Transitions m_transitions;
 
-      std::optional<Session> m_resumed_session;
+      Botan::optional<Session> m_resumed_session;
    };
 
 }

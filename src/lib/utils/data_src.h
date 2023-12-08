@@ -10,7 +10,7 @@
 #define BOTAN_DATA_SRC_H_
 
 #include <botan/secmem.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <iosfwd>
 #include <botan/span.h>
@@ -109,7 +109,7 @@ class BOTAN_PUBLIC_API(2,0) DataSource_Memory final : public DataSource
       * Construct a memory source that reads from a string
       * @param in the string to read from
       */
-      explicit DataSource_Memory(std::string_view in);
+      explicit DataSource_Memory(Botan::string_view in);
 
       /**
       * Construct a memory source that reads from a byte array
@@ -159,7 +159,7 @@ class BOTAN_PUBLIC_API(2,0) DataSource_Stream final : public DataSource
       std::string id() const override;
 
       DataSource_Stream(std::istream&,
-                        std::string_view id = "<std::istream>");
+                        Botan::string_view id = "<std::istream>");
 
 #if defined(BOTAN_TARGET_OS_HAS_FILESYSTEM)
       /**
@@ -167,7 +167,7 @@ class BOTAN_PUBLIC_API(2,0) DataSource_Stream final : public DataSource
       * @param filename the path to the file
       * @param use_binary whether to treat the file as binary or not
       */
-      DataSource_Stream(std::string_view filename, bool use_binary = false);
+      DataSource_Stream(Botan::string_view filename, bool use_binary = false);
 #endif
 
       DataSource_Stream(const DataSource_Stream&) = delete;

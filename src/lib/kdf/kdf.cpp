@@ -54,7 +54,7 @@ namespace {
 
 template<typename KDF_Type>
 std::unique_ptr<KDF>
-kdf_create_mac_or_hash(std::string_view nm)
+kdf_create_mac_or_hash(Botan::string_view nm)
    {
    if(auto mac = MessageAuthenticationCode::create(fmt("HMAC({})", nm)))
       return std::make_unique<KDF_Type>(std::move(mac));
@@ -67,8 +67,8 @@ kdf_create_mac_or_hash(std::string_view nm)
 
 }
 
-std::unique_ptr<KDF> KDF::create(std::string_view algo_spec,
-                                 std::string_view provider)
+std::unique_ptr<KDF> KDF::create(Botan::string_view algo_spec,
+                                 Botan::string_view provider)
    {
    const SCAN_Name req(algo_spec);
 
@@ -210,8 +210,8 @@ std::unique_ptr<KDF> KDF::create(std::string_view algo_spec,
 
 //static
 std::unique_ptr<KDF>
-KDF::create_or_throw(std::string_view algo,
-                     std::string_view provider)
+KDF::create_or_throw(Botan::string_view algo,
+                     Botan::string_view provider)
    {
    if(auto kdf = KDF::create(algo, provider))
       {
@@ -220,7 +220,7 @@ KDF::create_or_throw(std::string_view algo,
    throw Lookup_Error("KDF", algo, provider);
    }
 
-std::vector<std::string> KDF::providers(std::string_view algo_spec)
+std::vector<std::string> KDF::providers(Botan::string_view algo_spec)
    {
    return probe_providers_of<KDF>(algo_spec);
    }

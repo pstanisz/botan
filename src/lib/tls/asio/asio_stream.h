@@ -644,10 +644,10 @@ class Stream
 
             void tls_verify_cert_chain(
                const std::vector<X509_Certificate>& cert_chain,
-               const std::vector<std::optional<OCSP::Response>>& ocsp_responses,
+               const std::vector<Botan::optional<OCSP::Response>>& ocsp_responses,
                const std::vector<Certificate_Store*>& trusted_roots,
                Usage_Type usage,
-               std::string_view hostname,
+               Botan::string_view hostname,
                const TLS::Policy& policy) override
                {
                auto ctx = m_context.lock();

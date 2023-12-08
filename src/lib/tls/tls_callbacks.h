@@ -16,7 +16,7 @@
 #include <botan/dl_group.h>
 #include <botan/pubkey.h>
 #include <botan/ocsp.h>
-#include <optional>
+#include <botan/optional.h>
 #include <chrono>
 
 namespace Botan {
@@ -170,10 +170,10 @@ class BOTAN_PUBLIC_API(2,0) Callbacks
        */
        virtual void tls_verify_cert_chain(
           const std::vector<X509_Certificate>& cert_chain,
-          const std::vector<std::optional<OCSP::Response>>& ocsp_responses,
+          const std::vector<Botan::optional<OCSP::Response>>& ocsp_responses,
           const std::vector<Certificate_Store*>& trusted_roots,
           Usage_Type usage,
-          std::string_view hostname,
+          Botan::string_view hostname,
           const TLS::Policy& policy);
 
        /**
@@ -239,7 +239,7 @@ class BOTAN_PUBLIC_API(2,0) Callbacks
        virtual std::vector<uint8_t> tls_sign_message(
           const Private_Key& key,
           RandomNumberGenerator& rng,
-          std::string_view padding,
+          Botan::string_view padding,
           Signature_Format format,
           const std::vector<uint8_t>& msg);
 
@@ -259,7 +259,7 @@ class BOTAN_PUBLIC_API(2,0) Callbacks
        */
        virtual bool tls_verify_message(
           const Public_Key& key,
-          std::string_view padding,
+          Botan::string_view padding,
           Signature_Format format,
           const std::vector<uint8_t>& msg,
           const std::vector<uint8_t>& sig);
@@ -405,7 +405,7 @@ class BOTAN_PUBLIC_API(2,0) Callbacks
        * @param raw_response raw OCSP response buffer
        * @returns the parsed OCSP response or std::nullopt on error
        */
-       virtual std::optional<OCSP::Response> tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response);
+       virtual Botan::optional<OCSP::Response> tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response);
 
        /**
        * Optional callback: return peer network identity

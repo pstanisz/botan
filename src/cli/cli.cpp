@@ -132,7 +132,7 @@ std::string Command::get_arg_or(const std::string& opt_name, const std::string& 
    return m_args->get_arg_or(opt_name, otherwise);
    }
 
-std::optional<std::string> Command::get_arg_maybe(const std::string& opt_name) const
+Botan::optional<std::string> Command::get_arg_maybe(const std::string& opt_name) const
    {
    auto arg = m_args->get_arg(opt_name);
    if(arg.empty())

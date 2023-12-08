@@ -13,7 +13,7 @@
 #include <string>
 #include <set>
 #include <memory>
-#include <optional>
+#include <botan/optional.h>
 #include <variant>
 #include <chrono>
 
@@ -63,7 +63,7 @@ class BOTAN_UNSTABLE_API Hello_Verify_Request final : public Handshake_Message
       explicit Hello_Verify_Request(const std::vector<uint8_t>& buf);
 
       Hello_Verify_Request(const std::vector<uint8_t>& client_hello_bits,
-                           std::string_view client_identity,
+                           Botan::string_view client_identity,
                            const SymmetricKey& secret_key);
 
    private:
@@ -154,7 +154,7 @@ class BOTAN_UNSTABLE_API Client_Hello_12 final : public Client_Hello
          {
          public:
             Settings(const Protocol_Version version,
-                     std::string_view hostname = ""):
+                     Botan::string_view hostname = ""):
                m_new_session_version(version),
                m_hostname(hostname) {}
 
@@ -205,7 +205,7 @@ class BOTAN_UNSTABLE_API Client_Hello_12 final : public Client_Hello
 
       Session_Ticket session_ticket() const;
 
-      std::optional<Session_Handle> session_handle() const;
+      Botan::optional<Session_Handle> session_handle() const;
 
       bool supports_extended_master_secret() const;
 
@@ -229,9 +229,9 @@ class BOTAN_UNSTABLE_API Client_Hello_13 final : public Client_Hello
       Client_Hello_13(const Policy& policy,
                       Callbacks& cb,
                       RandomNumberGenerator& rng,
-                      std::string_view hostname,
+                      Botan::string_view hostname,
                       const std::vector<std::string>& next_protocols,
-                      std::optional<Session_with_Handle>& session);
+                      Botan::optional<Session_with_Handle>& session);
 
       static std::variant<Client_Hello_13, Client_Hello_12>
       parse(const std::vector<uint8_t>& buf);
@@ -246,7 +246,7 @@ class BOTAN_UNSTABLE_API Client_Hello_13 final : public Client_Hello
        * supported by the client. If no such version can be determind this
        * returns std::nullopt.
        */
-      std::optional<Protocol_Version> highest_supported_version(const Policy& policy) const;
+      Botan::optional<Protocol_Version> highest_supported_version(const Policy& policy) const;
 
       /**
        * This validates that a Client Hello received after sending a Hello
@@ -344,7 +344,7 @@ class BOTAN_UNSTABLE_API Server_Hello_12 final : public Server_Hello
                       const std::vector<uint8_t>& secure_reneg_info,
                       const Client_Hello_12& client_hello,
                       const Settings& settings,
-                      std::string_view next_protocol);
+                      Botan::string_view next_protocol);
 
       Server_Hello_12(Handshake_IO& io,
                       Handshake_Hash& hash,
@@ -355,7 +355,7 @@ class BOTAN_UNSTABLE_API Server_Hello_12 final : public Server_Hello
                       const Client_Hello_12& client_hello,
                       const Session& resumed_session,
                       bool offer_session_ticket,
-                      std::string_view next_protocol);
+                      Botan::string_view next_protocol);
 
       explicit Server_Hello_12(const std::vector<uint8_t> &buf);
 
@@ -394,7 +394,7 @@ class BOTAN_UNSTABLE_API Server_Hello_12 final : public Server_Hello
       /**
        * Return desired downgrade version indicated by hello random, if any.
        */
-      std::optional<Protocol_Version> random_signals_downgrade() const;
+      Botan::optional<Protocol_Version> random_signals_downgrade() const;
    };
 
 #if defined(BOTAN_HAS_TLS_13)
@@ -418,7 +418,7 @@ class BOTAN_UNSTABLE_API Server_Hello_13 : public Server_Hello
 
       // Instantiate a Server Hello as response to a client's Client Hello
       // (called from Server_Hello_13::create())
-      Server_Hello_13(const Client_Hello_13& ch, std::optional<Named_Group> key_exchange_group, Session_Manager& session_mgr, RandomNumberGenerator& rng, Callbacks& cb, const Policy& policy);
+      Server_Hello_13(const Client_Hello_13& ch, Botan::optional<Named_Group> key_exchange_group, Session_Manager& session_mgr, RandomNumberGenerator& rng, Callbacks& cb, const Policy& policy);
 
       explicit Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data, Hello_Retry_Request_Creation_Tag tag);
 
@@ -432,7 +432,7 @@ class BOTAN_UNSTABLE_API Server_Hello_13 : public Server_Hello
       /**
        * Return desired downgrade version indicated by hello random, if any.
        */
-      std::optional<Protocol_Version> random_signals_downgrade() const;
+      Botan::optional<Protocol_Version> random_signals_downgrade() const;
 
       /**
        * @returns the selected version as indicated by the supported_versions extension
@@ -486,7 +486,7 @@ class BOTAN_UNSTABLE_API Client_Key_Exchange final : public Handshake_Message
                           const Policy& policy,
                           Credentials_Manager& creds,
                           const Public_Key* server_public_key,
-                          std::string_view hostname,
+                          Botan::string_view hostname,
                           RandomNumberGenerator& rng);
 
       Client_Key_Exchange(const std::vector<uint8_t>& buf,
@@ -561,7 +561,7 @@ class BOTAN_UNSTABLE_API Certificate_13 final : public Handshake_Message
        * ... in response to a Certificate Request message.
        */
       Certificate_13(const Certificate_Request_13& cert_request,
-                     std::string_view hostname,
+                     Botan::string_view hostname,
                      Credentials_Manager& credentials_manager,
                      Callbacks& callbacks);
 
@@ -601,7 +601,7 @@ class BOTAN_UNSTABLE_API Certificate_13 final : public Handshake_Message
       void verify(Callbacks& callbacks,
                   const Policy& policy,
                   Credentials_Manager& creds,
-                  std::string_view hostname,
+                  Botan::string_view hostname,
                   bool use_ocsp) const;
 
       std::vector<uint8_t> serialize() const override;
@@ -692,7 +692,7 @@ class BOTAN_UNSTABLE_API Certificate_Request_13 final : public Handshake_Message
 
       //! Creates a Certificate_Request message if it is required by the configuration
       //! @return std::nullopt if configuration does not require client authentication
-      static std::optional<Certificate_Request_13> maybe_create(const Client_Hello_13& sni_hostname,
+      static Botan::optional<Certificate_Request_13> maybe_create(const Client_Hello_13& sni_hostname,
                                                                 Credentials_Manager& cred_mgr,
                                                                 Callbacks& callbacks,
                                                                 const Policy& policy);
@@ -780,7 +780,7 @@ class BOTAN_UNSTABLE_API Certificate_Verify_13 final : public Certificate_Verify
       Certificate_Verify_13(
             const Certificate_13& certificate_message,
             const std::vector<Signature_Scheme>& peer_allowed_schemes,
-            std::string_view hostname,
+            Botan::string_view hostname,
             const Transcript_Hash& hash,
             Connection_Side whoami,
             Credentials_Manager& creds_mgr,
@@ -970,7 +970,7 @@ class BOTAN_UNSTABLE_API New_Session_Ticket_13 final : public Handshake_Message
        * @return  the number of bytes allowed for early data or std::nullopt
        *          when early data is not allowed at all
        */
-      std::optional<uint32_t> early_data_byte_limit() const;
+      Botan::optional<uint32_t> early_data_byte_limit() const;
 
    private:
       // RFC 8446 4.6.1

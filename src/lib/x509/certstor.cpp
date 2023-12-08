@@ -16,7 +16,7 @@ namespace Botan {
 
 Certificate_Store::~Certificate_Store() = default;
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store::find_cert(const X509_DN& subject_dn, const std::vector<uint8_t>& key_id) const
    {
    const auto certs = find_all_certs(subject_dn, key_id);
@@ -30,7 +30,7 @@ Certificate_Store::find_cert(const X509_DN& subject_dn, const std::vector<uint8_
    return certs.front();
    }
 
-std::optional<X509_CRL> Certificate_Store::find_crl_for(const X509_Certificate& /*unused*/) const
+Botan::optional<X509_CRL> Certificate_Store::find_crl_for(const X509_Certificate& /*unused*/) const
    {
    return std::nullopt;
    }
@@ -53,7 +53,7 @@ std::vector<X509_DN> Certificate_Store_In_Memory::all_subjects() const
    return subjects;
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_In_Memory::find_cert(const X509_DN& subject_dn,
                                        const std::vector<uint8_t>& key_id) const
    {
@@ -98,7 +98,7 @@ std::vector<X509_Certificate> Certificate_Store_In_Memory::find_all_certs(
    return matches;
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_In_Memory::find_cert_by_pubkey_sha1(const std::vector<uint8_t>& key_hash) const
    {
    if(key_hash.size() != 20)
@@ -115,7 +115,7 @@ Certificate_Store_In_Memory::find_cert_by_pubkey_sha1(const std::vector<uint8_t>
    return std::nullopt;
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_In_Memory::find_cert_by_raw_subject_dn_sha256(const std::vector<uint8_t>& subject_hash) const
    {
    if(subject_hash.size() != 32)
@@ -151,7 +151,7 @@ void Certificate_Store_In_Memory::add_crl(const X509_CRL& crl)
    m_crls.push_back(crl);
    }
 
-std::optional<X509_CRL> Certificate_Store_In_Memory::find_crl_for(const X509_Certificate& subject) const
+Botan::optional<X509_CRL> Certificate_Store_In_Memory::find_crl_for(const X509_Certificate& subject) const
    {
    const std::vector<uint8_t>& key_id = subject.authority_key_id();
 
@@ -179,7 +179,7 @@ Certificate_Store_In_Memory::Certificate_Store_In_Memory(const X509_Certificate&
    }
 
 #if defined(BOTAN_TARGET_OS_HAS_FILESYSTEM)
-Certificate_Store_In_Memory::Certificate_Store_In_Memory(std::string_view dir)
+Certificate_Store_In_Memory::Certificate_Store_In_Memory(Botan::string_view dir)
    {
    if(dir.empty())
       return;

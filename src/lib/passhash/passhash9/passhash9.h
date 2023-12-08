@@ -8,6 +8,7 @@
 #ifndef BOTAN_PASSHASH9_H_
 #define BOTAN_PASSHASH9_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 
@@ -28,7 +29,7 @@ class RandomNumberGenerator;
 *        4 is HMAC(SHA-512)
 *        all other values are currently undefined
 */
-std::string BOTAN_PUBLIC_API(2,0) generate_passhash9(std::string_view password,
+std::string BOTAN_PUBLIC_API(2,0) generate_passhash9(Botan::string_view password,
                                          RandomNumberGenerator& rng,
                                          uint16_t work_factor = 15,
                                          uint8_t alg_id = 4);
@@ -38,8 +39,8 @@ std::string BOTAN_PUBLIC_API(2,0) generate_passhash9(std::string_view password,
 * @param password the password to check against
 * @param hash the stored hash to check against
 */
-bool BOTAN_PUBLIC_API(2,0) check_passhash9(std::string_view password,
-                               std::string_view hash);
+bool BOTAN_PUBLIC_API(2,0) check_passhash9(Botan::string_view password,
+                               Botan::string_view hash);
 
 /**
 * Check if the PRF used with PBKDF2 is supported

@@ -8,6 +8,7 @@
 #ifndef BOTAN_SOCKET_UDP_H_
 #define BOTAN_SOCKET_UDP_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 #include <chrono>
@@ -54,8 +55,8 @@ class BOTAN_TEST_API SocketUDP
 * not available on this platform.
 */
 std::unique_ptr<SocketUDP>
-BOTAN_TEST_API open_socket_udp(std::string_view hostname,
-                               std::string_view service,
+BOTAN_TEST_API open_socket_udp(Botan::string_view hostname,
+                               Botan::string_view service,
                                std::chrono::microseconds timeout);
 
 /**
@@ -63,7 +64,7 @@ BOTAN_TEST_API open_socket_udp(std::string_view hostname,
 * not available on this platform.
 */
 std::unique_ptr<SocketUDP>
-BOTAN_TEST_API open_socket_udp(std::string_view uri,
+BOTAN_TEST_API open_socket_udp(Botan::string_view uri,
                                std::chrono::microseconds timeout);
 
 

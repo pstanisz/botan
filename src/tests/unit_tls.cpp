@@ -515,7 +515,7 @@ class TLS_Handshake_Test final
             std::vector<uint8_t>& m_recv;
 
             std::function<void(const Botan::TLS::Session_Summary&)> m_session_established_callback;
-            std::optional<Botan::TLS::Alert> m_expected_handshake_alert;
+            Botan::optional<Botan::TLS::Alert> m_expected_handshake_alert;
          };
 
       const Botan::TLS::Protocol_Version m_offer_version;

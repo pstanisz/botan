@@ -41,7 +41,7 @@ void DataSink_Stream::end_msg()
 * DataSink_Stream Constructor
 */
 DataSink_Stream::DataSink_Stream(std::ostream& out,
-                                 std::string_view name) :
+                                 Botan::string_view name) :
    m_identifier(name),
    m_sink(out)
    {
@@ -52,7 +52,7 @@ DataSink_Stream::DataSink_Stream(std::ostream& out,
 /*
 * DataSink_Stream Constructor
 */
-DataSink_Stream::DataSink_Stream(std::string_view path,
+DataSink_Stream::DataSink_Stream(Botan::string_view path,
                                  bool use_binary) :
    m_identifier(path),
    m_sink_memory(std::make_unique<std::ofstream>(std::string(path), use_binary ? std::ios::binary : std::ios::out)),

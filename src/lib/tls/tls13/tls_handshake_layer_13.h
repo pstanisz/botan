@@ -9,7 +9,7 @@
 #ifndef BOTAN_TLS_HANDSHAKE_LAYER_13_H_
 #define BOTAN_TLS_HANDSHAKE_LAYER_13_H_
 
-#include <optional>
+#include <botan/optional.h>
 #include <vector>
 
 #include <botan/tls_magic.h>
@@ -46,7 +46,7 @@ class BOTAN_TEST_API Handshake_Layer
        *
        * @return the parsed handshake message, or nullopt if more data is needed to complete the message
        */
-      std::optional<Handshake_Message_13> next_message(const Policy& policy, Transcript_Hash_State& transcript_hash);
+      Botan::optional<Handshake_Message_13> next_message(const Policy& policy, Transcript_Hash_State& transcript_hash);
 
       /**
        * Parses one post-handshake message off the internal buffer that is being filled using `copy_data`.
@@ -55,7 +55,7 @@ class BOTAN_TEST_API Handshake_Layer
        *
        * @return the parsed post-handshake message, or nullopt if more data is needed to complete the message
        */
-      std::optional<Post_Handshake_Message_13> next_post_handshake_message(const Policy& policy);
+      Botan::optional<Post_Handshake_Message_13> next_post_handshake_message(const Policy& policy);
 
       /**
        * Marshalls one handshake message for sending in an (encrypted) record and updates the

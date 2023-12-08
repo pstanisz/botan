@@ -41,7 +41,7 @@ std::unique_ptr<MessageAuthenticationCode> get_pbkdf_prf(uint8_t alg_id)
 
 }
 
-std::string generate_passhash9(std::string_view pass,
+std::string generate_passhash9(Botan::string_view pass,
                                RandomNumberGenerator& rng,
                                uint16_t work_factor,
                                uint8_t alg_id)
@@ -75,7 +75,7 @@ std::string generate_passhash9(std::string_view pass,
    return MAGIC_PREFIX + base64_encode(blob);
    }
 
-bool check_passhash9(std::string_view pass, std::string_view hash)
+bool check_passhash9(Botan::string_view pass, Botan::string_view hash)
    {
    const size_t BINARY_LENGTH =
      ALGID_BYTES +

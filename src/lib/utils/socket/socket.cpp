@@ -44,8 +44,8 @@ namespace {
 class Asio_Socket final : public OS::Socket
    {
    public:
-      Asio_Socket(std::string_view hostname,
-                  std::string_view service,
+      Asio_Socket(Botan::string_view hostname,
+                  Botan::string_view service,
                   std::chrono::milliseconds timeout) :
          m_timeout(timeout), m_timer(m_io), m_tcp(m_io)
          {
@@ -197,8 +197,8 @@ class BSD_Socket final : public OS::Socket
 #endif
 
    public:
-      BSD_Socket(std::string_view hostname,
-                 std::string_view service,
+      BSD_Socket(Botan::string_view hostname,
+                 Botan::string_view service,
                  std::chrono::microseconds timeout) : m_timeout(timeout)
          {
          socket_init();
@@ -359,8 +359,8 @@ class BSD_Socket final : public OS::Socket
 }
 
 std::unique_ptr<OS::Socket>
-OS::open_socket(std::string_view hostname,
-                std::string_view service,
+OS::open_socket(Botan::string_view hostname,
+                Botan::string_view service,
                 std::chrono::milliseconds timeout)
    {
 #if defined(BOTAN_HAS_BOOST_ASIO)

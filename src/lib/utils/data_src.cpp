@@ -96,7 +96,7 @@ bool DataSource_Memory::end_of_data() const
 /*
 * DataSource_Memory Constructor
 */
-DataSource_Memory::DataSource_Memory(std::string_view in) :
+DataSource_Memory::DataSource_Memory(Botan::string_view in) :
    m_source(cast_char_ptr_to_uint8(in.data()),
             cast_char_ptr_to_uint8(in.data()) + in.length()),
    m_offset(0)
@@ -181,7 +181,7 @@ std::string DataSource_Stream::id() const
 /*
 * DataSource_Stream Constructor
 */
-DataSource_Stream::DataSource_Stream(std::string_view path,
+DataSource_Stream::DataSource_Stream(Botan::string_view path,
                                      bool use_binary) :
    m_identifier(path),
    m_source_memory(std::make_unique<std::ifstream>(std::string(path), use_binary ? std::ios::binary : std::ios::in)),
@@ -200,7 +200,7 @@ DataSource_Stream::DataSource_Stream(std::string_view path,
 * DataSource_Stream Constructor
 */
 DataSource_Stream::DataSource_Stream(std::istream& in,
-                                     std::string_view name) :
+                                     Botan::string_view name) :
    m_identifier(name),
    m_source(in),
    m_total_read(0)

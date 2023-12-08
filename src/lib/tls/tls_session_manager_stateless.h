@@ -43,8 +43,8 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_Stateless : public Session_Manager
          const std::shared_ptr<Credentials_Manager>& credentials_manager,
          const std::shared_ptr<RandomNumberGenerator>& rng);
 
-      std::optional<Session_Handle> establish(const Session& session,
-                                              const std::optional<Session_ID>& id = std::nullopt,
+      Botan::optional<Session_Handle> establish(const Session& session,
+                                              const Botan::optional<Session_ID>& id = std::nullopt,
                                               bool tls12_no_ticket = false) override;
 
       void store(const Session& session, const Session_Handle& handle) override;
@@ -55,11 +55,11 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_Stateless : public Session_Manager
       bool emits_session_tickets() override;
 
    protected:
-      std::optional<Session> retrieve_one(const Session_Handle& handle) override;
+      Botan::optional<Session> retrieve_one(const Session_Handle& handle) override;
       std::vector<Session_with_Handle> find_some(const Server_Information&, const size_t) override { return {}; }
 
    private:
-      std::optional<SymmetricKey> get_ticket_key() noexcept;
+      Botan::optional<SymmetricKey> get_ticket_key() noexcept;
 
    private:
       std::shared_ptr<Credentials_Manager> m_credentials_manager;

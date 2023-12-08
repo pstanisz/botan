@@ -25,7 +25,7 @@ const unsigned request_min_size = 1024;
 class BOTAN_PUBLIC_API(2, 13) Roughtime_Error final : public Decoding_Error
    {
    public:
-      explicit Roughtime_Error(std::string_view s) : Decoding_Error("Roughtime", s) {}
+      explicit Roughtime_Error(Botan::string_view s) : Decoding_Error("Roughtime", s) {}
       ErrorType error_type() const noexcept override { return ErrorType::RoughtimeError; }
    };
 
@@ -110,7 +110,7 @@ class BOTAN_PUBLIC_API(2, 13) Chain final
    {
    public:
       Chain() = default; //empty
-      Chain(std::string_view str);
+      Chain(Botan::string_view str);
       const std::vector<Link>& links() const { return m_links; }
       std::vector<Response> responses() const;
       Nonce next_nonce(const Nonce& blind) const;
@@ -134,14 +134,14 @@ Nonce nonce_from_blind(const std::vector<uint8_t>& previous_response,
 * @return Roughtime response
 */
 BOTAN_PUBLIC_API(2, 13)
-std::vector<uint8_t> online_request(std::string_view url,
+std::vector<uint8_t> online_request(Botan::string_view url,
                                     const Nonce& nonce,
                                     std::chrono::milliseconds timeout = std::chrono::seconds(3));
 
 struct BOTAN_PUBLIC_API(2, 13) Server_Information final
    {
    public:
-      Server_Information(std::string_view name,
+      Server_Information(Botan::string_view name,
                          const Ed25519_PublicKey& public_key,
                          const std::vector<std::string>& addresses)
          : m_name { name }
@@ -159,7 +159,7 @@ struct BOTAN_PUBLIC_API(2, 13) Server_Information final
    };
 
 BOTAN_PUBLIC_API(2, 13)
-std::vector<Server_Information> servers_from_str(std::string_view str);
+std::vector<Server_Information> servers_from_str(Botan::string_view str);
 
 }
 }

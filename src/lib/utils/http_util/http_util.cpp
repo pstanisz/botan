@@ -25,9 +25,9 @@ namespace {
 * Connect to a host, write some bytes, then read until the server
 * closes the socket.
 */
-std::string http_transact(std::string_view hostname,
-                          std::string_view service,
-                          std::string_view message,
+std::string http_transact(Botan::string_view hostname,
+                          Botan::string_view service,
+                          Botan::string_view message,
                           std::chrono::milliseconds timeout)
    {
    std::unique_ptr<OS::Socket> socket;
@@ -85,7 +85,7 @@ bool needs_url_encoding(char c)
 
 }
 
-std::string url_encode(std::string_view in)
+std::string url_encode(Botan::string_view in)
    {
    std::ostringstream out;
 
@@ -111,9 +111,9 @@ std::ostream& operator<<(std::ostream& o, const Response& resp)
    }
 
 Response http_sync(const http_exch_fn& http_transact,
-                   std::string_view verb,
-                   std::string_view url,
-                   std::string_view content_type,
+                   Botan::string_view verb,
+                   Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects)
    {
@@ -232,15 +232,15 @@ Response http_sync(const http_exch_fn& http_transact,
    return Response(status_code, status_message, resp_body, headers);
    }
 
-Response http_sync(std::string_view verb,
-                   std::string_view url,
-                   std::string_view content_type,
+Response http_sync(Botan::string_view verb,
+                   Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects,
                    std::chrono::milliseconds timeout)
    {
    auto transact_with_timeout =
-      [timeout](std::string_view hostname, std::string_view service, std::string_view message)
+      [timeout](Botan::string_view hostname, Botan::string_view service, Botan::string_view message)
       {
       return http_transact(hostname, service, message, timeout);
       };
@@ -254,15 +254,15 @@ Response http_sync(std::string_view verb,
       allowable_redirects);
    }
 
-Response GET_sync(std::string_view url,
+Response GET_sync(Botan::string_view url,
                   size_t allowable_redirects,
                   std::chrono::milliseconds timeout)
    {
    return http_sync("GET", url, "", std::vector<uint8_t>(), allowable_redirects, timeout);
    }
 
-Response POST_sync(std::string_view url,
-                   std::string_view content_type,
+Response POST_sync(Botan::string_view url,
+                   Botan::string_view content_type,
                    const std::vector<uint8_t>& body,
                    size_t allowable_redirects,
                    std::chrono::milliseconds timeout)

@@ -13,7 +13,7 @@
 #include <botan/exceptn.h>
 #include <memory>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -26,9 +26,9 @@ typedef int32_t CCCryptorStatus;
 class BOTAN_PUBLIC_API(2, 0) CommonCrypto_Error final : public Exception
    {
    public:
-      CommonCrypto_Error(std::string_view what);
+      CommonCrypto_Error(Botan::string_view what);
 
-      CommonCrypto_Error(std::string_view what, int32_t status);
+      CommonCrypto_Error(Botan::string_view what, int32_t status);
 
       ErrorType error_type() const noexcept override { return ErrorType::CommonCryptoError; }
 
@@ -43,16 +43,16 @@ class BOTAN_PUBLIC_API(2, 0) CommonCrypto_Error final : public Exception
 /* Cipher Modes */
 
 std::unique_ptr<Cipher_Mode>
-make_commoncrypto_cipher_mode(std::string_view name, Cipher_Dir direction);
+make_commoncrypto_cipher_mode(Botan::string_view name, Cipher_Dir direction);
 
 /* Block Ciphers */
 
 std::unique_ptr<BlockCipher>
-make_commoncrypto_block_cipher(std::string_view name);
+make_commoncrypto_block_cipher(Botan::string_view name);
 
 /* Hash */
 
-std::unique_ptr<HashFunction> make_commoncrypto_hash(std::string_view name);
+std::unique_ptr<HashFunction> make_commoncrypto_hash(Botan::string_view name);
 
 }
 

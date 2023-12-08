@@ -9,12 +9,12 @@
 
 #include <botan/secmem.h>
 #include <botan/exceptn.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <vector>
 #include <string>
 #include <chrono>
 #include <unordered_map>
-#include <optional>
+#include <botan/optional.h>
 #include <iosfwd>
 
 namespace Botan {
@@ -157,7 +157,7 @@ class BOTAN_PUBLIC_API(2,0) BER_Object final
       size_t length() const { return m_value.size(); }
 
       void assert_is_a(ASN1_Type type_tag, ASN1_Class class_tag,
-                       std::string_view descr = "object") const;
+                       Botan::string_view descr = "object") const;
 
       bool is_a(ASN1_Type type_tag, ASN1_Class class_tag) const;
 
@@ -204,7 +204,7 @@ bool maybe_BER(DataSource& src);
 class BOTAN_PUBLIC_API(2,0) BER_Decoding_Error : public Decoding_Error
    {
    public:
-      explicit BER_Decoding_Error(std::string_view);
+      explicit BER_Decoding_Error(Botan::string_view);
    };
 
 /**
@@ -213,7 +213,7 @@ class BOTAN_PUBLIC_API(2,0) BER_Decoding_Error : public Decoding_Error
 class BOTAN_PUBLIC_API(2,0) BER_Bad_Tag final : public BER_Decoding_Error
    {
    public:
-      BER_Bad_Tag(std::string_view msg, uint32_t tagging);
+      BER_Bad_Tag(Botan::string_view msg, uint32_t tagging);
    };
 
 /**
@@ -232,7 +232,7 @@ class BOTAN_PUBLIC_API(2,0) OID final : public ASN1_Object
       * Construct an OID from a string.
       * @param str a string in the form "a.b.c" etc., where a,b,c are numbers
       */
-      explicit OID(std::string_view str);
+      explicit OID(Botan::string_view str);
 
       /**
       * Initialize an OID from a sequence of integer values
@@ -257,18 +257,18 @@ class BOTAN_PUBLIC_API(2,0) OID final : public ASN1_Object
       * @param str a string in the form "a.b.c" etc., where a,b,c are numbers
       *        or any known OID name (for example "RSA" or "X509v3.SubjectKeyIdentifier")
       */
-      static OID from_string(std::string_view str);
+      static OID from_string(Botan::string_view str);
 
       /**
       * Construct an OID from a name
       * @param name any known OID name (for example "RSA" or "X509v3.SubjectKeyIdentifier")
       */
-      static std::optional<OID> from_name(std::string_view name);
+      static Botan::optional<OID> from_name(Botan::string_view name);
 
       /**
       * Register a new OID in the internal table
       */
-      static void register_oid(const OID& oid, std::string_view name);
+      static void register_oid(const OID& oid, Botan::string_view name);
 
       void encode_into(DER_Encoder&) const override;
       void decode_from(BER_Decoder&) override;
@@ -385,10 +385,10 @@ class BOTAN_PUBLIC_API(2,0) ASN1_Time final : public ASN1_Object
       explicit ASN1_Time(const std::chrono::system_clock::time_point& time);
 
       /// Create an ASN1_Time from string
-      ASN1_Time(std::string_view t_spec);
+      ASN1_Time(Botan::string_view t_spec);
 
       /// Create an ASN1_Time from string and a specified tagging (Utc or Generalized)
-      ASN1_Time(std::string_view t_spec, ASN1_Type tag);
+      ASN1_Time(Botan::string_view t_spec, ASN1_Type tag);
 
       /// Returns a STL timepoint object
       std::chrono::system_clock::time_point to_std_timepoint() const;
@@ -397,7 +397,7 @@ class BOTAN_PUBLIC_API(2,0) ASN1_Time final : public ASN1_Object
       uint64_t time_since_epoch() const;
 
    private:
-      void set_to(std::string_view t_spec, ASN1_Type type);
+      void set_to(Botan::string_view t_spec, ASN1_Type type);
       bool passes_sanity_check() const;
 
       uint32_t m_year = 0;
@@ -447,8 +447,8 @@ class BOTAN_PUBLIC_API(2,0) ASN1_String final : public ASN1_Object
       bool operator==(const ASN1_String& other) const
          { return value() == other.value(); }
 
-      explicit ASN1_String(std::string_view utf8 = "");
-      ASN1_String(std::string_view utf8, ASN1_Type tag);
+      explicit ASN1_String(Botan::string_view utf8 = "");
+      ASN1_String(Botan::string_view utf8, ASN1_Type tag);
    private:
       std::vector<uint8_t> m_data;
       std::string m_utf8_str;
@@ -469,10 +469,10 @@ class BOTAN_PUBLIC_API(2,0) AlgorithmIdentifier final : public ASN1_Object
       AlgorithmIdentifier() = default;
 
       AlgorithmIdentifier(const OID& oid, Encoding_Option enc);
-      AlgorithmIdentifier(std::string_view oid_name, Encoding_Option enc);
+      AlgorithmIdentifier(Botan::string_view oid_name, Encoding_Option enc);
 
       AlgorithmIdentifier(const OID& oid, const std::vector<uint8_t>& params);
-      AlgorithmIdentifier(std::string_view oid_name, const std::vector<uint8_t>& params);
+      AlgorithmIdentifier(Botan::string_view oid_name, const std::vector<uint8_t>& params);
 
       const OID& oid() const { return m_oid; }
       const std::vector<uint8_t>& parameters() const { return m_parameters; }

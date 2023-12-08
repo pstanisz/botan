@@ -20,10 +20,10 @@ namespace Botan {
 /*
 * Create an AlternativeName
 */
-AlternativeName::AlternativeName(std::string_view email_addr,
-                                 std::string_view uri,
-                                 std::string_view dns,
-                                 std::string_view ip)
+AlternativeName::AlternativeName(Botan::string_view email_addr,
+                                 Botan::string_view uri,
+                                 Botan::string_view dns,
+                                 Botan::string_view ip)
    {
    add_attribute("RFC822", email_addr);
    add_attribute("DNS", dns);
@@ -34,8 +34,8 @@ AlternativeName::AlternativeName(std::string_view email_addr,
 /*
 * Add an attribute to an alternative name
 */
-void AlternativeName::add_attribute(std::string_view type,
-                                    std::string_view value)
+void AlternativeName::add_attribute(Botan::string_view type,
+                                    Botan::string_view value)
    {
    if(type.empty() || value.empty())
       return;
@@ -51,7 +51,7 @@ void AlternativeName::add_attribute(std::string_view type,
 /*
 * Add an OtherName field
 */
-void AlternativeName::add_othername(const OID& oid, std::string_view value,
+void AlternativeName::add_othername(const OID& oid, Botan::string_view value,
                                     ASN1_Type type)
    {
    if(value.empty())
@@ -81,13 +81,13 @@ std::multimap<std::string, std::string> AlternativeName::contents() const
    return names;
    }
 
-bool AlternativeName::has_field(std::string_view attr) const
+bool AlternativeName::has_field(Botan::string_view attr) const
    {
    auto range = m_alt_info.equal_range(attr);
    return (range.first != range.second);
    }
 
-std::string AlternativeName::get_first_attribute(std::string_view attr) const
+std::string AlternativeName::get_first_attribute(Botan::string_view attr) const
    {
    auto i = m_alt_info.lower_bound(attr);
    if(i != m_alt_info.end() && i->first == attr)
@@ -96,7 +96,7 @@ std::string AlternativeName::get_first_attribute(std::string_view attr) const
    return "";
    }
 
-std::vector<std::string> AlternativeName::get_attribute(std::string_view attr) const
+std::vector<std::string> AlternativeName::get_attribute(Botan::string_view attr) const
    {
    std::vector<std::string> results;
    auto range = m_alt_info.equal_range(attr);
@@ -134,7 +134,7 @@ namespace {
 */
 void encode_entries(DER_Encoder& encoder,
                     const std::multimap<std::string, std::string, std::less<>>& attr,
-                    std::string_view type, ASN1_Type tagging)
+                    Botan::string_view type, ASN1_Type tagging)
    {
    auto range = attr.equal_range(type);
 

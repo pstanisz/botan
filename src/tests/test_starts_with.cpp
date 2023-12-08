@@ -44,10 +44,10 @@ std::vector<Test::Result> test_starts_with()
             result.confirm("not starts with", Botan::starts_with(input, "World!"), false);
             result.confirm("starts with", Botan::starts_with(input, "Hello"), true);
             }),
-        Botan_Tests::CHECK("std::string_view starts_with", [](auto &result)
+        Botan_Tests::CHECK("Botan::string_view starts_with", [](auto &result)
             {
             std::string str{"Hello, World!"};
-            std::string_view input{str};
+            Botan::string_view input{str};
     
             result.confirm("not starts with", Botan::starts_with(input, "World!"), false);
             result.confirm("starts with", Botan::starts_with(input, "Hello"), true);
@@ -59,11 +59,11 @@ std::vector<Test::Result> test_starts_with()
             result.confirm("not starts with", Botan::starts_with(input, std::string("World!")), false);
             result.confirm("starts with", Botan::starts_with(input, std::string("Hello")), true);
             }),
-        Botan_Tests::CHECK("starts_with std::string_view", [](auto &result)
+        Botan_Tests::CHECK("starts_with Botan::string_view", [](auto &result)
             {
             std::string input{"Hello, World!"};
-            std::string_view world = "World!";
-            std::string_view hello = "Hello";
+            Botan::string_view world = "World!";
+            Botan::string_view hello = "Hello";
     
             result.confirm("not starts with", Botan::starts_with(input, world), false);
             result.confirm("starts with", Botan::starts_with(input, hello), true);

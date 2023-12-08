@@ -7,6 +7,7 @@
 #ifndef BOTAN_PSK_DB_H_
 #define BOTAN_PSK_DB_H_
 
+#include <botan/string_view.h>
 #include <botan/secmem.h>
 #include <memory>
 #include <string>
@@ -34,18 +35,18 @@ class BOTAN_PUBLIC_API(2,4) PSK_Database
       * Return the value associated with the specified @param name or otherwise
       * throw an exception.
       */
-      virtual secure_vector<uint8_t> get(std::string_view name) const = 0;
+      virtual secure_vector<uint8_t> get(Botan::string_view name) const = 0;
 
       /**
       * Set a value that can later be accessed with get().
       * If name already exists in the database, the old value will be overwritten.
       */
-      virtual void set(std::string_view name, const uint8_t psk[], size_t psk_len) = 0;
+      virtual void set(Botan::string_view name, const uint8_t psk[], size_t psk_len) = 0;
 
       /**
       * Remove a PSK from the database
       */
-      virtual void remove(std::string_view name) = 0;
+      virtual void remove(Botan::string_view name) = 0;
 
       /**
       * Returns if the values in the PSK database are encrypted. If
@@ -56,19 +57,19 @@ class BOTAN_PUBLIC_API(2,4) PSK_Database
       /**
       * Get a PSK in the form of a string (eg if the PSK is a password)
       */
-      std::string get_str(std::string_view name) const
+      std::string get_str(Botan::string_view name) const
          {
          secure_vector<uint8_t> psk = get(name);
          return std::string(cast_uint8_ptr_to_char(psk.data()), psk.size());
          }
 
-      void set_str(std::string_view name, std::string_view psk)
+      void set_str(Botan::string_view name, Botan::string_view psk)
          {
          set(name, cast_char_ptr_to_uint8(psk.data()), psk.size());
          }
 
       template<typename Alloc>
-      void set_vec(std::string_view name,
+      void set_vec(Botan::string_view name,
                    const std::vector<uint8_t, Alloc>& psk)
 
          {
@@ -105,11 +106,11 @@ class BOTAN_PUBLIC_API(2,4) Encrypted_PSK_Database : public PSK_Database
 
       std::set<std::string> list_names() const override;
 
-      secure_vector<uint8_t> get(std::string_view name) const override;
+      secure_vector<uint8_t> get(Botan::string_view name) const override;
 
-      void set(std::string_view name, const uint8_t psk[], size_t psk_len) override;
+      void set(Botan::string_view name, const uint8_t psk[], size_t psk_len) override;
 
-      void remove(std::string_view name) override;
+      void remove(Botan::string_view name) override;
 
       bool is_encrypted() const override { return true; }
 
@@ -117,18 +118,18 @@ class BOTAN_PUBLIC_API(2,4) Encrypted_PSK_Database : public PSK_Database
       /**
       * Save a encrypted (name.value) pair to the database. Both will be base64 encoded strings.
       */
-      virtual void kv_set(std::string_view index, std::string_view value) = 0;
+      virtual void kv_set(Botan::string_view index, Botan::string_view value) = 0;
 
       /**
       * Get a value previously saved with set_raw_value. Should return an empty
       * string if index is not found.
       */
-      virtual std::string kv_get(std::string_view index) const = 0;
+      virtual std::string kv_get(Botan::string_view index) const = 0;
 
       /**
       * Remove an index
       */
-      virtual void kv_del(std::string_view index) = 0;
+      virtual void kv_del(Botan::string_view index) = 0;
 
       /**
       * Return all indexes in the table.
@@ -148,13 +149,13 @@ class BOTAN_PUBLIC_API(2,4) Encrypted_PSK_Database_SQL : public Encrypted_PSK_Da
    public:
       Encrypted_PSK_Database_SQL(const secure_vector<uint8_t>& master_key,
                                  std::shared_ptr<SQL_Database> db,
-                                 std::string_view table_name);
+                                 Botan::string_view table_name);
 
       ~Encrypted_PSK_Database_SQL();
    private:
-      void kv_set(std::string_view index, std::string_view value) override;
-      std::string kv_get(std::string_view index) const override;
-      void kv_del(std::string_view index) override;
+      void kv_set(Botan::string_view index, Botan::string_view value) override;
+      std::string kv_get(Botan::string_view index) const override;
+      void kv_del(Botan::string_view index) override;
       std::set<std::string> kv_get_all() const override;
 
       std::shared_ptr<SQL_Database> m_db;

@@ -237,11 +237,11 @@ Path_Validation_Result BOTAN_PUBLIC_API(2,0) x509_path_validate(
    const std::vector<X509_Certificate>& end_certs,
    const Path_Validation_Restrictions& restrictions,
    const std::vector<Certificate_Store*>& trusted_roots,
-   std::string_view hostname = "",
+   Botan::string_view hostname = "",
    Usage_Type usage = Usage_Type::UNSPECIFIED,
    std::chrono::system_clock::time_point validation_time = std::chrono::system_clock::now(),
    std::chrono::milliseconds ocsp_timeout = std::chrono::milliseconds(0),
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp = {});
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp = {});
 
 /**
 * PKIX Path Validation
@@ -259,11 +259,11 @@ Path_Validation_Result BOTAN_PUBLIC_API(2,0) x509_path_validate(
    const X509_Certificate& end_cert,
    const Path_Validation_Restrictions& restrictions,
    const std::vector<Certificate_Store*>& trusted_roots,
-   std::string_view hostname = "",
+   Botan::string_view hostname = "",
    Usage_Type usage = Usage_Type::UNSPECIFIED,
    std::chrono::system_clock::time_point validation_time = std::chrono::system_clock::now(),
    std::chrono::milliseconds ocsp_timeout = std::chrono::milliseconds(0),
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp = {});
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp = {});
 
 /**
 * PKIX Path Validation
@@ -281,11 +281,11 @@ Path_Validation_Result BOTAN_PUBLIC_API(2,0) x509_path_validate(
    const X509_Certificate& end_cert,
    const Path_Validation_Restrictions& restrictions,
    const Certificate_Store& store,
-   std::string_view hostname = "",
+   Botan::string_view hostname = "",
    Usage_Type usage = Usage_Type::UNSPECIFIED,
    std::chrono::system_clock::time_point validation_time = std::chrono::system_clock::now(),
    std::chrono::milliseconds ocsp_timeout = std::chrono::milliseconds(0),
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp = {});
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp = {});
 
 /**
 * PKIX Path Validation
@@ -303,11 +303,11 @@ Path_Validation_Result BOTAN_PUBLIC_API(2,0) x509_path_validate(
    const std::vector<X509_Certificate>& end_certs,
    const Path_Validation_Restrictions& restrictions,
    const Certificate_Store& store,
-   std::string_view hostname = "",
+   Botan::string_view hostname = "",
    Usage_Type usage = Usage_Type::UNSPECIFIED,
    std::chrono::system_clock::time_point validation_time = std::chrono::system_clock::now(),
    std::chrono::milliseconds ocsp_timeout = std::chrono::milliseconds(0),
-   const std::vector<std::optional<OCSP::Response>>& ocsp_resp = {});
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_resp = {});
 
 
 /**
@@ -321,7 +321,7 @@ namespace PKIX {
 Certificate_Status_Code
 build_all_certificate_paths(std::vector<std::vector<X509_Certificate>>& cert_paths,
                             const std::vector<Certificate_Store*>& trusted_certstores,
-                            const std::optional<X509_Certificate>& end_entity,
+                            const Botan::optional<X509_Certificate>& end_entity,
                             const std::vector<X509_Certificate>& end_entity_extra);
 
 
@@ -355,7 +355,7 @@ BOTAN_PUBLIC_API(2,0) build_certificate_path(std::vector<X509_Certificate>& cert
 CertificatePathStatusCodes
 BOTAN_PUBLIC_API(3,0) check_chain(const std::vector<X509_Certificate>& cert_path,
                       std::chrono::system_clock::time_point ref_time,
-                      std::string_view hostname,
+                      Botan::string_view hostname,
                       Usage_Type usage,
                       const Path_Validation_Restrictions& restrictions);
 
@@ -371,7 +371,7 @@ BOTAN_PUBLIC_API(3,0) check_chain(const std::vector<X509_Certificate>& cert_path
 */
 CertificatePathStatusCodes
 BOTAN_PUBLIC_API(3, 0) check_ocsp(const std::vector<X509_Certificate>& cert_path,
-                                  const std::vector<std::optional<OCSP::Response>>& ocsp_responses,
+                                  const std::vector<Botan::optional<OCSP::Response>>& ocsp_responses,
                                   const std::vector<Certificate_Store*>& certstores,
                                   std::chrono::system_clock::time_point ref_time,
                                   const Path_Validation_Restrictions& restrictions);
@@ -387,7 +387,7 @@ BOTAN_PUBLIC_API(3, 0) check_ocsp(const std::vector<X509_Certificate>& cert_path
 */
 CertificatePathStatusCodes
 BOTAN_PUBLIC_API(2,0) check_crl(const std::vector<X509_Certificate>& cert_path,
-                                const std::vector<std::optional<X509_CRL>>& crls,
+                                const std::vector<Botan::optional<X509_CRL>>& crls,
                                 std::chrono::system_clock::time_point ref_time);
 
 /**

@@ -13,6 +13,7 @@
 #include <vector>
 #include <chrono>
 #include <botan/span.h>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -80,7 +81,7 @@ class BOTAN_PUBLIC_API(2,8) PasswordHash
       * either use unique objects, or serialize all access.
       */
       void hash(Botan::span<uint8_t> out,
-                std::string_view password,
+                Botan::string_view password,
                 Botan::span<const uint8_t> salt)
          {
          this->derive_key(out.data(), out.size(),
@@ -101,7 +102,7 @@ class BOTAN_PUBLIC_API(2,8) PasswordHash
       * either use unique objects, or serialize all access.
       */
       void hash(Botan::span<uint8_t> out,
-                std::string_view password,
+                Botan::string_view password,
                 Botan::span<const uint8_t> salt,
                 Botan::span<const uint8_t> associated_data,
                 Botan::span<const uint8_t> key)
@@ -167,8 +168,8 @@ class BOTAN_PUBLIC_API(2,8) PasswordHashFamily
       * @param provider provider implementation to choose
       * @return a null pointer if the algo/provider combination cannot be found
       */
-      static std::unique_ptr<PasswordHashFamily> create(std::string_view algo_spec,
-                                                        std::string_view provider = "");
+      static std::unique_ptr<PasswordHashFamily> create(Botan::string_view algo_spec,
+                                                        Botan::string_view provider = "");
 
       /**
       * Create an instance based on a name, or throw if the
@@ -176,13 +177,13 @@ class BOTAN_PUBLIC_API(2,8) PasswordHashFamily
       * empty then best available is chosen.
       */
       static std::unique_ptr<PasswordHashFamily>
-         create_or_throw(std::string_view algo_spec,
-                         std::string_view provider = "");
+         create_or_throw(Botan::string_view algo_spec,
+                         Botan::string_view provider = "");
 
       /**
       * @return list of available providers for this algorithm, empty if not available
       */
-      static std::vector<std::string> providers(std::string_view algo_spec);
+      static std::vector<std::string> providers(Botan::string_view algo_spec);
 
       virtual ~PasswordHashFamily() = default;
 

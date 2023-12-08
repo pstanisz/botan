@@ -15,7 +15,7 @@ namespace Botan {
 /*
 * Look up the canonical ID for a queue
 */
-Pipe::message_id Pipe::get_message_no(std::string_view func_name,
+Pipe::message_id Pipe::get_message_no(Botan::string_view func_name,
                                       message_id msg) const
    {
    if(msg == DEFAULT_MESSAGE)
@@ -42,7 +42,7 @@ void Pipe::write(const uint8_t input[], size_t length)
 /*
 * Write a string into a Pipe
 */
-void Pipe::write(std::string_view str)
+void Pipe::write(Botan::string_view str)
    {
    write(cast_char_ptr_to_uint8(str.data()), str.size());
    }

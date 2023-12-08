@@ -7,6 +7,7 @@
 #ifndef BOTAN_TIMER_H_
 #define BOTAN_TIMER_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 #include <chrono>
@@ -16,19 +17,19 @@ namespace Botan {
 class BOTAN_TEST_API Timer final
    {
    public:
-      Timer(std::string_view name,
-            std::string_view provider,
-            std::string_view doing,
+      Timer(Botan::string_view name,
+            Botan::string_view provider,
+            Botan::string_view doing,
             uint64_t event_mult,
             size_t buf_size,
             double clock_cycle_ratio,
             uint64_t clock_speed);
 
-      Timer(std::string_view name) :
+      Timer(Botan::string_view name) :
          Timer(name, "", "", 1, 0, 0.0, 0)
          {}
 
-      Timer(std::string_view name, size_t buf_size) :
+      Timer(Botan::string_view name, size_t buf_size) :
          Timer(name, "", "", buf_size, buf_size, 0.0, 0)
          {}
 
@@ -145,7 +146,7 @@ class BOTAN_TEST_API Timer final
          return events() > 0 ? seconds() / events() : 0.0;
          }
 
-      void set_custom_msg(std::string_view s)
+      void set_custom_msg(Botan::string_view s)
          {
          m_custom_msg = s;
          }

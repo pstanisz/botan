@@ -26,7 +26,7 @@ using Test = Botan_Tests::Test;
 template<typename T>
 bool has_message(
    Test::Result& test_result,
-   const std::optional<Handshake_Message_13>& read_result)
+   const Botan::optional<Handshake_Message_13>& read_result)
    {
    test_result.require("has a message", read_result.has_value());
    return std::holds_alternative<T>(read_result.value());
@@ -35,7 +35,7 @@ bool has_message(
 template<typename T>
 const Handshake_Message_13& get_message(
    Test::Result& test_result,
-   const std::optional<Handshake_Message_13>& read_result)
+   const Botan::optional<Handshake_Message_13>& read_result)
    {
    test_result.require("has the expected message", has_message<T>(test_result, read_result));
    return std::get<T>(read_result.value());

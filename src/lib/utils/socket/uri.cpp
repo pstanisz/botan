@@ -26,7 +26,7 @@ constexpr bool isdigit(char ch)
    return ch >= '0' && ch <= '9';
    }
 
-bool isDomain(std::string_view domain)
+bool isDomain(Botan::string_view domain)
    {
    std::string domain_str(domain);
    std::regex re(
@@ -35,14 +35,14 @@ bool isDomain(std::string_view domain)
    return std::regex_match(domain_str.c_str(), m, re);
    }
 
-bool isIPv4(std::string_view ip)
+bool isIPv4(Botan::string_view ip)
    {
    std::string ip_str(ip);
    sockaddr_storage inaddr;
    return !!inet_pton(AF_INET, ip_str.c_str(), &inaddr);
    }
 
-bool isIPv6(std::string_view ip)
+bool isIPv6(Botan::string_view ip)
    {
    std::string ip_str(ip);
    sockaddr_storage in6addr;
@@ -52,7 +52,7 @@ bool isIPv6(std::string_view ip)
 
 namespace Botan {
 
-URI URI::fromDomain(std::string_view uri)
+URI URI::fromDomain(Botan::string_view uri)
    {
    unsigned port = 0;
    const auto port_pos = uri.find(':');
@@ -75,7 +75,7 @@ URI URI::fromDomain(std::string_view uri)
    return {Type::Domain, domain, uint16_t(port)};
    }
 
-URI URI::fromIPv4(std::string_view uri)
+URI URI::fromIPv4(Botan::string_view uri)
    {
    unsigned port = 0;
    const auto port_pos = uri.find(':');
@@ -96,7 +96,7 @@ URI URI::fromIPv4(std::string_view uri)
    return { Type::IPv4, ip, uint16_t(port) };
    }
 
-URI URI::fromIPv6(std::string_view uri)
+URI URI::fromIPv6(Botan::string_view uri)
    {
    unsigned port = 0;
    const auto port_pos = uri.find(']');
@@ -123,7 +123,7 @@ URI URI::fromIPv6(std::string_view uri)
    return { Type::IPv6, ip, uint16_t(port) };
    }
 
-URI URI::fromAny(std::string_view uri)
+URI URI::fromAny(Botan::string_view uri)
    {
 
    bool colon_seen=false;
@@ -175,10 +175,10 @@ std::string URI::to_string() const
 
 namespace Botan {
 
-URI URI::fromDomain(std::string_view) {throw Not_Implemented("No socket support enabled in build");}
-URI URI::fromIPv4(std::string_view) {throw Not_Implemented("No socket support enabled in build");}
-URI URI::fromIPv6(std::string_view) {throw Not_Implemented("No socket support enabled in build");}
-URI URI::fromAny(std::string_view) {throw Not_Implemented("No socket support enabled in build");}
+URI URI::fromDomain(Botan::string_view) {throw Not_Implemented("No socket support enabled in build");}
+URI URI::fromIPv4(Botan::string_view) {throw Not_Implemented("No socket support enabled in build");}
+URI URI::fromIPv6(Botan::string_view) {throw Not_Implemented("No socket support enabled in build");}
+URI URI::fromAny(Botan::string_view) {throw Not_Implemented("No socket support enabled in build");}
 
 }
 

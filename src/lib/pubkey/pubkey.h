@@ -13,7 +13,7 @@
 #include <botan/symkey.h>
 #include <botan/asn1_obj.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 #include <botan/span.h>
 
 namespace Botan {
@@ -177,9 +177,9 @@ class BOTAN_PUBLIC_API(2,0) PK_Signer final
       */
       PK_Signer(const Private_Key& key,
                 RandomNumberGenerator& rng,
-                std::string_view padding,
+                Botan::string_view padding,
                 Signature_Format format = Signature_Format::Standard,
-                std::string_view provider = "");
+                Botan::string_view provider = "");
 
       ~PK_Signer();
 
@@ -240,7 +240,7 @@ class BOTAN_PUBLIC_API(2,0) PK_Signer final
       * Add a message part.
       * @param in the message part to add
       */
-      void update(std::string_view in)
+      void update(Botan::string_view in)
          {
          update(cast_char_ptr_to_uint8(in.data()), in.size());
          }
@@ -303,9 +303,9 @@ class BOTAN_PUBLIC_API(2,0) PK_Verifier final
       * @param provider the provider to use
       */
       PK_Verifier(const Public_Key& pub_key,
-                  std::string_view padding,
+                  Botan::string_view padding,
                   Signature_Format format = Signature_Format::Standard,
-                  std::string_view provider = "");
+                  Botan::string_view provider = "");
 
       /**
       * Construct a PK Verifier (X.509 specific)
@@ -320,7 +320,7 @@ class BOTAN_PUBLIC_API(2,0) PK_Verifier final
       */
       PK_Verifier(const Public_Key& pub_key,
                   const AlgorithmIdentifier& signature_algorithm,
-                  std::string_view provider = "");
+                  Botan::string_view provider = "");
 
       ~PK_Verifier();
 
@@ -381,7 +381,7 @@ class BOTAN_PUBLIC_API(2,0) PK_Verifier final
       * Add a message part of the message corresponding to the
       * signature to be verified.
       */
-      void update(std::string_view in)
+      void update(Botan::string_view in)
          {
          update(cast_char_ptr_to_uint8(in.data()), in.size());
          }
@@ -442,8 +442,8 @@ class BOTAN_PUBLIC_API(2,0) PK_Key_Agreement final
       */
       PK_Key_Agreement(const Private_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view kdf,
-                       std::string_view provider = "");
+                       Botan::string_view kdf,
+                       Botan::string_view provider = "");
 
       ~PK_Key_Agreement();
 
@@ -492,7 +492,7 @@ class BOTAN_PUBLIC_API(2,0) PK_Key_Agreement final
       */
       SymmetricKey derive_key(size_t key_len,
                               const uint8_t in[], size_t in_len,
-                              std::string_view params = "") const
+                              Botan::string_view params = "") const
          {
          return derive_key(key_len, in, in_len,
                            cast_char_ptr_to_uint8(params.data()),
@@ -507,7 +507,7 @@ class BOTAN_PUBLIC_API(2,0) PK_Key_Agreement final
       */
       SymmetricKey derive_key(size_t key_len,
                               const Botan::span<const uint8_t> in,
-                              std::string_view params = "") const
+                              Botan::string_view params = "") const
          {
          return derive_key(key_len, in.data(), in.size(),
                            cast_char_ptr_to_uint8(params.data()),
@@ -543,8 +543,8 @@ class BOTAN_PUBLIC_API(2,0) PK_Encryptor_EME final : public PK_Encryptor
       */
       PK_Encryptor_EME(const Public_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view padding,
-                       std::string_view provider = "");
+                       Botan::string_view padding,
+                       Botan::string_view provider = "");
 
       ~PK_Encryptor_EME();
 
@@ -580,8 +580,8 @@ class BOTAN_PUBLIC_API(2,0) PK_Decryptor_EME final : public PK_Decryptor
       */
       PK_Decryptor_EME(const Private_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view eme,
-                       std::string_view provider = "");
+                       Botan::string_view eme,
+                       Botan::string_view provider = "");
 
       size_t plaintext_length(size_t ptext_len) const override;
 
@@ -611,8 +611,8 @@ class BOTAN_PUBLIC_API(2,0) PK_KEM_Encryptor final
       * @param provider the provider to use
       */
       PK_KEM_Encryptor(const Public_Key& key,
-                       std::string_view kem_param = "",
-                       std::string_view provider = "");
+                       Botan::string_view kem_param = "",
+                       Botan::string_view provider = "");
 
       /**
       * Construct an instance.
@@ -624,8 +624,8 @@ class BOTAN_PUBLIC_API(2,0) PK_KEM_Encryptor final
       BOTAN_DEPRECATED("Use constructor that does not take RNG")
       PK_KEM_Encryptor(const Public_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view kem_param = "",
-                       std::string_view provider = "") :
+                       Botan::string_view kem_param = "",
+                       Botan::string_view provider = "") :
          PK_KEM_Encryptor(key, kem_param, provider)
          {
          BOTAN_UNUSED(rng);
@@ -736,8 +736,8 @@ class BOTAN_PUBLIC_API(2,0) PK_KEM_Decryptor final
       */
       PK_KEM_Decryptor(const Private_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view kem_param = "",
-                       std::string_view provider = "");
+                       Botan::string_view kem_param = "",
+                       Botan::string_view provider = "");
 
       ~PK_KEM_Decryptor();
       PK_KEM_Decryptor(const PK_KEM_Decryptor&) = delete;

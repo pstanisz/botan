@@ -68,9 +68,9 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * @return a Session_Handle containing either an ID or a ticket
        *         if the session was saved, otherwise std::nullopt
        */
-      virtual std::optional<Session_Handle> establish(
+      virtual Botan::optional<Session_Handle> establish(
          const Session& session,
-         const std::optional<Session_ID>& id = std::nullopt,
+         const Botan::optional<Session_ID>& id = std::nullopt,
          bool tls12_no_ticket = false);
 
       /**
@@ -117,9 +117,9 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        *
        * @note if no PSK is chosen, the server will attempt a regular handshake.
        */
-      virtual std::optional<std::pair<Session, uint16_t>>
+      virtual Botan::optional<std::pair<Session, uint16_t>>
             choose_from_offered_tickets(const std::vector<Ticket>& tickets,
-                                        std::string_view hash_function,
+                                        Botan::string_view hash_function,
                                         Callbacks& callbacks,
                                         const Policy& policy);
 #endif
@@ -147,7 +147,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * @return           the obtained session or std::nullopt if no session
        *                   was found or the policy checks failed
        */
-      virtual std::optional<Session> retrieve(const Session_Handle& handle,
+      virtual Botan::optional<Session> retrieve(const Session_Handle& handle,
                                               Callbacks& callbacks,
                                               const Policy& policy);
 
@@ -234,7 +234,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * @param handle a Session_Handle containing either an ID or a ticket
        * @return the obtained session or std::nullopt if none can be obtained
        */
-      virtual std::optional<Session> retrieve_one(const Session_Handle& handle) = 0;
+      virtual Botan::optional<Session> retrieve_one(const Session_Handle& handle) = 0;
 
       /**
        * @brief Internal retrieval function to find sessions to resume

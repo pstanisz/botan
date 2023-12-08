@@ -21,7 +21,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <optional>
+#include <botan/optional.h>
 #include <variant>
 #include <typeindex>
 
@@ -178,7 +178,7 @@ constexpr bool has_ostream_operator<
 template <typename T>
 struct is_optional : std::false_type { };
 template <typename T>
-struct is_optional<std::optional<T>> : std::true_type { };
+struct is_optional<Botan::optional<T>> : std::true_type { };
 template <typename T>
 constexpr bool is_optional_v = is_optional<T>::value;
 
@@ -245,7 +245,7 @@ class Test
             const std::vector<std::string>& failures() const { return m_fail_log; }
             const std::vector<std::string>& notes() const { return m_log; }
 
-            std::optional<std::chrono::nanoseconds> elapsed_time() const
+            Botan::optional<std::chrono::nanoseconds> elapsed_time() const
                {
                if (m_ns_taken == 0)
                   {
@@ -380,7 +380,7 @@ class Test
                }
 
             template<typename T>
-            bool test_not_nullopt(const std::string& what, std::optional<T> val)
+            bool test_not_nullopt(const std::string& what, Botan::optional<T> val)
                {
                if(val == std::nullopt)
                   return test_failure(what + " was nullopt");
@@ -563,8 +563,8 @@ class Test
                private:
                   std::function<void()>          m_fn;
                   bool                           m_expect_success;
-                  std::optional<std::string>     m_expected_message;
-                  std::optional<std::type_index> m_expected_exception_type;
+                  Botan::optional<std::string>     m_expected_message;
+                  Botan::optional<std::type_index> m_expected_exception_type;
                   bool                           m_consumed;
                };
 
@@ -602,7 +602,7 @@ class Test
             void end_timer();
 
             void set_code_location(CodeLocation where) { m_where = std::move(where); }
-            const std::optional<CodeLocation>& code_location() const { return m_where; }
+            const Botan::optional<CodeLocation>& code_location() const { return m_where; }
 
          private:
             template <typename T>
@@ -626,7 +626,7 @@ class Test
 
          private:
             std::string m_who;
-            std::optional<CodeLocation> m_where;
+            Botan::optional<CodeLocation> m_where;
             std::chrono::system_clock::time_point m_timestamp;
             uint64_t m_started = 0;
             uint64_t m_ns_taken = 0;
@@ -641,7 +641,7 @@ class Test
       virtual std::vector<std::string> possible_providers(const std::string&);
 
       void set_registration_location(CodeLocation location) { m_registration_location = std::move(location); }
-      const std::optional<CodeLocation>& registration_location() const { return m_registration_location; }
+      const Botan::optional<CodeLocation>& registration_location() const { return m_registration_location; }
 
       /// @p smoke_test are run first in an unfiltered test run
       static void register_test(std::string category,
@@ -725,7 +725,7 @@ class Test
       static Test_Options m_opts;
       static std::shared_ptr<Botan::RandomNumberGenerator> m_test_rng;
 
-      std::optional<CodeLocation> m_registration_location;  /// The source file location where the test was registered
+      Botan::optional<CodeLocation> m_registration_location;  /// The source file location where the test was registered
    };
 
 /*

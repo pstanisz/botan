@@ -14,8 +14,8 @@ namespace Botan {
 
 namespace {
 
-std::string format_timer_name(std::string_view name,
-                              std::string_view provider)
+std::string format_timer_name(Botan::string_view name,
+                              Botan::string_view provider)
    {
    if(provider.empty() || provider == "base")
       return std::string(name);
@@ -27,9 +27,9 @@ std::string format_timer_name(std::string_view name,
 
 }
 
-Timer::Timer(std::string_view name,
-             std::string_view provider,
-             std::string_view doing,
+Timer::Timer(Botan::string_view name,
+             Botan::string_view provider,
+             Botan::string_view doing,
              uint64_t event_mult,
              size_t buf_size,
              double clock_cycle_ratio,

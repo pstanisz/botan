@@ -9,7 +9,7 @@
 
 #include <botan/types.h>
 #include <sstream>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <locale>
 
@@ -17,13 +17,13 @@ namespace Botan {
 
 namespace fmt_detail {
 
-inline void do_fmt(std::ostringstream& oss, std::string_view format)
+inline void do_fmt(std::ostringstream& oss, Botan::string_view format)
    {
    oss << format;
    }
 
 template<typename T, typename... Ts>
-void do_fmt(std::ostringstream& oss, std::string_view format, const T& val, const Ts&... rest)
+void do_fmt(std::ostringstream& oss, Botan::string_view format, const T& val, const Ts&... rest)
    {
    size_t i = 0;
 
@@ -57,7 +57,7 @@ void do_fmt(std::ostringstream& oss, std::string_view format, const T& val, cons
 * of conversion flags.
 */
 template<typename... T>
-std::string fmt(std::string_view format, const T&... args)
+std::string fmt(Botan::string_view format, const T&... args)
    {
    std::ostringstream oss;
    oss.imbue(std::locale::classic());

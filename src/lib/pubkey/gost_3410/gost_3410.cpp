@@ -137,7 +137,7 @@ class GOST_3410_Signature_Operation final : public PK_Ops::Signature_with_Hash
    {
    public:
       GOST_3410_Signature_Operation(const GOST_3410_PrivateKey& gost_3410,
-                                    std::string_view emsa) :
+                                    Botan::string_view emsa) :
          PK_Ops::Signature_with_Hash(emsa),
          m_group(gost_3410.domain()),
          m_x(gost_3410.private_value())
@@ -229,7 +229,7 @@ class GOST_3410_Verification_Operation final : public PK_Ops::Verification_with_
    public:
 
       GOST_3410_Verification_Operation(const GOST_3410_PublicKey& gost,
-                                       std::string_view padding) :
+                                       Botan::string_view padding) :
          PK_Ops::Verification_with_Hash(padding),
          m_group(gost.domain()),
          m_gy_mul(m_group.get_base_point(), gost.public_point())
@@ -284,8 +284,8 @@ bool GOST_3410_Verification_Operation::verify(const uint8_t msg[], size_t msg_le
 }
 
 std::unique_ptr<PK_Ops::Verification>
-GOST_3410_PublicKey::create_verification_op(std::string_view params,
-                                            std::string_view provider) const
+GOST_3410_PublicKey::create_verification_op(Botan::string_view params,
+                                            Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<GOST_3410_Verification_Operation>(*this, params);
@@ -294,7 +294,7 @@ GOST_3410_PublicKey::create_verification_op(std::string_view params,
 
 std::unique_ptr<PK_Ops::Verification>
 GOST_3410_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                             std::string_view provider) const
+                                             Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<GOST_3410_Verification_Operation>(*this, signature_algorithm);
@@ -305,8 +305,8 @@ GOST_3410_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& sign
 
 std::unique_ptr<PK_Ops::Signature>
 GOST_3410_PrivateKey::create_signature_op(RandomNumberGenerator& /*rng*/,
-                                          std::string_view params,
-                                          std::string_view provider) const
+                                          Botan::string_view params,
+                                          Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<GOST_3410_Signature_Operation>(*this, params);

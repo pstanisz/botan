@@ -54,12 +54,12 @@ class BOTAN_PUBLIC_API(2,0) ECGDSA_PublicKey : public virtual EC_PublicKey
          }
 
       std::unique_ptr<PK_Ops::Verification>
-         create_verification_op(std::string_view params,
-                                std::string_view provider) const override;
+         create_verification_op(Botan::string_view params,
+                                Botan::string_view provider) const override;
 
       std::unique_ptr<PK_Ops::Verification>
          create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                     std::string_view provider) const override;
+                                     Botan::string_view provider) const override;
    protected:
       ECGDSA_PublicKey() = default;
    };
@@ -102,8 +102,8 @@ class BOTAN_PUBLIC_API(2,0) ECGDSA_PrivateKey final : public ECGDSA_PublicKey,
 
       std::unique_ptr<PK_Ops::Signature>
          create_signature_op(RandomNumberGenerator& rng,
-                             std::string_view params,
-                             std::string_view provider) const override;
+                             Botan::string_view params,
+                             Botan::string_view provider) const override;
    };
 
 BOTAN_DIAGNOSTIC_POP

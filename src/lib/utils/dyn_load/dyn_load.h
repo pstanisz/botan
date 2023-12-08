@@ -8,6 +8,7 @@
 #ifndef BOTAN_DYNAMIC_LOADER_H_
 #define BOTAN_DYNAMIC_LOADER_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 
@@ -28,7 +29,7 @@ class BOTAN_TEST_API Dynamically_Loaded_Library final
       * qualified pathnames can help prevent code injection attacks (eg
       * via manipulation of LD_LIBRARY_PATH on Linux)
       */
-      Dynamically_Loaded_Library(std::string_view lib_name);
+      Dynamically_Loaded_Library(Botan::string_view lib_name);
 
       /**
       * Unload the DLL

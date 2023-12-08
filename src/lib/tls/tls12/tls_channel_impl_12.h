@@ -109,8 +109,8 @@ class Channel_Impl_12 : public Channel_Impl
       * @param length the length of the desired key in bytes
       * @return key of length bytes
       */
-      SymmetricKey key_material_export(std::string_view label,
-                                       std::string_view context,
+      SymmetricKey key_material_export(Botan::string_view label,
+                                       Botan::string_view context,
                                        size_t length) const override;
 
       /**

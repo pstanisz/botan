@@ -197,7 +197,7 @@ class TLS_Data_Reader final
                                " left");
          }
 
-      [[noreturn]] void throw_decode_error(std::string_view why) const
+      [[noreturn]] void throw_decode_error(Botan::string_view why) const
          {
          throw Decoding_Error(fmt("Invalid {}: {}", m_typename, why));
          }
@@ -245,7 +245,7 @@ void append_tls_length_value(std::vector<uint8_t, Alloc>& buf,
 
 template<typename Alloc>
 void append_tls_length_value(std::vector<uint8_t, Alloc>& buf,
-                             std::string_view str,
+                             Botan::string_view str,
                              size_t tag_size)
    {
    append_tls_length_value(buf,

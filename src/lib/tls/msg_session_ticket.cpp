@@ -118,7 +118,7 @@ New_Session_Ticket_13::New_Session_Ticket_13(const std::vector<uint8_t>& buf,
    reader.assert_done();
    }
 
-std::optional<uint32_t> New_Session_Ticket_13::early_data_byte_limit() const
+Botan::optional<uint32_t> New_Session_Ticket_13::early_data_byte_limit() const
    {
    if(!m_extensions.has<EarlyDataIndication>())
       return std::nullopt;

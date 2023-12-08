@@ -61,7 +61,7 @@ calculate_t0_and_t1(const DilithiumModeConstants& mode,
    return { std::move(t0), std::move(t1) };
    }
 
-DilithiumMode::Mode dilithium_mode_from_string(std::string_view str)
+DilithiumMode::Mode dilithium_mode_from_string(Botan::string_view str)
    {
    if(str == "Dilithium-4x4-r3")
       { return DilithiumMode::Dilithium4x4; }
@@ -84,7 +84,7 @@ DilithiumMode::Mode dilithium_mode_from_string(std::string_view str)
 DilithiumMode::DilithiumMode(const OID& oid)
    : m_mode(dilithium_mode_from_string(oid.to_formatted_string())) {}
 
-DilithiumMode::DilithiumMode(std::string_view str)
+DilithiumMode::DilithiumMode(Botan::string_view str)
    : m_mode(dilithium_mode_from_string(str)) {}
 
 OID DilithiumMode::object_identifier() const { return OID::from_string(to_string()); }
@@ -561,8 +561,8 @@ bool Dilithium_PublicKey::check_key(RandomNumberGenerator&, bool) const
    }
 
 std::unique_ptr<PK_Ops::Verification>
-Dilithium_PublicKey::create_verification_op(std::string_view params,
-                                            std::string_view provider) const
+Dilithium_PublicKey::create_verification_op(Botan::string_view params,
+                                            Botan::string_view provider) const
    {
    BOTAN_ARG_CHECK(params.empty() || params == "Pure",
                    "Unexpected parameters for verifying with Dilithium");
@@ -573,7 +573,7 @@ Dilithium_PublicKey::create_verification_op(std::string_view params,
 
 std::unique_ptr<PK_Ops::Verification>
 Dilithium_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& alg_id,
-                                                 std::string_view provider) const
+                                                 Botan::string_view provider) const
    {
    if(provider.empty() || provider == "base")
       {
@@ -645,8 +645,8 @@ secure_vector<uint8_t> Dilithium_PrivateKey::private_key_bits() const
 
 std::unique_ptr<PK_Ops::Signature>
 Dilithium_PrivateKey::create_signature_op(RandomNumberGenerator& rng,
-      std::string_view params,
-      std::string_view provider) const
+      Botan::string_view params,
+      Botan::string_view provider) const
    {
    BOTAN_UNUSED(rng);
 

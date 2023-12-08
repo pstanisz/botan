@@ -7,6 +7,7 @@
 #ifndef BOTAN_ARGON2_FMT_H_
 #define BOTAN_ARGON2_FMT_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <string>
 
@@ -29,7 +30,7 @@ std::string BOTAN_PUBLIC_API(2,11)
 * @param hash the stored hash to check against
 */
 bool BOTAN_PUBLIC_API(2,11) argon2_check_pwhash(const char* password, size_t password_len,
-                                                std::string_view hash);
+                                                Botan::string_view hash);
 
 }
 

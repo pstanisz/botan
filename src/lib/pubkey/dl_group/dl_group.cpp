@@ -17,7 +17,7 @@
 #include <botan/internal/workfactor.h>
 #include <botan/internal/monty_exp.h>
 #include <botan/internal/fmt.h>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -102,7 +102,7 @@ class DL_Group_Data final
 
       bool q_is_set() const { return m_q_bits > 0; }
 
-      void assert_q_is_set(std::string_view function) const
+      void assert_q_is_set(Botan::string_view function) const
          {
          if(q_is_set() == false)
             throw Invalid_State(fmt("DL_Group::{}: q is not set for this group", function));
@@ -189,7 +189,7 @@ DL_Group::load_DL_group_info(const char* p_str,
 
 namespace {
 
-DL_Group_Format pem_label_to_dl_format(std::string_view label)
+DL_Group_Format pem_label_to_dl_format(Botan::string_view label)
    {
    if(label == "DH PARAMETERS")
       return DL_Group_Format::PKCS_3;
@@ -206,7 +206,7 @@ DL_Group_Format pem_label_to_dl_format(std::string_view label)
 /*
 * DL_Group Constructor
 */
-DL_Group::DL_Group(std::string_view str)
+DL_Group::DL_Group(Botan::string_view str)
    {
    // Either a name or a PEM block, try name first
    m_data = DL_group_info(str);
@@ -685,7 +685,7 @@ void DL_Group::BER_decode(const std::vector<uint8_t>& ber, DL_Group_Format forma
    }
 
 //static
-DL_Group DL_Group::DL_Group_from_PEM(std::string_view pem)
+DL_Group DL_Group::DL_Group_from_PEM(Botan::string_view pem)
    {
    std::string label;
    const std::vector<uint8_t> ber = unlock(PEM_Code::decode(pem, label));

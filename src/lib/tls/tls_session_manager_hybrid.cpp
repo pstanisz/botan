@@ -26,12 +26,12 @@ Session_Manager_Hybrid::Session_Manager_Hybrid(
    BOTAN_ASSERT_NONNULL(m_stateful);
    }
 
-std::optional<Session_Handle>
+Botan::optional<Session_Handle>
 Session_Manager_Hybrid::establish(const Session& session,
-                                  const std::optional<Session_ID>& id,
+                                  const Botan::optional<Session_ID>& id,
                                   bool tls12_no_ticket)
    {
-   auto create_ticket = [&]() -> std::optional<Session_Handle>
+   auto create_ticket = [&]() -> Botan::optional<Session_Handle>
       {
       if(tls12_no_ticket)
          { return std::nullopt; }
@@ -64,7 +64,7 @@ Session_Manager_Hybrid::establish(const Session& session,
    return fallback();
    }
 
-std::optional<Session> Session_Manager_Hybrid::retrieve(const Session_Handle& handle,
+Botan::optional<Session> Session_Manager_Hybrid::retrieve(const Session_Handle& handle,
                                                         Callbacks& callbacks,
                                                         const Policy& policy)
    {

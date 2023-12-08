@@ -279,7 +279,7 @@ AlgorithmIdentifier Signature_Scheme::algorithm_identifier() const noexcept
       }
    }
 
-std::optional<Signature_Format> Signature_Scheme::format() const noexcept
+Botan::optional<Signature_Format> Signature_Scheme::format() const noexcept
    {
    switch(m_code)
       {

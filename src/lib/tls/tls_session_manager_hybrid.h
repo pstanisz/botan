@@ -56,11 +56,11 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_Hybrid final : public Session_Manag
          const std::shared_ptr<RandomNumberGenerator>& rng,
          bool prefer_tickets = true);
 
-      std::optional<Session_Handle> establish(const Session& session,
-                                              const std::optional<Session_ID>& id = std::nullopt,
+      Botan::optional<Session_Handle> establish(const Session& session,
+                                              const Botan::optional<Session_ID>& id = std::nullopt,
                                               bool tls12_no_ticket = false) override;
 
-      std::optional<Session> retrieve(const Session_Handle& handle,
+      Botan::optional<Session> retrieve(const Session_Handle& handle,
                                       Callbacks& callbacks,
                                       const Policy& policy) override;
 
@@ -83,7 +83,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_Hybrid final : public Session_Manag
       // The Hybrid_Session_Manager just delegates to its underlying managers
       // via the public retrieval API. Its own "storage interface" is therefore
       // never called.
-      std::optional<Session> retrieve_one(const Session_Handle&) override
+      Botan::optional<Session> retrieve_one(const Session_Handle&) override
          { BOTAN_ASSERT(false, "This should never be called"); }
       std::vector<Session_with_Handle> find_some(const Server_Information&, const size_t) override
          { BOTAN_ASSERT(false, "This should never be called"); }

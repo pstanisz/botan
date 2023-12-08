@@ -201,7 +201,7 @@ MechanismWrapper::MechanismWrapper(MechanismType mechanism_type)
    : m_mechanism( { static_cast<CK_MECHANISM_TYPE>(mechanism_type), nullptr, 0 }), m_parameters(nullptr)
    {}
 
-MechanismWrapper MechanismWrapper::create_rsa_crypt_mechanism(std::string_view padding_view)
+MechanismWrapper MechanismWrapper::create_rsa_crypt_mechanism(Botan::string_view padding_view)
    {
    const std::string padding(padding_view);
    auto mechanism_info_it = CryptMechanisms.find(padding);
@@ -228,7 +228,7 @@ MechanismWrapper MechanismWrapper::create_rsa_crypt_mechanism(std::string_view p
    return mech;
    }
 
-MechanismWrapper MechanismWrapper::create_rsa_sign_mechanism(std::string_view padding_view)
+MechanismWrapper MechanismWrapper::create_rsa_sign_mechanism(Botan::string_view padding_view)
    {
    const std::string padding(padding_view);
    auto mechanism_info_it = SignMechanisms.find(padding);
@@ -252,7 +252,7 @@ MechanismWrapper MechanismWrapper::create_rsa_sign_mechanism(std::string_view pa
    return mech;
    }
 
-MechanismWrapper MechanismWrapper::create_ecdsa_mechanism(std::string_view hash_spec_view)
+MechanismWrapper MechanismWrapper::create_ecdsa_mechanism(Botan::string_view hash_spec_view)
    {
    const std::string hash_spec(hash_spec_view);
    auto mechanism = EcdsaHash.find(hash_spec);
@@ -271,7 +271,7 @@ MechanismWrapper MechanismWrapper::create_ecdsa_mechanism(std::string_view hash_
    throw Lookup_Error(fmt("PKCS #11 ECDSA sign/verify does not support {}", hash_spec));
    }
 
-MechanismWrapper MechanismWrapper::create_ecdh_mechanism(std::string_view params)
+MechanismWrapper MechanismWrapper::create_ecdh_mechanism(Botan::string_view params)
    {
    std::vector<std::string> param_parts = split_on(params, ',');
 

@@ -22,7 +22,7 @@
 
 namespace Botan {
 
-inline std::vector<uint8_t> to_byte_vector(std::string_view s)
+inline std::vector<uint8_t> to_byte_vector(Botan::string_view s)
    {
    return std::vector<uint8_t>(s.cbegin(), s.cend());
    }

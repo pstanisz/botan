@@ -62,7 +62,7 @@ Handshake_Type handshake_type_from_byte(uint8_t byte_value)
    }
 
 template<typename Msg_Type>
-std::optional<Msg_Type> parse_message(TLS::TLS_Data_Reader& reader, const Policy& policy,
+Botan::optional<Msg_Type> parse_message(TLS::TLS_Data_Reader& reader, const Policy& policy,
                                       const Connection_Side peer_side)
    {
    // read the message header
@@ -125,7 +125,7 @@ std::optional<Msg_Type> parse_message(TLS::TLS_Data_Reader& reader, const Policy
 
 } // namespace
 
-std::optional<Handshake_Message_13> Handshake_Layer::next_message(const Policy& policy,
+Botan::optional<Handshake_Message_13> Handshake_Layer::next_message(const Policy& policy,
       Transcript_Hash_State& transcript_hash)
    {
    TLS::TLS_Data_Reader reader("handshake message", m_read_buffer);
@@ -141,7 +141,7 @@ std::optional<Handshake_Message_13> Handshake_Layer::next_message(const Policy& 
    return msg;
    }
 
-std::optional<Post_Handshake_Message_13> Handshake_Layer::next_post_handshake_message(const Policy& policy)
+Botan::optional<Post_Handshake_Message_13> Handshake_Layer::next_post_handshake_message(const Policy& policy)
    {
    TLS::TLS_Data_Reader reader("post handshake message", m_read_buffer);
 

@@ -13,7 +13,7 @@
 
 #include "test_reporter.h"
 
-#include <optional>
+#include <botan/optional.h>
 #include <fstream>
 
 namespace Botan_Tests {
@@ -46,7 +46,7 @@ class XmlReporter : public Reporter
    private:
       std::string m_output_dir;
 
-      mutable std::optional<std::ofstream> m_outfile;
+      mutable Botan::optional<std::ofstream> m_outfile;
    };
 
 }

@@ -112,8 +112,8 @@ class Channel_Impl
       * @param length the length of the desired key in bytes
       * @return key of length bytes
       */
-      virtual SymmetricKey key_material_export(std::string_view label,
-                                       std::string_view context,
+      virtual SymmetricKey key_material_export(Botan::string_view label,
+                                       Botan::string_view context,
                                        size_t length) const = 0;
 
       /**
@@ -191,7 +191,7 @@ class Channel_Impl
 
          /// The TLS 1.2 session information found by a TLS 1.3 client that
          /// caused it to initiate a downgrade before even sending a client hello.
-         std::optional<Session_with_Handle> tls12_session;
+         Botan::optional<Session_with_Handle> tls12_session;
 
          Server_Information server_info;
          std::vector<std::string> next_protocols;

@@ -67,7 +67,7 @@ BigInt BigInt::with_capacity(size_t size)
 /*
 * Construct a BigInt from a string
 */
-BigInt::BigInt(std::string_view str)
+BigInt::BigInt(Botan::string_view str)
    {
    Base base = Decimal;
    size_t markers = 0;

@@ -11,7 +11,7 @@
 #include <botan/buf_comp.h>
 #include <memory>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 
 namespace Botan {
 
@@ -27,8 +27,8 @@ class BOTAN_PUBLIC_API(2,0) HashFunction : public Buffered_Computation
       * empty then best available is chosen.
       */
       static std::unique_ptr<HashFunction>
-         create(std::string_view algo_spec,
-                std::string_view provider = "");
+         create(Botan::string_view algo_spec,
+                Botan::string_view provider = "");
 
       /**
       * Create an instance based on a name
@@ -38,14 +38,14 @@ class BOTAN_PUBLIC_API(2,0) HashFunction : public Buffered_Computation
       * Throws Lookup_Error if not found.
       */
       static std::unique_ptr<HashFunction>
-         create_or_throw(std::string_view algo_spec,
-                         std::string_view provider = "");
+         create_or_throw(Botan::string_view algo_spec,
+                         Botan::string_view provider = "");
 
       /**
       * @return list of available providers for this algorithm, empty if not available
       * @param algo_spec algorithm name
       */
-      static std::vector<std::string> providers(std::string_view algo_spec);
+      static std::vector<std::string> providers(Botan::string_view algo_spec);
 
       /**
       * @return provider information about this implementation. Default is "base",

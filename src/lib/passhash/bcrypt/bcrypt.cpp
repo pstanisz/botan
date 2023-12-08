@@ -87,7 +87,7 @@ std::string bcrypt_base64_encode(const uint8_t input[], size_t length)
    return b64;
    }
 
-std::vector<uint8_t> bcrypt_base64_decode(std::string_view input)
+std::vector<uint8_t> bcrypt_base64_decode(Botan::string_view input)
    {
    std::string translated;
    for(size_t i = 0; i != input.size(); ++i)
@@ -99,7 +99,7 @@ std::vector<uint8_t> bcrypt_base64_decode(std::string_view input)
    return unlock(base64_decode(translated));
    }
 
-std::string make_bcrypt(std::string_view pass,
+std::string make_bcrypt(Botan::string_view pass,
                         const std::vector<uint8_t>& salt,
                         uint16_t work_factor,
                         char version)
@@ -152,7 +152,7 @@ std::string make_bcrypt(std::string_view pass,
 
 }
 
-std::string generate_bcrypt(std::string_view pass,
+std::string generate_bcrypt(Botan::string_view pass,
                             RandomNumberGenerator& rng,
                             uint16_t work_factor,
                             char version)
@@ -170,7 +170,7 @@ std::string generate_bcrypt(std::string_view pass,
    return make_bcrypt(pass, salt, work_factor, version);
    }
 
-bool check_bcrypt(std::string_view pass, std::string_view hash)
+bool check_bcrypt(Botan::string_view pass, Botan::string_view hash)
    {
    if(hash.size() != 60 ||
       hash[0] != '$' || hash[1] != '2' || hash[3] != '$' || hash[6] != '$')

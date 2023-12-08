@@ -35,7 +35,7 @@ UUID::UUID(const std::vector<uint8_t>& blob)
    m_uuid = blob;
    }
 
-UUID::UUID(std::string_view uuid_str)
+UUID::UUID(Botan::string_view uuid_str)
    {
    if(uuid_str.size() != 36 ||
       uuid_str[8] != '-' ||

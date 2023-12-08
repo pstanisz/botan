@@ -26,7 +26,7 @@ std::vector<uint8_t> ASN1_Object::BER_encode() const
 * Check a type invariant on BER data
 */
 void BER_Object::assert_is_a(ASN1_Type expected_type_tag, ASN1_Class expected_class_tag,
-                             std::string_view descr) const
+                             Botan::string_view descr) const
    {
    if(this->is_a(expected_type_tag, expected_class_tag) == false)
       {
@@ -178,10 +178,10 @@ std::string asn1_tag_to_string(ASN1_Type type)
 /*
 * BER Decoding Exceptions
 */
-BER_Decoding_Error::BER_Decoding_Error(std::string_view str) :
+BER_Decoding_Error::BER_Decoding_Error(Botan::string_view str) :
    Decoding_Error(fmt("BER: {}", str)) {}
 
-BER_Bad_Tag::BER_Bad_Tag(std::string_view str, uint32_t tagging) :
+BER_Bad_Tag::BER_Bad_Tag(Botan::string_view str, uint32_t tagging) :
    BER_Decoding_Error(fmt("{}: {}", str, tagging)) {}
 
 namespace ASN1 {

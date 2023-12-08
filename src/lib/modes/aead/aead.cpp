@@ -39,9 +39,9 @@
 
 namespace Botan {
 
-std::unique_ptr<AEAD_Mode> AEAD_Mode::create_or_throw(std::string_view algo,
+std::unique_ptr<AEAD_Mode> AEAD_Mode::create_or_throw(Botan::string_view algo,
                                                       Cipher_Dir dir,
-                                                      std::string_view provider)
+                                                      Botan::string_view provider)
    {
    if(auto aead = AEAD_Mode::create(algo, dir, provider))
       return aead;
@@ -49,9 +49,9 @@ std::unique_ptr<AEAD_Mode> AEAD_Mode::create_or_throw(std::string_view algo,
    throw Lookup_Error("AEAD", algo, provider);
    }
 
-std::unique_ptr<AEAD_Mode> AEAD_Mode::create(std::string_view algo,
+std::unique_ptr<AEAD_Mode> AEAD_Mode::create(Botan::string_view algo,
                                              Cipher_Dir dir,
-                                             std::string_view provider)
+                                             Botan::string_view provider)
    {
    BOTAN_UNUSED(provider);
 #if defined(BOTAN_HAS_AEAD_CHACHA20_POLY1305)
@@ -68,7 +68,7 @@ std::unique_ptr<AEAD_Mode> AEAD_Mode::create(std::string_view algo,
    if(algo.find('/') != std::string::npos)
       {
       const std::vector<std::string> algo_parts = split_on(algo, '/');
-      std::string_view cipher_name = algo_parts[0];
+      Botan::string_view cipher_name = algo_parts[0];
       const std::vector<std::string> mode_info = parse_algorithm_name(algo_parts[1]);
 
       if(mode_info.empty())

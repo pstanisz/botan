@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <optional>
+#include <botan/optional.h>
 
 namespace Botan_Tests {
 

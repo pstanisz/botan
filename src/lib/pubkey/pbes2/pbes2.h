@@ -27,10 +27,10 @@ class RandomNumberGenerator;
 */
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt(Botan::span<const uint8_t> key_bits,
-              std::string_view passphrase,
+              Botan::string_view passphrase,
               std::chrono::milliseconds msec,
-              std::string_view cipher,
-              std::string_view digest,
+              Botan::string_view cipher,
+              Botan::string_view digest,
               RandomNumberGenerator& rng);
 
 /**
@@ -46,11 +46,11 @@ pbes2_encrypt(Botan::span<const uint8_t> key_bits,
 */
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
-                   std::string_view passphrase,
+                   Botan::string_view passphrase,
                    std::chrono::milliseconds msec,
                    size_t* out_iterations_if_nonnull,
-                   std::string_view cipher,
-                   std::string_view digest,
+                   Botan::string_view cipher,
+                   Botan::string_view digest,
                    RandomNumberGenerator& rng);
 
 /**
@@ -64,10 +64,10 @@ pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
 */
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
-                   std::string_view passphrase,
+                   Botan::string_view passphrase,
                    size_t iterations,
-                   std::string_view cipher,
-                   std::string_view digest,
+                   Botan::string_view cipher,
+                   Botan::string_view digest,
                    RandomNumberGenerator& rng);
 
 /**
@@ -78,7 +78,7 @@ pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
 */
 secure_vector<uint8_t>
 pbes2_decrypt(Botan::span<const uint8_t> key_bits,
-              std::string_view passphrase,
+              Botan::string_view passphrase,
               const std::vector<uint8_t>& params);
 
 }

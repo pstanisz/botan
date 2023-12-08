@@ -43,7 +43,7 @@ bool ECKCDSA_PrivateKey::check_key(RandomNumberGenerator& rng,
 
 namespace {
 
-std::unique_ptr<HashFunction> eckcdsa_signature_hash(std::string_view padding)
+std::unique_ptr<HashFunction> eckcdsa_signature_hash(Botan::string_view padding)
    {
    if(auto hash = HashFunction::create(padding))
       return hash;
@@ -137,7 +137,7 @@ class ECKCDSA_Signature_Operation final : public PK_Ops::Signature
    public:
 
       ECKCDSA_Signature_Operation(const ECKCDSA_PrivateKey& eckcdsa,
-                                  std::string_view padding) :
+                                  Botan::string_view padding) :
          m_group(eckcdsa.domain()),
          m_x(eckcdsa.private_value()),
          m_hash(eckcdsa_signature_hash(padding)),
@@ -230,7 +230,7 @@ class ECKCDSA_Verification_Operation final : public PK_Ops::Verification
    public:
 
       ECKCDSA_Verification_Operation(const ECKCDSA_PublicKey& eckcdsa,
-                                     std::string_view padding) :
+                                     Botan::string_view padding) :
          m_group(eckcdsa.domain()),
          m_gy_mul(m_group.get_base_point(), eckcdsa.public_point()),
          m_hash(eckcdsa_signature_hash(padding)),
@@ -336,8 +336,8 @@ bool ECKCDSA_Verification_Operation::verify(const uint8_t msg[], size_t msg_len,
 }
 
 std::unique_ptr<PK_Ops::Verification>
-ECKCDSA_PublicKey::create_verification_op(std::string_view params,
-                                          std::string_view provider) const
+ECKCDSA_PublicKey::create_verification_op(Botan::string_view params,
+                                          Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECKCDSA_Verification_Operation>(*this, params);
@@ -346,7 +346,7 @@ ECKCDSA_PublicKey::create_verification_op(std::string_view params,
 
 std::unique_ptr<PK_Ops::Verification>
 ECKCDSA_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                               std::string_view provider) const
+                                               Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECKCDSA_Verification_Operation>(*this, signature_algorithm);
@@ -356,8 +356,8 @@ ECKCDSA_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& signat
 
 std::unique_ptr<PK_Ops::Signature>
 ECKCDSA_PrivateKey::create_signature_op(RandomNumberGenerator& /*rng*/,
-                                        std::string_view params,
-                                        std::string_view provider) const
+                                        Botan::string_view params,
+                                        Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECKCDSA_Signature_Operation>(*this, params);

@@ -14,8 +14,8 @@ namespace Botan_Tests {
 namespace {
 
 template <typename T>
-constexpr std::optional<T>
-operator+(const std::optional<T>& a, const std::optional<T>& b)
+constexpr Botan::optional<T>
+operator+(const Botan::optional<T>& a, const Botan::optional<T>& b)
    {
    if(!a.has_value() || !b.has_value())
       {
@@ -65,7 +65,7 @@ std::chrono::system_clock::time_point Testsuite::timestamp() const
             [](const auto& result) { return result.timestamp; });
    }
 
-std::optional<std::chrono::nanoseconds> Testsuite::elapsed_time() const
+Botan::optional<std::chrono::nanoseconds> Testsuite::elapsed_time() const
    {
    return std::transform_reduce(
       m_results.begin(), m_results.end(),

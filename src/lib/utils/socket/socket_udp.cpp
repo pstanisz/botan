@@ -44,8 +44,8 @@ namespace {
 class Asio_SocketUDP final : public OS::SocketUDP
    {
    public:
-      Asio_SocketUDP(std::string_view hostname,
-                     std::string_view service,
+      Asio_SocketUDP(Botan::string_view hostname,
+                     Botan::string_view service,
                      std::chrono::microseconds timeout) :
          m_timeout(timeout), m_timer(m_io), m_udp(m_io)
          {
@@ -140,8 +140,8 @@ class Asio_SocketUDP final : public OS::SocketUDP
 class BSD_SocketUDP final : public OS::SocketUDP
    {
    public:
-      BSD_SocketUDP(std::string_view hostname,
-                    std::string_view service,
+      BSD_SocketUDP(Botan::string_view hostname,
+                    Botan::string_view service,
                     std::chrono::microseconds timeout) : m_timeout(timeout)
          {
          socket_init();
@@ -325,8 +325,8 @@ class BSD_SocketUDP final : public OS::SocketUDP
 }
 
 std::unique_ptr<OS::SocketUDP>
-OS::open_socket_udp(std::string_view hostname,
-                    std::string_view service,
+OS::open_socket_udp(Botan::string_view hostname,
+                    Botan::string_view service,
                     std::chrono::microseconds timeout)
    {
 #if defined(BOTAN_HAS_BOOST_ASIO)
@@ -342,7 +342,7 @@ OS::open_socket_udp(std::string_view hostname,
    }
 
 std::unique_ptr<OS::SocketUDP>
-OS::open_socket_udp(std::string_view uri_string,
+OS::open_socket_udp(Botan::string_view uri_string,
                     std::chrono::microseconds timeout)
    {
    const auto uri = URI::fromAny(uri_string);

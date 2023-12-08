@@ -249,7 +249,7 @@ Nonce nonce_from_blind(const std::vector<uint8_t>& previous_response,
    return ret;
    }
 
-Chain::Chain(std::string_view str)
+Chain::Chain(Botan::string_view str)
    {
    std::istringstream ss{std::string(str)}; // FIXME C++23 avoid copy
    const std::string ERROR_MESSAGE = "Line does not have 4 space separated fields";
@@ -361,7 +361,7 @@ std::string Chain::to_string() const
    return s;
    }
 
-std::vector<uint8_t> online_request(std::string_view uri,
+std::vector<uint8_t> online_request(Botan::string_view uri,
                                     const Nonce& nonce,
                                     std::chrono::milliseconds timeout)
    {
@@ -391,7 +391,7 @@ std::vector<uint8_t> online_request(std::string_view uri,
    return buffer;
    }
 
-std::vector<Server_Information> servers_from_str(std::string_view str)
+std::vector<Server_Information> servers_from_str(Botan::string_view str)
    {
    std::vector<Server_Information> servers;
    std::istringstream ss{std::string(str)}; // FIXME C++23 avoid copy

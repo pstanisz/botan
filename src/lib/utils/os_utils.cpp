@@ -419,7 +419,7 @@ size_t OS::get_memory_locking_limit()
    return 0;
    }
 
-bool OS::read_env_variable(std::string& value_out, std::string_view name_view)
+bool OS::read_env_variable(std::string& value_out, Botan::string_view name_view)
    {
    value_out = "";
 
@@ -447,7 +447,7 @@ bool OS::read_env_variable(std::string& value_out, std::string_view name_view)
    return false;
    }
 
-size_t OS::read_env_variable_sz(std::string_view name, size_t def)
+size_t OS::read_env_variable_sz(Botan::string_view name, size_t def)
    {
    std::string value;
    if(read_env_variable(value, name) && !value.empty())

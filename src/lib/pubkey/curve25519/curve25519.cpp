@@ -120,7 +120,7 @@ class Curve25519_KA_Operation final : public PK_Ops::Key_Agreement_with_KDF
    {
    public:
 
-      Curve25519_KA_Operation(const Curve25519_PrivateKey& key, std::string_view kdf) :
+      Curve25519_KA_Operation(const Curve25519_PrivateKey& key, Botan::string_view kdf) :
          PK_Ops::Key_Agreement_with_KDF(kdf),
          m_key(key) {}
 
@@ -138,8 +138,8 @@ class Curve25519_KA_Operation final : public PK_Ops::Key_Agreement_with_KDF
 
 std::unique_ptr<PK_Ops::Key_Agreement>
 Curve25519_PrivateKey::create_key_agreement_op(RandomNumberGenerator& /*rng*/,
-                                               std::string_view params,
-                                               std::string_view provider) const
+                                               Botan::string_view params,
+                                               Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<Curve25519_KA_Operation>(*this, params);

@@ -8,6 +8,7 @@
 #ifndef BOTAN_UUID_H_
 #define BOTAN_UUID_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <vector>
 #include <string>
@@ -42,7 +43,7 @@ class BOTAN_UNSTABLE_API UUID final
       /**
       * Decode a UUID string
       */
-      UUID(std::string_view uuid_str);
+      UUID(Botan::string_view uuid_str);
 
       /**
       * Convert the UUID to a string

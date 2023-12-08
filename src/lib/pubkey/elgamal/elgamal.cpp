@@ -47,7 +47,7 @@ std::vector<uint8_t> ElGamal_PublicKey::public_key_bits() const
    return m_public_key->DER_encode();
    }
 
-const BigInt& ElGamal_PublicKey::get_int_field(std::string_view field) const
+const BigInt& ElGamal_PublicKey::get_int_field(Botan::string_view field) const
    {
    return m_public_key->get_int_field(algo_name(), field);
    }
@@ -83,7 +83,7 @@ std::unique_ptr<Public_Key> ElGamal_PrivateKey::public_key() const
    return std::unique_ptr<Public_Key>(new ElGamal_PublicKey(m_public_key));
    }
 
-const BigInt& ElGamal_PrivateKey::get_int_field(std::string_view field) const
+const BigInt& ElGamal_PrivateKey::get_int_field(Botan::string_view field) const
    {
    return m_private_key->get_int_field(algo_name(), field);
    }
@@ -117,7 +117,7 @@ class ElGamal_Encryption_Operation final : public PK_Ops::Encryption_with_EME
    public:
 
       ElGamal_Encryption_Operation(const std::shared_ptr<const DL_PublicKey>& key,
-                                   std::string_view eme) :
+                                   Botan::string_view eme) :
          PK_Ops::Encryption_with_EME(eme),
          m_key(key)
          {
@@ -181,7 +181,7 @@ class ElGamal_Decryption_Operation final : public PK_Ops::Decryption_with_EME
    public:
 
       ElGamal_Decryption_Operation(const std::shared_ptr<const DL_PrivateKey>& key,
-                                   std::string_view eme,
+                                   Botan::string_view eme,
                                    RandomNumberGenerator& rng) :
          PK_Ops::Decryption_with_EME(eme),
          m_key(key),
@@ -234,8 +234,8 @@ ElGamal_Decryption_Operation::raw_decrypt(const uint8_t msg[], size_t msg_len)
 
 std::unique_ptr<PK_Ops::Encryption>
 ElGamal_PublicKey::create_encryption_op(RandomNumberGenerator& /*rng*/,
-                                        std::string_view params,
-                                        std::string_view provider) const
+                                        Botan::string_view params,
+                                        Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ElGamal_Encryption_Operation>(this->m_public_key, params);
@@ -244,8 +244,8 @@ ElGamal_PublicKey::create_encryption_op(RandomNumberGenerator& /*rng*/,
 
 std::unique_ptr<PK_Ops::Decryption>
 ElGamal_PrivateKey::create_decryption_op(RandomNumberGenerator& rng,
-                                         std::string_view params,
-                                         std::string_view provider) const
+                                         Botan::string_view params,
+                                         Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ElGamal_Decryption_Operation>(this->m_private_key, params, rng);

@@ -37,7 +37,7 @@ std::string cert_type_code_to_name(uint8_t code)
       }
    }
 
-uint8_t cert_type_name_to_code(std::string_view name)
+uint8_t cert_type_name_to_code(Botan::string_view name)
    {
    if(name == "RSA")
       return 1;

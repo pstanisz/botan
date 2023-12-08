@@ -1,0 +1,13 @@
+<defines>
+CPP17_EXTRAS -> 20231208
+</defines>
+
+<module_info>
+name -> "C++17 extra features"
+brief -> "C++17 features which are provided by Botan to allow compilation with lower standards"
+</module_info>
+
+<header:public>
+optional.h
+string_view.h
+</header:public>

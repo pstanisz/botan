@@ -23,7 +23,7 @@ class SM2_Encryption_Operation final : public PK_Ops::Encryption
    public:
       SM2_Encryption_Operation(const SM2_Encryption_PublicKey& key,
                                RandomNumberGenerator& rng,
-                               std::string_view kdf_hash) :
+                               Botan::string_view kdf_hash) :
          m_group(key.domain()),
          m_ws(EC_Point::WORKSPACE_SIZE),
          m_mul_public_point(key.public_point(), rng, m_ws)
@@ -112,7 +112,7 @@ class SM2_Decryption_Operation final : public PK_Ops::Decryption
    public:
       SM2_Decryption_Operation(const SM2_Encryption_PrivateKey& key,
                                RandomNumberGenerator& rng,
-                               std::string_view kdf_hash) :
+                               Botan::string_view kdf_hash) :
          m_key(key),
          m_rng(rng)
          {
@@ -234,8 +234,8 @@ class SM2_Decryption_Operation final : public PK_Ops::Decryption
 
 std::unique_ptr<PK_Ops::Encryption>
 SM2_PublicKey::create_encryption_op(RandomNumberGenerator& rng,
-                                    std::string_view params,
-                                    std::string_view provider) const
+                                    Botan::string_view params,
+                                    Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       {
@@ -250,8 +250,8 @@ SM2_PublicKey::create_encryption_op(RandomNumberGenerator& rng,
 
 std::unique_ptr<PK_Ops::Decryption>
 SM2_PrivateKey::create_decryption_op(RandomNumberGenerator& rng,
-                                     std::string_view params,
-                                     std::string_view provider) const
+                                     Botan::string_view params,
+                                     Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       {

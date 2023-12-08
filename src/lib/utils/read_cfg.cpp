@@ -12,7 +12,7 @@ namespace Botan {
 
 namespace {
 
-std::string clean_ws(std::string_view s)
+std::string clean_ws(Botan::string_view s)
    {
    const char* ws = " \t\n";
    auto start = s.find_first_not_of(ws);

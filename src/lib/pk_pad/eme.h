@@ -8,6 +8,7 @@
 #ifndef BOTAN_PUBKEY_EME_ENCRYPTION_PAD_H_
 #define BOTAN_PUBKEY_EME_ENCRYPTION_PAD_H_
 
+#include <botan/string_view.h>
 #include <botan/secmem.h>
 #include <string>
 
@@ -28,7 +29,7 @@ class EME
       * @param algo_spec the name of the EME to create
       * @return pointer to newly allocated object of that type
       */
-      static std::unique_ptr<EME> create(std::string_view algo_spec);
+      static std::unique_ptr<EME> create(Botan::string_view algo_spec);
 
       /**
       * Return the maximum input size in bytes we can support

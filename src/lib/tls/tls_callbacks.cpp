@@ -73,10 +73,10 @@ bool TLS::Callbacks::tls_should_persist_resumption_information(const Session& se
 
 void TLS::Callbacks::tls_verify_cert_chain(
    const std::vector<X509_Certificate>& cert_chain,
-   const std::vector<std::optional<OCSP::Response>>& ocsp_responses,
+   const std::vector<Botan::optional<OCSP::Response>>& ocsp_responses,
    const std::vector<Certificate_Store*>& trusted_roots,
    Usage_Type usage,
-   std::string_view hostname,
+   Botan::string_view hostname,
    const TLS::Policy& policy)
    {
    if(cert_chain.empty())
@@ -102,7 +102,7 @@ void TLS::Callbacks::tls_verify_cert_chain(
       }
    }
 
-std::optional<OCSP::Response> TLS::Callbacks::tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response)
+Botan::optional<OCSP::Response> TLS::Callbacks::tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response)
    {
    try
       {
@@ -131,7 +131,7 @@ std::vector<std::vector<uint8_t>> TLS::Callbacks::tls_provide_cert_chain_status(
 std::vector<uint8_t> TLS::Callbacks::tls_sign_message(
    const Private_Key& key,
    RandomNumberGenerator& rng,
-   std::string_view padding,
+   Botan::string_view padding,
    Signature_Format format,
    const std::vector<uint8_t>& msg)
    {
@@ -142,7 +142,7 @@ std::vector<uint8_t> TLS::Callbacks::tls_sign_message(
 
 bool TLS::Callbacks::tls_verify_message(
    const Public_Key& key,
-   std::string_view padding,
+   Botan::string_view padding,
    Signature_Format format,
    const std::vector<uint8_t>& msg,
    const std::vector<uint8_t>& sig)

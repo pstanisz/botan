@@ -19,7 +19,7 @@ namespace {
 /*
 * Choose an encoding for the string
 */
-ASN1_Type choose_encoding(std::string_view str)
+ASN1_Type choose_encoding(Botan::string_view str)
    {
    auto all_printable = CT::Mask<uint8_t>::set();
 
@@ -71,7 +71,7 @@ bool ASN1_String::is_string_type(ASN1_Type tag)
    return is_asn1_string_type(tag);
    }
 
-ASN1_String::ASN1_String(std::string_view str, ASN1_Type t) : m_utf8_str(str), m_tag(t)
+ASN1_String::ASN1_String(Botan::string_view str, ASN1_Type t) : m_utf8_str(str), m_tag(t)
    {
    if(!is_utf8_subset_string_type(m_tag))
       {
@@ -79,7 +79,7 @@ ASN1_String::ASN1_String(std::string_view str, ASN1_Type t) : m_utf8_str(str), m
       }
    }
 
-ASN1_String::ASN1_String(std::string_view str) :
+ASN1_String::ASN1_String(Botan::string_view str) :
    ASN1_String(str, choose_encoding(str))
    {}
 

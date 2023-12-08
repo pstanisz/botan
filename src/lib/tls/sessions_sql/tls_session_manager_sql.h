@@ -38,7 +38,7 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_SQL : public Session_Manager
       *        to keep in memory at any one time. (If zero, don't cap)
       */
       Session_Manager_SQL(std::shared_ptr<SQL_Database> db,
-                          std::string_view passphrase,
+                          Botan::string_view passphrase,
                           const std::shared_ptr<RandomNumberGenerator>& rng,
                           size_t max_sessions = 1000);
 
@@ -52,7 +52,7 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_SQL : public Session_Manager
       bool emits_session_tickets() override { return false; }
 
    protected:
-      std::optional<Session> retrieve_one(const Session_Handle& handle) override;
+      Botan::optional<Session> retrieve_one(const Session_Handle& handle) override;
       std::vector<Session_with_Handle> find_some(const Server_Information& info,
                                                  const size_t max_sessions_hint) override;
 
@@ -80,10 +80,10 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_SQL : public Session_Manager
          BOTAN_3_0     = 20230112,
          };
 
-      void create_or_migrate_and_open(std::string_view passphrase);
+      void create_or_migrate_and_open(Botan::string_view passphrase);
       Schema_Revision detect_schema_revision();
-      void create_with_latest_schema(std::string_view passphrase, Schema_Revision rev);
-      void initialize_existing_database(std::string_view passphrase);
+      void create_with_latest_schema(Botan::string_view passphrase, Schema_Revision rev);
+      void initialize_existing_database(Botan::string_view passphrase);
 
       void prune_session_cache();
 

@@ -81,7 +81,7 @@ size_t
 pbkdf2(MessageAuthenticationCode& prf,
        uint8_t out[],
        size_t out_len,
-       std::string_view password,
+       Botan::string_view password,
        const uint8_t salt[], size_t salt_len,
        size_t iterations,
        std::chrono::milliseconds msec)
@@ -146,7 +146,7 @@ void pbkdf2(MessageAuthenticationCode& prf,
 // PBKDF interface
 size_t
 PKCS5_PBKDF2::pbkdf(uint8_t key[], size_t key_len,
-                    std::string_view password,
+                    Botan::string_view password,
                     const uint8_t salt[], size_t salt_len,
                     size_t iterations,
                     std::chrono::milliseconds msec) const

@@ -43,8 +43,8 @@
 namespace Botan {
 
 std::unique_ptr<MessageAuthenticationCode>
-MessageAuthenticationCode::create(std::string_view algo_spec,
-                                  std::string_view provider)
+MessageAuthenticationCode::create(Botan::string_view algo_spec,
+                                  Botan::string_view provider)
    {
    const SCAN_Name req(algo_spec);
 
@@ -124,15 +124,15 @@ MessageAuthenticationCode::create(std::string_view algo_spec,
    }
 
 std::vector<std::string>
-MessageAuthenticationCode::providers(std::string_view algo_spec)
+MessageAuthenticationCode::providers(Botan::string_view algo_spec)
    {
    return probe_providers_of<MessageAuthenticationCode>(algo_spec);
    }
 
 //static
 std::unique_ptr<MessageAuthenticationCode>
-MessageAuthenticationCode::create_or_throw(std::string_view algo,
-                                           std::string_view provider)
+MessageAuthenticationCode::create_or_throw(Botan::string_view algo,
+                                           Botan::string_view provider)
    {
    if(auto mac = MessageAuthenticationCode::create(algo, provider))
       {

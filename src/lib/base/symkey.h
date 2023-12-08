@@ -9,8 +9,9 @@
 #define BOTAN_SYMKEY_H_
 
 #include <botan/secmem.h>
-#include <string>
 #include <botan/span.h>
+#include <botan/string_view.h>
+#include <string>
 
 namespace Botan {
 
@@ -70,7 +71,7 @@ class BOTAN_PUBLIC_API(2,0) OctetString final
       * Create a new OctetString
       * @param str is a hex encoded string
       */
-      explicit OctetString(std::string_view str = "");
+      explicit OctetString(Botan::string_view str = "");
 
       /**
       * Create a new random OctetString

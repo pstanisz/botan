@@ -45,7 +45,7 @@ class BOTAN_PUBLIC_API(2,0) Pipe final : public DataSource
             * @param where the error occurred
             * @param msg the invalid message id that was used
             */
-            Invalid_Message_Number(std::string_view where, message_id msg);
+            Invalid_Message_Number(Botan::string_view where, message_id msg);
          };
 
       /**
@@ -83,7 +83,7 @@ class BOTAN_PUBLIC_API(2,0) Pipe final : public DataSource
       * Write input to the pipe, i.e. to its first filter.
       * @param in the string containing the data to write
       */
-      void write(std::string_view in);
+      void write(Botan::string_view in);
 
       /**
       * Write input to the pipe, i.e. to its first filter.
@@ -120,7 +120,7 @@ class BOTAN_PUBLIC_API(2,0) Pipe final : public DataSource
       * Perform start_msg(), write() and end_msg() sequentially.
       * @param in the string containing the data to write
       */
-      void process_msg(std::string_view in);
+      void process_msg(Botan::string_view in);
 
       /**
       * Perform start_msg(), write() and end_msg() sequentially.
@@ -343,7 +343,7 @@ class BOTAN_PUBLIC_API(2,0) Pipe final : public DataSource
       void find_endpoints(Filter*);
       void clear_endpoints(Filter*);
 
-      message_id get_message_no(std::string_view, message_id) const;
+      message_id get_message_no(Botan::string_view, message_id) const;
 
       Filter* m_pipe;
       std::unique_ptr<Output_Buffers> m_outputs;

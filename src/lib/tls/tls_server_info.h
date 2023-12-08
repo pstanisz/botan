@@ -31,7 +31,7 @@ class BOTAN_PUBLIC_API(2,0) Server_Information final
       * @param port specifies the protocol port of the server (eg for
       *        TCP/UDP). Zero represents unknown.
       */
-      Server_Information(std::string_view hostname,
+      Server_Information(Botan::string_view hostname,
                         uint16_t port = 0) :
          m_hostname(hostname), m_service(""), m_port(port) {}
 
@@ -42,8 +42,8 @@ class BOTAN_PUBLIC_API(2,0) Server_Information final
       * @param port specifies the protocol port of the server (eg for
       *        TCP/UDP). Zero represents unknown.
       */
-      Server_Information(std::string_view hostname,
-                        std::string_view service,
+      Server_Information(Botan::string_view hostname,
+                        Botan::string_view service,
                         uint16_t port = 0) :
          m_hostname(hostname), m_service(service), m_port(port) {}
 

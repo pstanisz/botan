@@ -57,15 +57,15 @@ class BOTAN_PUBLIC_API(2,0) DSA_PublicKey : public virtual Public_Key
       size_t estimated_strength() const override;
       size_t key_length() const override;
 
-      const BigInt& get_int_field(std::string_view field) const override;
+      const BigInt& get_int_field(Botan::string_view field) const override;
 
       std::unique_ptr<PK_Ops::Verification>
-         create_verification_op(std::string_view params,
-                                std::string_view provider) const override;
+         create_verification_op(Botan::string_view params,
+                                Botan::string_view provider) const override;
 
       std::unique_ptr<PK_Ops::Verification>
          create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                     std::string_view provider) const override;
+                                     Botan::string_view provider) const override;
    private:
       friend class DSA_PrivateKey;
 
@@ -119,13 +119,13 @@ class BOTAN_PUBLIC_API(2,0) DSA_PrivateKey final :
 
       secure_vector<uint8_t> private_key_bits() const override;
 
-      const BigInt& get_int_field(std::string_view field) const override;
+      const BigInt& get_int_field(Botan::string_view field) const override;
       secure_vector<uint8_t> raw_private_key_bits() const override;
 
       std::unique_ptr<PK_Ops::Signature>
          create_signature_op(RandomNumberGenerator& rng,
-                             std::string_view params,
-                             std::string_view provider) const override;
+                             Botan::string_view params,
+                             Botan::string_view provider) const override;
    private:
       std::shared_ptr<const DL_PrivateKey> m_private_key;
    };

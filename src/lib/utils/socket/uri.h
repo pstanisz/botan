@@ -9,7 +9,7 @@
 
 #include <botan/types.h>
 #include <cstdint>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 
 namespace Botan {
@@ -23,12 +23,12 @@ struct BOTAN_TEST_API URI
       IPv6,
       Domain,
       };
-   static URI fromAny(std::string_view uri);
-   static URI fromIPv4(std::string_view uri);
-   static URI fromIPv6(std::string_view uri);
-   static URI fromDomain(std::string_view uri);
+   static URI fromAny(Botan::string_view uri);
+   static URI fromIPv4(Botan::string_view uri);
+   static URI fromIPv6(Botan::string_view uri);
+   static URI fromDomain(Botan::string_view uri);
    URI() = default;
-   URI(Type xtype, std::string_view xhost, unsigned short xport)
+   URI(Type xtype, Botan::string_view xhost, unsigned short xport)
       : type { xtype }
       , host { xhost }
       , port { xport }

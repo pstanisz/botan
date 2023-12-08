@@ -14,11 +14,11 @@
 
 namespace Botan {
 
-CommonCrypto_Error::CommonCrypto_Error(std::string_view what) :
+CommonCrypto_Error::CommonCrypto_Error(Botan::string_view what) :
    Exception(what),
    m_rc(0) {}
 
-CommonCrypto_Error::CommonCrypto_Error(std::string_view what, int32_t status) :
+CommonCrypto_Error::CommonCrypto_Error(Botan::string_view what, int32_t status) :
    Exception(fmt("CommonCrypto op {} failed with err {} ({})",
                  what, status, ccryptorstatus_to_string(status))),
    m_rc(status) {}
@@ -57,7 +57,7 @@ std::string CommonCrypto_Error::ccryptorstatus_to_string(CCCryptorStatus status)
    };
 
 
-CommonCryptor_Opts commoncrypto_opts_from_algo_name(std::string_view algo_name)
+CommonCryptor_Opts commoncrypto_opts_from_algo_name(Botan::string_view algo_name)
    {
    CommonCryptor_Opts opts;
 
@@ -117,7 +117,7 @@ CommonCryptor_Opts commoncrypto_opts_from_algo_name(std::string_view algo_name)
    }
 
 
-CommonCryptor_Opts commoncrypto_opts_from_algo(std::string_view algo)
+CommonCryptor_Opts commoncrypto_opts_from_algo(Botan::string_view algo)
    {
    SCAN_Name spec(algo);
 

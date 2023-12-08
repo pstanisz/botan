@@ -41,7 +41,7 @@ class ECGDSA_Signature_Operation final : public PK_Ops::Signature_with_Hash
    public:
 
       ECGDSA_Signature_Operation(const ECGDSA_PrivateKey& ecgdsa,
-                                std::string_view emsa) :
+                                Botan::string_view emsa) :
          PK_Ops::Signature_with_Hash(emsa),
          m_group(ecgdsa.domain()),
          m_x(ecgdsa.private_value())
@@ -97,7 +97,7 @@ class ECGDSA_Verification_Operation final : public PK_Ops::Verification_with_Has
    public:
 
       ECGDSA_Verification_Operation(const ECGDSA_PublicKey& ecgdsa,
-                                   std::string_view padding) :
+                                   Botan::string_view padding) :
          PK_Ops::Verification_with_Hash(padding),
          m_group(ecgdsa.domain()),
          m_gy_mul(m_group.get_base_point(), ecgdsa.public_point())
@@ -149,8 +149,8 @@ bool ECGDSA_Verification_Operation::verify(const uint8_t msg[], size_t msg_len,
 }
 
 std::unique_ptr<PK_Ops::Verification>
-ECGDSA_PublicKey::create_verification_op(std::string_view params,
-                                         std::string_view provider) const
+ECGDSA_PublicKey::create_verification_op(Botan::string_view params,
+                                         Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECGDSA_Verification_Operation>(*this, params);
@@ -159,7 +159,7 @@ ECGDSA_PublicKey::create_verification_op(std::string_view params,
 
 std::unique_ptr<PK_Ops::Verification>
 ECGDSA_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                              std::string_view provider) const
+                                              Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECGDSA_Verification_Operation>(*this, signature_algorithm);
@@ -169,8 +169,8 @@ ECGDSA_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& signatu
 
 std::unique_ptr<PK_Ops::Signature>
 ECGDSA_PrivateKey::create_signature_op(RandomNumberGenerator& /*rng*/,
-                                       std::string_view params,
-                                       std::string_view provider) const
+                                       Botan::string_view params,
+                                       Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       return std::make_unique<ECGDSA_Signature_Operation>(*this, params);

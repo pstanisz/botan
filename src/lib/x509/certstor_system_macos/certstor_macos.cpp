@@ -294,7 +294,7 @@ BOTAN_DIAGNOSTIC_POP
          check_notnull(m_keychains, "initialize keychain array");
          }
 
-      std::optional<X509_Certificate> findOne(Query query) const
+      Botan::optional<X509_Certificate> findOne(Query query) const
          {
          query.addParameter(kSecMatchLimit, kSecMatchLimitOne);
 
@@ -404,7 +404,7 @@ std::vector<X509_DN> Certificate_Store_MacOS::all_subjects() const
    std::vector<X509_DN> output;
    std::transform(certificates.cbegin(), certificates.cend(),
                   std::back_inserter(output),
-                  [](const std::optional<X509_Certificate> cert)
+                  [](const Botan::optional<X509_Certificate> cert)
       {
       return cert->subject_dn();
       });
@@ -412,7 +412,7 @@ std::vector<X509_DN> Certificate_Store_MacOS::all_subjects() const
    return output;
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_MacOS::find_cert(const X509_DN& subject_dn,
                                    const std::vector<uint8_t>& key_id) const
    {
@@ -442,7 +442,7 @@ std::vector<X509_Certificate> Certificate_Store_MacOS::find_all_certs(
    return m_impl->findAll(std::move(query));
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_MacOS::find_cert_by_pubkey_sha1(const std::vector<uint8_t>& key_hash) const
    {
    if(key_hash.size() != 20)
@@ -456,14 +456,14 @@ Certificate_Store_MacOS::find_cert_by_pubkey_sha1(const std::vector<uint8_t>& ke
    return m_impl->findOne(std::move(query));
    }
 
-std::optional<X509_Certificate>
+Botan::optional<X509_Certificate>
 Certificate_Store_MacOS::find_cert_by_raw_subject_dn_sha256(const std::vector<uint8_t>& subject_hash) const
    {
    BOTAN_UNUSED(subject_hash);
    throw Not_Implemented("Certificate_Store_MacOS::find_cert_by_raw_subject_dn_sha256");
    }
 
-std::optional<X509_CRL> Certificate_Store_MacOS::find_crl_for(const X509_Certificate& subject) const
+Botan::optional<X509_CRL> Certificate_Store_MacOS::find_crl_for(const X509_Certificate& subject) const
    {
    BOTAN_UNUSED(subject);
    return {};

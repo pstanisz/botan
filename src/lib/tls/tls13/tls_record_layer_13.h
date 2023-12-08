@@ -9,7 +9,7 @@
 #ifndef BOTAN_TLS_RECORD_LAYER_13_H_
 #define BOTAN_TLS_RECORD_LAYER_13_H_
 
-#include <optional>
+#include <botan/optional.h>
 #include <variant>
 #include <vector>
 #include <botan/span.h>
@@ -28,7 +28,7 @@ struct Record
    {
    Record_Type             type;
    secure_vector<uint8_t>  fragment;
-   std::optional<uint64_t> seq_no;  // unprotected records have no sequence number
+   Botan::optional<uint64_t> seq_no;  // unprotected records have no sequence number
 
    Record(Record_Type record_type, secure_vector<uint8_t> frgmnt)
       : type(record_type)

@@ -16,7 +16,7 @@
 namespace Botan::TLS {
 
 Session_Manager_SQL::Session_Manager_SQL(std::shared_ptr<SQL_Database> db,
-                                         std::string_view passphrase,
+                                         Botan::string_view passphrase,
                                          const std::shared_ptr<RandomNumberGenerator>& rng,
                                          size_t max_sessions) :
    Session_Manager(rng),
@@ -26,7 +26,7 @@ Session_Manager_SQL::Session_Manager_SQL(std::shared_ptr<SQL_Database> db,
    create_or_migrate_and_open(passphrase);
    }
 
-void Session_Manager_SQL::create_or_migrate_and_open(std::string_view passphrase)
+void Session_Manager_SQL::create_or_migrate_and_open(Botan::string_view passphrase)
    {
    switch(detect_schema_revision())
       {
@@ -75,7 +75,7 @@ Session_Manager_SQL::Schema_Revision Session_Manager_SQL::detect_schema_revision
       }
    }
 
-void Session_Manager_SQL::create_with_latest_schema(std::string_view passphrase, Schema_Revision rev)
+void Session_Manager_SQL::create_with_latest_schema(Botan::string_view passphrase, Schema_Revision rev)
    {
    m_db->create_table(
       "CREATE TABLE tls_sessions "
@@ -130,7 +130,7 @@ void Session_Manager_SQL::create_with_latest_schema(std::string_view passphrase,
    stmt->spin();
    }
 
-void Session_Manager_SQL::initialize_existing_database(std::string_view passphrase)
+void Session_Manager_SQL::initialize_existing_database(Botan::string_view passphrase)
    {
    auto stmt = m_db->new_statement("SELECT * FROM tls_sessions_metadata");
    if(!stmt->step())
@@ -162,7 +162,7 @@ void Session_Manager_SQL::initialize_existing_database(std::string_view passphra
 
 void Session_Manager_SQL::store(const Session& session, const Session_Handle& handle)
    {
-   std::optional<lock_guard_type<recursive_mutex_type>> lk;
+   Botan::optional<lock_guard_type<recursive_mutex_type>> lk;
    if(!database_is_threadsafe())
       { lk.emplace(mutex()); }
 
@@ -189,9 +189,9 @@ void Session_Manager_SQL::store(const Session& session, const Session_Handle& ha
    prune_session_cache();
    }
 
-std::optional<Session> Session_Manager_SQL::retrieve_one(const Session_Handle& handle)
+Botan::optional<Session> Session_Manager_SQL::retrieve_one(const Session_Handle& handle)
    {
-   std::optional<lock_guard_type<recursive_mutex_type>> lk;
+   Botan::optional<lock_guard_type<recursive_mutex_type>> lk;
    if(!database_is_threadsafe())
       { lk.emplace(mutex()); }
 
@@ -221,7 +221,7 @@ std::optional<Session> Session_Manager_SQL::retrieve_one(const Session_Handle& h
 std::vector<Session_with_Handle> Session_Manager_SQL::find_some(const Server_Information& info,
                                                                 const size_t max_sessions_hint)
    {
-   std::optional<lock_guard_type<recursive_mutex_type>> lk;
+   Botan::optional<lock_guard_type<recursive_mutex_type>> lk;
    if(!database_is_threadsafe())
       { lk.emplace(mutex()); }
 

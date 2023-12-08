@@ -22,7 +22,7 @@ class BOTAN_TEST_API RFC6979_Nonce_Generator final
       /**
       * Note: keeps persistent reference to order
       */
-      RFC6979_Nonce_Generator(std::string_view hash,
+      RFC6979_Nonce_Generator(Botan::string_view hash,
                               const BigInt& order,
                               const BigInt& x);
 
@@ -47,7 +47,7 @@ BOTAN_TEST_API
 BigInt generate_rfc6979_nonce(const BigInt& x,
                               const BigInt& q,
                               const BigInt& h,
-                              std::string_view hash);
+                              Botan::string_view hash);
 
 }
 

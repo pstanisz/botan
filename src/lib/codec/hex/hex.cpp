@@ -154,14 +154,14 @@ size_t hex_decode(uint8_t output[],
    }
 
 size_t hex_decode(uint8_t output[],
-                  std::string_view input,
+                  Botan::string_view input,
                   bool ignore_ws)
    {
    return hex_decode(output, input.data(), input.length(), ignore_ws);
    }
 
 size_t hex_decode(Botan::span<uint8_t> output,
-                  std::string_view input,
+                  Botan::string_view input,
                   bool ignore_ws)
    {
    return hex_decode(output.data(), input.data(), input.length(), ignore_ws);
@@ -182,7 +182,7 @@ secure_vector<uint8_t> hex_decode_locked(const char input[],
    return bin;
    }
 
-secure_vector<uint8_t> hex_decode_locked(std::string_view input,
+secure_vector<uint8_t> hex_decode_locked(Botan::string_view input,
                                          bool ignore_ws)
    {
    return hex_decode_locked(input.data(), input.size(), ignore_ws);
@@ -203,7 +203,7 @@ std::vector<uint8_t> hex_decode(const char input[],
    return bin;
    }
 
-std::vector<uint8_t> hex_decode(std::string_view input,
+std::vector<uint8_t> hex_decode(Botan::string_view input,
                                 bool ignore_ws)
    {
    return hex_decode(input.data(), input.size(), ignore_ws);

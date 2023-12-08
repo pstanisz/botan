@@ -204,7 +204,7 @@ size_t base32_decode(uint8_t output[],
    }
 
 size_t base32_decode(uint8_t output[],
-                     std::string_view input,
+                     Botan::string_view input,
                      bool ignore_ws)
    {
    return base32_decode(output, input.data(), input.length(), ignore_ws);
@@ -217,7 +217,7 @@ secure_vector<uint8_t> base32_decode(const char input[],
    return base_decode_to_vec<secure_vector<uint8_t>>(Base32(), input, input_length, ignore_ws);
    }
 
-secure_vector<uint8_t> base32_decode(std::string_view input,
+secure_vector<uint8_t> base32_decode(Botan::string_view input,
                                      bool ignore_ws)
    {
    return base32_decode(input.data(), input.size(), ignore_ws);

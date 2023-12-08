@@ -53,7 +53,7 @@ void Session_Manager_In_Memory::store(const Session& session, const Session_Hand
       }
    }
 
-std::optional<Session> Session_Manager_In_Memory::retrieve_one(const Session_Handle& handle)
+Botan::optional<Session> Session_Manager_In_Memory::retrieve_one(const Session_Handle& handle)
    {
    lock_guard_type<recursive_mutex_type> lk(mutex());
 

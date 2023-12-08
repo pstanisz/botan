@@ -21,7 +21,7 @@
 namespace Botan {
 
 XMSS_WOTS_Parameters::ots_algorithm_t
-XMSS_WOTS_Parameters::xmss_wots_id_from_string(std::string_view param_set)
+XMSS_WOTS_Parameters::xmss_wots_id_from_string(Botan::string_view param_set)
    {
    if(param_set == "WOTSP-SHA2_256")
       { return WOTSP_SHA2_256; }
@@ -41,7 +41,7 @@ XMSS_WOTS_Parameters::xmss_wots_id_from_string(std::string_view param_set)
    throw Lookup_Error(fmt("Unknown XMSS-WOTS algorithm param '{}'", param_set));
    }
 
-XMSS_WOTS_Parameters::XMSS_WOTS_Parameters(std::string_view param_set)
+XMSS_WOTS_Parameters::XMSS_WOTS_Parameters(Botan::string_view param_set)
    : XMSS_WOTS_Parameters(xmss_wots_id_from_string(param_set))
    {}
 

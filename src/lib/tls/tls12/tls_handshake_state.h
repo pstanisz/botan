@@ -20,7 +20,7 @@
 #include <botan/pk_keys.h>
 #include <botan/pubkey.h>
 #include <functional>
-#include <optional>
+#include <botan/optional.h>
 
 namespace Botan {
 
@@ -197,7 +197,7 @@ class Handshake_State
 
       Handshake_Transitions m_transitions;
       Protocol_Version m_version;
-      std::optional<Ciphersuite> m_ciphersuite;
+      Botan::optional<Ciphersuite> m_ciphersuite;
       Session_Keys m_session_keys;
       Handshake_Hash m_handshake_hash;
 

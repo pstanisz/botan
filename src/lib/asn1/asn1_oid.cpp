@@ -12,6 +12,7 @@
 #include <botan/internal/parsing.h>
 #include <botan/internal/oid_map.h>
 #include <botan/internal/fmt.h>
+#include <botan/optional.h>
 #include <algorithm>
 #include <sstream>
 
@@ -20,7 +21,7 @@ namespace Botan {
 namespace {
 
 // returns empty on invalid
-std::vector<uint32_t> parse_oid_str(std::string_view oid)
+std::vector<uint32_t> parse_oid_str(Botan::string_view oid)
    {
    try
       {
@@ -56,26 +57,26 @@ std::vector<uint32_t> parse_oid_str(std::string_view oid)
 }
 
 //static
-void OID::register_oid(const OID& oid, std::string_view name)
+void OID::register_oid(const OID& oid, Botan::string_view name)
    {
    OID_Map::global_registry().add_oid(oid, name);
    }
 
 //static
-std::optional<OID> OID::from_name(std::string_view name)
+Botan::optional<OID> OID::from_name(Botan::string_view name)
    {
    if(name.empty())
       throw Invalid_Argument("OID::from_name argument must be non-empty");
 
    OID o = OID_Map::global_registry().str2oid(name);
    if(o.has_value())
-      return std::optional(o);
+      return Botan::optional<OID>(o);
 
    return std::nullopt;
    }
 
 //static
-OID OID::from_string(std::string_view str)
+OID OID::from_string(Botan::string_view str)
    {
    if(str.empty())
       throw Invalid_Argument("OID::from_string argument must be non-empty");
@@ -95,7 +96,7 @@ OID OID::from_string(std::string_view str)
 /*
 * ASN.1 OID Constructor
 */
-OID::OID(std::string_view oid_str)
+OID::OID(Botan::string_view oid_str)
    {
    if(!oid_str.empty())
       {

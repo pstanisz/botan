@@ -20,9 +20,9 @@ Session_Manager::Session_Manager(const std::shared_ptr<RandomNumberGenerator>& r
    BOTAN_ASSERT_NONNULL(m_rng);
    }
 
-std::optional<Session_Handle> Session_Manager::establish(
+Botan::optional<Session_Handle> Session_Manager::establish(
    const Session& session,
-   const std::optional<Session_ID>& id,
+   const Botan::optional<Session_ID>& id,
    bool tls12_no_ticket)
 {
    // Establishing a session does not require locking at this level as
@@ -38,7 +38,7 @@ std::optional<Session_Handle> Session_Manager::establish(
    return handle;
 }
 
-std::optional<Session> Session_Manager::retrieve(const Session_Handle& handle,
+Botan::optional<Session> Session_Manager::retrieve(const Session_Handle& handle,
                                                  Callbacks& callbacks,
                                                  const Policy& policy)
    {
@@ -180,7 +180,7 @@ std::vector<Session_with_Handle> Session_Manager::find(const Server_Information&
    // allowed. I.e. each ticket handed to concurrently requesting threads must
    // be unique. In that case we must hold a lock while retrieving a ticket.
    // Otherwise, no locking is required on this level.
-   std::optional<lock_guard_type<recursive_mutex_type>> lk;
+   Botan::optional<lock_guard_type<recursive_mutex_type>> lk;
    if(!allow_reusing_tickets)
       { lk.emplace(mutex()); }
 
@@ -217,9 +217,9 @@ std::vector<Session_with_Handle> Session_Manager::find(const Server_Information&
 
 #if defined(BOTAN_HAS_TLS_13)
 
-std::optional<std::pair<Session, uint16_t>>
+Botan::optional<std::pair<Session, uint16_t>>
       Session_Manager::choose_from_offered_tickets(const std::vector<Ticket>& tickets,
-                                                   std::string_view hash_function,
+                                                   Botan::string_view hash_function,
                                                    Callbacks& callbacks,
                                                    const Policy& policy)
    {

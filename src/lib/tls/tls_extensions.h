@@ -21,7 +21,7 @@
 #include <botan/tls_session.h>
 
 #include <algorithm>
-#include <optional>
+#include <botan/optional.h>
 #include <variant>
 #include <vector>
 #include <string>
@@ -126,7 +126,7 @@ class BOTAN_UNSTABLE_API Server_Name_Indicator final : public Extension
 
       Extension_Code type() const override { return static_type(); }
 
-      explicit Server_Name_Indicator(std::string_view host_name) :
+      explicit Server_Name_Indicator(Botan::string_view host_name) :
          m_sni_host_name(host_name) {}
 
       Server_Name_Indicator(TLS_Data_Reader& reader,
@@ -189,7 +189,7 @@ class BOTAN_UNSTABLE_API Application_Layer_Protocol_Notification final : public 
       /**
       * Single protocol, used by server
       */
-      explicit Application_Layer_Protocol_Notification(std::string_view protocol) :
+      explicit Application_Layer_Protocol_Notification(Botan::string_view protocol) :
          m_protocols(1, std::string(protocol)) {}
 
       /**
@@ -783,7 +783,7 @@ class BOTAN_UNSTABLE_API EarlyDataIndication final : public Extension
 
       bool empty() const override;
 
-      std::optional<uint32_t> max_early_data_size() const
+      Botan::optional<uint32_t> max_early_data_size() const
          { return m_max_early_data_size; }
 
       EarlyDataIndication(TLS_Data_Reader& reader,
@@ -795,11 +795,11 @@ class BOTAN_UNSTABLE_API EarlyDataIndication final : public Extension
        * this extension in the NewSessionTicket message! Otherwise it stays
        * std::nullopt and results in an empty extension. (RFC 8446 4.2.10).
        */
-      EarlyDataIndication(std::optional<uint32_t> max_early_data_size = std::nullopt)
+      EarlyDataIndication(Botan::optional<uint32_t> max_early_data_size = std::nullopt)
          : m_max_early_data_size(std::move(max_early_data_size)) {}
 
    private:
-      std::optional<uint32_t> m_max_early_data_size;
+      Botan::optional<uint32_t> m_max_early_data_size;
    };
 
 #endif

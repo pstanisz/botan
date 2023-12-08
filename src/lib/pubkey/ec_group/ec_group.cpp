@@ -431,7 +431,7 @@ EC_Group::EC_Group(const OID& domain_oid)
       throw Invalid_Argument("Unknown EC_Group " + domain_oid.to_string());
    }
 
-EC_Group::EC_Group(std::string_view str)
+EC_Group::EC_Group(Botan::string_view str)
    {
    if(str.empty())
       return; // no initialization / uninitialized
@@ -461,7 +461,7 @@ EC_Group::EC_Group(std::string_view str)
    }
 
 //static
-EC_Group EC_Group::EC_Group_from_PEM(std::string_view pem)
+EC_Group EC_Group::EC_Group_from_PEM(Botan::string_view pem)
    {
    const auto ber = PEM_Code::decode_check_label(pem, "EC PARAMETERS");
    return EC_Group(ber.data(), ber.size());
@@ -660,10 +660,10 @@ EC_Point EC_Group::zero_point() const
    return EC_Point(data().curve());
    }
 
-EC_Point EC_Group::hash_to_curve(std::string_view hash_fn,
+EC_Point EC_Group::hash_to_curve(Botan::string_view hash_fn,
                                  const uint8_t input[],
                                  size_t input_len,
-                                 std::string_view domain,
+                                 Botan::string_view domain,
                                  bool random_oracle) const
    {
    return this->hash_to_curve(hash_fn,
@@ -674,7 +674,7 @@ EC_Point EC_Group::hash_to_curve(std::string_view hash_fn,
                               random_oracle);
    }
 
-EC_Point EC_Group::hash_to_curve(std::string_view hash_fn,
+EC_Point EC_Group::hash_to_curve(Botan::string_view hash_fn,
                                  const uint8_t input[],
                                  size_t input_len,
                                  const uint8_t domain_sep[],

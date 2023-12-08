@@ -291,7 +291,7 @@ class Key_Share_ClientHello
          throw Invalid_Argument("Client Hello Key Share does not select a group");
          }
 
-      std::optional<std::reference_wrapper<const Key_Share_Entry>>
+      Botan::optional<std::reference_wrapper<const Key_Share_Entry>>
             find_matching_keyshare(const Key_Share_Entry& server_share) const
          {
          auto match = std::find_if(m_client_shares.cbegin(), m_client_shares.cend(), [&](const auto& offered)

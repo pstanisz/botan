@@ -426,11 +426,11 @@ std::vector<Test::Result> PSS_Path_Validation_Tests::run()
          continue;
          }
 
-      std::optional<Botan::X509_CRL> crl;
-      std::optional<Botan::X509_Certificate> end;
-      std::optional<Botan::X509_Certificate> root;
+      Botan::optional<Botan::X509_CRL> crl;
+      Botan::optional<Botan::X509_Certificate> end;
+      Botan::optional<Botan::X509_Certificate> root;
       Botan::Certificate_Store_In_Memory store;
-      std::optional<Botan::PKCS10_Request> csr;
+      Botan::optional<Botan::PKCS10_Request> csr;
 
       const auto validation_year =
          Botan::to_u32bit((validation_times_iter++)->second);
@@ -462,7 +462,7 @@ std::vector<Test::Result> PSS_Path_Validation_Tests::run()
       if(end && crl && root)    // CRL tests
          {
          const std::vector<Botan::X509_Certificate> cert_path = { *end, *root };
-         const std::vector<std::optional<Botan::X509_CRL>> crls = { crl };
+         const std::vector<Botan::optional<Botan::X509_CRL>> crls = { crl };
          auto crl_status = Botan::PKIX::check_crl(cert_path, crls,
                            validation_time);   // alternatively we could just call crl.check_signature( root_pubkey )
 
@@ -934,7 +934,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
          return Botan::X509_Certificate(Test::data_file(path));
          }
 
-      static std::optional<Botan::OCSP::Response> load_test_OCSP_resp(const std::string& path)
+      static Botan::optional<Botan::OCSP::Response> load_test_OCSP_resp(const std::string& path)
          {
          return Botan::OCSP::Response(Test::read_binary_data_file(path));
          }
@@ -953,7 +953,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
 
          const std::vector<Botan::X509_Certificate> cert_path = { ee, ca, trust_root };
 
-         std::optional<const Botan::OCSP::Response> ocsp = load_test_OCSP_resp("x509/ocsp/randombit_ocsp.der");
+         Botan::optional<const Botan::OCSP::Response> ocsp = load_test_OCSP_resp("x509/ocsp/randombit_ocsp.der");
 
          auto check_path = [&](const std::chrono::system_clock::time_point valid_time,
                                const Botan::Certificate_Status_Code expected)
@@ -1162,7 +1162,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
          auto check_path = [&](const std::chrono::system_clock::time_point valid_time,
                                const Botan::OCSP::Response& ocsp_ee,
                                const Botan::Certificate_Status_Code expected,
-                               const std::optional<Botan::Certificate_Status_Code> also_expected = std::nullopt)
+                               const Botan::optional<Botan::Certificate_Status_Code> also_expected = std::nullopt)
             {
             const auto path_result = Botan::x509_path_validate(cert_path, restrictions, trusted, "", Botan::Usage_Type::UNSPECIFIED,
                                      valid_time, std::chrono::milliseconds(0), {ocsp_ee});

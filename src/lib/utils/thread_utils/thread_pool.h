@@ -18,7 +18,7 @@
 #include <thread>
 #include <future>
 #include <condition_variable>
-#include <optional>
+#include <botan/optional.h>
 
 namespace Botan {
 
@@ -37,7 +37,7 @@ class BOTAN_TEST_API Thread_Pool final
       *        is nullopt then the thread pool is disabled; all
       *        work is executed immediately when queued.
       */
-      Thread_Pool(std::optional<size_t> pool_size);
+      Thread_Pool(Botan::optional<size_t> pool_size);
 
       /**
       * Initialize a thread pool with some number of threads
@@ -45,7 +45,7 @@ class BOTAN_TEST_API Thread_Pool final
       *        then some default value is chosen.
       */
       Thread_Pool(size_t pool_size = 0) :
-         Thread_Pool(std::optional<size_t>(pool_size))
+         Thread_Pool(Botan::optional<size_t>(pool_size))
          {}
 
       ~Thread_Pool() { shutdown(); }

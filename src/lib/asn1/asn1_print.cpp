@@ -272,7 +272,7 @@ std::string ASN1_Pretty_Printer::format(ASN1_Type type_tag,
                                         ASN1_Class class_tag,
                                         size_t level,
                                         size_t length,
-                                        std::string_view value) const
+                                        Botan::string_view value) const
    {
    bool should_skip = false;
 

@@ -89,8 +89,8 @@ PK_Decryptor::decrypt_or_random(const uint8_t in[],
 
 PK_Encryptor_EME::PK_Encryptor_EME(const Public_Key& key,
                                    RandomNumberGenerator& rng,
-                                   std::string_view padding,
-                                   std::string_view provider)
+                                   Botan::string_view padding,
+                                   Botan::string_view provider)
    {
    m_op = key.create_encryption_op(rng, padding, provider);
    if(!m_op)
@@ -119,8 +119,8 @@ size_t PK_Encryptor_EME::maximum_input_size() const
 
 PK_Decryptor_EME::PK_Decryptor_EME(const Private_Key& key,
                                    RandomNumberGenerator& rng,
-                                   std::string_view padding,
-                                   std::string_view provider)
+                                   Botan::string_view padding,
+                                   Botan::string_view provider)
    {
    m_op = key.create_decryption_op(rng, padding, provider);
    if(!m_op)
@@ -143,8 +143,8 @@ secure_vector<uint8_t> PK_Decryptor_EME::do_decrypt(uint8_t& valid_mask,
    }
 
 PK_KEM_Encryptor::PK_KEM_Encryptor(const Public_Key& key,
-                                   std::string_view param,
-                                   std::string_view provider)
+                                   Botan::string_view param,
+                                   Botan::string_view provider)
    {
    m_op = key.create_kem_encryption_op(param, provider);
    if(!m_op)
@@ -187,8 +187,8 @@ size_t PK_KEM_Decryptor::shared_key_length(size_t desired_shared_key_len) const
 
 PK_KEM_Decryptor::PK_KEM_Decryptor(const Private_Key& key,
                                    RandomNumberGenerator& rng,
-                                   std::string_view param,
-                                   std::string_view provider)
+                                   Botan::string_view param,
+                                   Botan::string_view provider)
    {
    m_op = key.create_kem_decryption_op(rng, param, provider);
    if(!m_op)
@@ -214,8 +214,8 @@ PK_Key_Agreement::PK_Key_Agreement(PK_Key_Agreement&&) noexcept = default;
 
 PK_Key_Agreement::PK_Key_Agreement(const Private_Key& key,
                                    RandomNumberGenerator& rng,
-                                   std::string_view kdf,
-                                   std::string_view provider)
+                                   Botan::string_view kdf,
+                                   Botan::string_view provider)
    {
    m_op = key.create_key_agreement_op(rng, kdf, provider);
    if(!m_op)
@@ -249,9 +249,9 @@ static void check_der_format_supported(Signature_Format format, size_t parts)
 
 PK_Signer::PK_Signer(const Private_Key& key,
                      RandomNumberGenerator& rng,
-                     std::string_view emsa,
+                     Botan::string_view emsa,
                      Signature_Format format,
-                     std::string_view provider)
+                     Botan::string_view provider)
    {
    m_op = key.create_signature_op(rng, emsa, provider);
    if(!m_op)
@@ -337,9 +337,9 @@ std::vector<uint8_t> PK_Signer::signature(RandomNumberGenerator& rng)
    }
 
 PK_Verifier::PK_Verifier(const Public_Key& key,
-                         std::string_view emsa,
+                         Botan::string_view emsa,
                          Signature_Format format,
-                         std::string_view provider)
+                         Botan::string_view provider)
    {
    m_op = key.create_verification_op(emsa, provider);
    if(!m_op)
@@ -354,7 +354,7 @@ PK_Verifier::PK_Verifier(const Public_Key& key,
 
 PK_Verifier::PK_Verifier(const Public_Key& key,
                          const AlgorithmIdentifier& signature_algorithm,
-                         std::string_view provider)
+                         Botan::string_view provider)
    {
    m_op = key.create_x509_verification_op(signature_algorithm, provider);
 

@@ -90,7 +90,7 @@ load_public_key(const AlgorithmIdentifier& alg_id,
    {
    const std::string oid_str = alg_id.oid().to_formatted_string();
    const std::vector<std::string> alg_info = split_on(oid_str, '/');
-   std::string_view alg_name = alg_info[0];
+   Botan::string_view alg_name = alg_info[0];
 
 #if defined(BOTAN_HAS_RSA)
    if(alg_name == "RSA")
@@ -181,7 +181,7 @@ load_private_key(const AlgorithmIdentifier& alg_id,
    {
    const std::string oid_str = alg_id.oid().to_formatted_string();
    const std::vector<std::string> alg_info = split_on(oid_str, '/');
-   std::string_view alg_name = alg_info[0];
+   Botan::string_view alg_name = alg_info[0];
 
 #if defined(BOTAN_HAS_RSA)
    if(alg_name == "RSA")
@@ -267,7 +267,7 @@ load_private_key(const AlgorithmIdentifier& alg_id,
    }
 
 BOTAN_PUBLIC_API(3,0) std::unique_ptr<Private_Key>
-create_ec_private_key(std::string_view alg_name,
+create_ec_private_key(Botan::string_view alg_name,
                       const EC_Group& ec_group,
                       RandomNumberGenerator& rng)
    {
@@ -309,10 +309,10 @@ create_ec_private_key(std::string_view alg_name,
 
 
 std::unique_ptr<Private_Key>
-create_private_key(std::string_view alg_name,
+create_private_key(Botan::string_view alg_name,
                    RandomNumberGenerator& rng,
-                   std::string_view params,
-                   std::string_view provider)
+                   Botan::string_view params,
+                   Botan::string_view provider)
    {
    /*
    * Default paramaters are chosen for work factor > 2**128 where possible
@@ -476,7 +476,7 @@ create_private_key(std::string_view alg_name,
    }
 
 std::vector<std::string>
-probe_provider_private_key(std::string_view alg_name,
+probe_provider_private_key(Botan::string_view alg_name,
                            const std::vector<std::string>& possible)
    {
    std::vector<std::string> providers;

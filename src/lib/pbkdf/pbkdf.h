@@ -10,7 +10,7 @@
 
 #include <botan/symkey.h>
 #include <string>
-#include <string_view>
+#include <botan/string_view.h>
 #include <chrono>
 
 /*
@@ -38,8 +38,8 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @param provider provider implementation to choose
       * @return a null pointer if the algo/provider combination cannot be found
       */
-      static std::unique_ptr<PBKDF> create(std::string_view algo_spec,
-                                           std::string_view provider = "");
+      static std::unique_ptr<PBKDF> create(Botan::string_view algo_spec,
+                                           Botan::string_view provider = "");
 
       /**
       * Create an instance based on a name, or throw if the
@@ -47,13 +47,13 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * empty then best available is chosen.
       */
       static std::unique_ptr<PBKDF>
-         create_or_throw(std::string_view algo_spec,
-                         std::string_view provider = "");
+         create_or_throw(Botan::string_view algo_spec,
+                         Botan::string_view provider = "");
 
       /**
       * @return list of available providers for this algorithm, empty if not available
       */
-      static std::vector<std::string> providers(std::string_view algo_spec);
+      static std::vector<std::string> providers(Botan::string_view algo_spec);
 
       /**
       * @return new instance of this same algorithm
@@ -91,7 +91,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @return the number of iterations performed
       */
       virtual size_t pbkdf(uint8_t out[], size_t out_len,
-                           std::string_view passphrase,
+                           Botan::string_view passphrase,
                            const uint8_t salt[], size_t salt_len,
                            size_t iterations,
                            std::chrono::milliseconds msec) const = 0;
@@ -107,7 +107,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @param iterations the number of iterations to use (use 10K or more)
       */
       void pbkdf_iterations(uint8_t out[], size_t out_len,
-                            std::string_view passphrase,
+                            Botan::string_view passphrase,
                             const uint8_t salt[], size_t salt_len,
                             size_t iterations) const;
 
@@ -124,7 +124,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @param iterations set to the number iterations executed
       */
       void pbkdf_timed(uint8_t out[], size_t out_len,
-                         std::string_view passphrase,
+                         Botan::string_view passphrase,
                          const uint8_t salt[], size_t salt_len,
                          std::chrono::milliseconds msec,
                          size_t& iterations) const;
@@ -140,7 +140,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @return the derived key
       */
       secure_vector<uint8_t> pbkdf_iterations(size_t out_len,
-                                           std::string_view passphrase,
+                                           Botan::string_view passphrase,
                                            const uint8_t salt[], size_t salt_len,
                                            size_t iterations) const;
 
@@ -157,7 +157,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @return the derived key
       */
       secure_vector<uint8_t> pbkdf_timed(size_t out_len,
-                                      std::string_view passphrase,
+                                      Botan::string_view passphrase,
                                       const uint8_t salt[], size_t salt_len,
                                       std::chrono::milliseconds msec,
                                       size_t& iterations) const;
@@ -173,7 +173,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @param iterations the number of iterations to use (use 10K or more)
       */
       OctetString derive_key(size_t out_len,
-                             std::string_view passphrase,
+                             Botan::string_view passphrase,
                              const uint8_t salt[], size_t salt_len,
                              size_t iterations) const
          {
@@ -189,7 +189,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       */
       template<typename Alloc>
       OctetString derive_key(size_t out_len,
-                             std::string_view passphrase,
+                             Botan::string_view passphrase,
                              const std::vector<uint8_t, Alloc>& salt,
                              size_t iterations) const
          {
@@ -206,7 +206,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       * @param iterations is set to the number of iterations used
       */
       OctetString derive_key(size_t out_len,
-                             std::string_view passphrase,
+                             Botan::string_view passphrase,
                              const uint8_t salt[], size_t salt_len,
                              std::chrono::milliseconds msec,
                              size_t& iterations) const
@@ -224,7 +224,7 @@ class BOTAN_PUBLIC_API(2,0) PBKDF
       */
       template<typename Alloc>
       OctetString derive_key(size_t out_len,
-                             std::string_view passphrase,
+                             Botan::string_view passphrase,
                              const std::vector<uint8_t, Alloc>& salt,
                              std::chrono::milliseconds msec,
                              size_t& iterations) const
@@ -245,14 +245,14 @@ typedef PBKDF S2K;
 * @return pointer to newly allocated object of that type
 */
 BOTAN_DEPRECATED("Use PBKDF::create_or_throw")
-inline PBKDF* get_pbkdf(std::string_view algo_spec,
-                        std::string_view provider = "")
+inline PBKDF* get_pbkdf(Botan::string_view algo_spec,
+                        Botan::string_view provider = "")
    {
    return PBKDF::create_or_throw(algo_spec, provider).release();
    }
 
 BOTAN_DEPRECATED("Use PBKDF::create_or_throw")
-inline PBKDF* get_s2k(std::string_view algo_spec)
+inline PBKDF* get_s2k(Botan::string_view algo_spec)
    {
    return PBKDF::create_or_throw(algo_spec).release();
    }

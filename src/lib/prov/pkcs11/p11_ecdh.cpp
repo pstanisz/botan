@@ -44,7 +44,7 @@ namespace {
 class PKCS11_ECDH_KA_Operation final : public PK_Ops::Key_Agreement
    {
    public:
-      PKCS11_ECDH_KA_Operation(const PKCS11_EC_PrivateKey& key, std::string_view params)
+      PKCS11_ECDH_KA_Operation(const PKCS11_EC_PrivateKey& key, Botan::string_view params)
          : PK_Ops::Key_Agreement(),
            m_key(key),
            m_mechanism(MechanismWrapper::create_ecdh_mechanism(params))
@@ -102,8 +102,8 @@ class PKCS11_ECDH_KA_Operation final : public PK_Ops::Key_Agreement
 
 std::unique_ptr<PK_Ops::Key_Agreement>
 PKCS11_ECDH_PrivateKey::create_key_agreement_op(RandomNumberGenerator& /*rng*/,
-                                                std::string_view params,
-                                                std::string_view /*provider*/) const
+                                                Botan::string_view params,
+                                                Botan::string_view /*provider*/) const
    {
    return std::make_unique<PKCS11_ECDH_KA_Operation>(*this, params);
    }

@@ -362,7 +362,7 @@ Session_Ticket Client_Hello_12::session_ticket() const
    return {};
    }
 
-std::optional<Session_Handle> Client_Hello_12::session_handle() const
+Botan::optional<Session_Handle> Client_Hello_12::session_handle() const
    {
    // RFC 5077 3.4
    //    If a ticket is presented by the client, the server MUST NOT attempt
@@ -768,9 +768,9 @@ Client_Hello_13::Client_Hello_13(std::unique_ptr<Client_Hello_Internal> data)
 Client_Hello_13::Client_Hello_13(const Policy& policy,
                                  Callbacks& cb,
                                  RandomNumberGenerator& rng,
-                                 std::string_view hostname,
+                                 Botan::string_view hostname,
                                  const std::vector<std::string>& next_protocols,
-                                 std::optional<Session_with_Handle>& session)
+                                 Botan::optional<Session_with_Handle>& session)
    {
    // RFC 8446 4.1.2
    //    In TLS 1.3, the client indicates its version preferences in the
@@ -1056,7 +1056,7 @@ void Client_Hello_13::calculate_psk_binders(Transcript_Hash_State ths)
    psk->calculate_binders(ths);
    }
 
-std::optional<Protocol_Version> Client_Hello_13::highest_supported_version(const Policy& policy) const
+Botan::optional<Protocol_Version> Client_Hello_13::highest_supported_version(const Policy& policy) const
    {
    // RFC 8446 4.2.1
    //    The "supported_versions" extension is used by the client to indicate
@@ -1066,7 +1066,7 @@ std::optional<Protocol_Version> Client_Hello_13::highest_supported_version(const
    const auto supvers = m_data->extensions().get<Supported_Versions>();
    BOTAN_ASSERT_NONNULL(supvers);
 
-   std::optional<Protocol_Version> result;
+   Botan::optional<Protocol_Version> result;
 
    for(const auto& v : supvers->versions())
       {
@@ -1078,8 +1078,8 @@ std::optional<Protocol_Version> Client_Hello_13::highest_supported_version(const
          { continue; }
 
       result = (result.has_value())
-         ? std::optional(std::max(result.value(), v))
-         : std::optional(v);
+         ? Botan::optional<Protocol_Version>(std::max(result.value(), v))
+         : Botan::optional<Protocol_Version>(v);
       }
 
    return result;

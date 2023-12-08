@@ -9,6 +9,7 @@
 #define BOTAN_RTSS_H_
 
 #include <botan/secmem.h>
+#include <botan/string_view.h>
 #include <string>
 #include <vector>
 
@@ -49,7 +50,7 @@ class BOTAN_PUBLIC_API(2,0) RTSS_Share final
          split(uint8_t M, uint8_t N,
                const uint8_t secret[], uint16_t secret_len,
                const std::vector<uint8_t>& identifier,
-               std::string_view hash_fn,
+               Botan::string_view hash_fn,
                RandomNumberGenerator& rng);
 
       /**
@@ -63,7 +64,7 @@ class BOTAN_PUBLIC_API(2,0) RTSS_Share final
       /**
       * @param hex_input the share encoded in hexadecimal
       */
-      explicit RTSS_Share(std::string_view hex_input);
+      explicit RTSS_Share(Botan::string_view hex_input);
 
       /**
       * @param data the shared data

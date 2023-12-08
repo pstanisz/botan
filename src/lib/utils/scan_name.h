@@ -9,7 +9,7 @@
 #define BOTAN_SCAN_NAME_H_
 
 #include <botan/types.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <vector>
 
@@ -32,7 +32,7 @@ class SCAN_Name final
       * Create a SCAN_Name
       * @param algo_spec A SCAN-format name
       */
-      explicit SCAN_Name(std::string_view algo_spec);
+      explicit SCAN_Name(Botan::string_view algo_spec);
 
       /**
       * @return original input string
@@ -68,7 +68,7 @@ class SCAN_Name final
       * @param def_value the default value
       * @return ith argument or the default value
       */
-      std::string arg(size_t i, std::string_view def_value) const;
+      std::string arg(size_t i, Botan::string_view def_value) const;
 
       /**
       * @param i which argument
@@ -104,7 +104,7 @@ class SCAN_Name final
 
 // This is unrelated but it is convenient to stash it here
 template<typename T>
-std::vector<std::string> probe_providers_of(std::string_view algo_spec,
+std::vector<std::string> probe_providers_of(Botan::string_view algo_spec,
                                             const std::vector<std::string>& possible = { "base" })
    {
    std::vector<std::string> providers;

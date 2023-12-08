@@ -9,7 +9,7 @@
 #define BOTAN_PEM_H_
 
 #include <botan/secmem.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 
 namespace Botan {
@@ -27,7 +27,7 @@ namespace PEM_Code {
 */
 BOTAN_PUBLIC_API(2,0) std::string encode(const uint8_t data[],
                                          size_t data_len,
-                                         std::string_view label,
+                                         Botan::string_view label,
                                          size_t line_width = 64);
 
 /**
@@ -38,7 +38,7 @@ BOTAN_PUBLIC_API(2,0) std::string encode(const uint8_t data[],
 */
 template<typename Alloc>
 std::string encode(const std::vector<uint8_t, Alloc>& data,
-                   std::string_view label,
+                   Botan::string_view label,
                    size_t line_width = 64)
    {
    return encode(data.data(), data.size(), label, line_width);
@@ -57,7 +57,7 @@ BOTAN_PUBLIC_API(2,0) secure_vector<uint8_t> decode(DataSource& pem,
 * @param pem a string containing PEM encoded data
 * @param label is set to the PEM label found for later inspection
 */
-BOTAN_PUBLIC_API(2,0) secure_vector<uint8_t> decode(std::string_view pem,
+BOTAN_PUBLIC_API(2,0) secure_vector<uint8_t> decode(Botan::string_view pem,
                                                     std::string& label);
 
 /**
@@ -67,7 +67,7 @@ BOTAN_PUBLIC_API(2,0) secure_vector<uint8_t> decode(std::string_view pem,
 */
 BOTAN_PUBLIC_API(2,0)
 secure_vector<uint8_t> decode_check_label(DataSource& pem,
-                                          std::string_view label);
+                                          Botan::string_view label);
 
 /**
 * Decode PEM data
@@ -75,14 +75,14 @@ secure_vector<uint8_t> decode_check_label(DataSource& pem,
 * @param label is what we expect the label to be
 */
 BOTAN_PUBLIC_API(2,0)
-secure_vector<uint8_t> decode_check_label(std::string_view pem,
-                                          std::string_view label);
+secure_vector<uint8_t> decode_check_label(Botan::string_view pem,
+                                          Botan::string_view label);
 
 /**
 * Heuristic test for PEM data.
 */
 BOTAN_PUBLIC_API(2,0) bool matches(DataSource& source,
-                                   std::string_view extra = "",
+                                   Botan::string_view extra = "",
                                    size_t search_range = 4096);
 
 }

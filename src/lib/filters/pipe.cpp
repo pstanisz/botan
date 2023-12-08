@@ -29,7 +29,7 @@ class Null_Filter final : public Filter
 
 }
 
-Pipe::Invalid_Message_Number::Invalid_Message_Number(std::string_view where, message_id msg) :
+Pipe::Invalid_Message_Number::Invalid_Message_Number(Botan::string_view where, message_id msg) :
    Invalid_Argument(fmt("Pipe::{}: Invalid message number {}", where, msg))
    {}
 
@@ -129,7 +129,7 @@ void Pipe::process_msg(const std::vector<uint8_t>& input)
 /*
 * Process a full message at once
 */
-void Pipe::process_msg(std::string_view input)
+void Pipe::process_msg(Botan::string_view input)
    {
    process_msg(cast_char_ptr_to_uint8(input.data()), input.length());
    }

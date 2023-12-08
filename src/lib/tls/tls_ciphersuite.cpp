@@ -95,7 +95,7 @@ bool Ciphersuite::signature_used() const
    return auth_method() != Auth_Method::IMPLICIT;
    }
 
-std::optional<Ciphersuite> Ciphersuite::by_id(uint16_t suite)
+Botan::optional<Ciphersuite> Ciphersuite::by_id(uint16_t suite)
    {
    const std::vector<Ciphersuite>& all_suites = all_known_ciphersuites();
    auto s = std::lower_bound(all_suites.begin(), all_suites.end(), suite);
@@ -108,7 +108,7 @@ std::optional<Ciphersuite> Ciphersuite::by_id(uint16_t suite)
    return std::nullopt; // some unknown ciphersuite
    }
 
-std::optional<Ciphersuite> Ciphersuite::from_name(std::string_view name)
+Botan::optional<Ciphersuite> Ciphersuite::from_name(Botan::string_view name)
    {
    const std::vector<Ciphersuite>& all_suites = all_known_ciphersuites();
 
@@ -123,12 +123,12 @@ std::optional<Ciphersuite> Ciphersuite::from_name(std::string_view name)
 
 namespace {
 
-bool have_hash(std::string_view prf)
+bool have_hash(Botan::string_view prf)
    {
    return (!HashFunction::providers(prf).empty());
    }
 
-bool have_cipher(std::string_view cipher)
+bool have_cipher(Botan::string_view cipher)
    {
    return (!BlockCipher::providers(cipher).empty()) ||
       (!StreamCipher::providers(cipher).empty());

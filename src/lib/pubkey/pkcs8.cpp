@@ -149,7 +149,7 @@ std::string PEM_encode(const Private_Key& key)
 namespace {
 
 std::pair<std::string, std::string>
-choose_pbe_params(std::string_view pbe_algo, std::string_view key_algo)
+choose_pbe_params(Botan::string_view pbe_algo, Botan::string_view key_algo)
    {
    if(pbe_algo.empty())
       {
@@ -193,9 +193,9 @@ choose_pbe_params(std::string_view pbe_algo, std::string_view key_algo)
 */
 std::vector<uint8_t> BER_encode(const Private_Key& key,
                              RandomNumberGenerator& rng,
-                             std::string_view pass,
+                             Botan::string_view pass,
                              std::chrono::milliseconds msec,
-                             std::string_view pbe_algo)
+                             Botan::string_view pbe_algo)
    {
 #if defined(BOTAN_HAS_PKCS5_PBES2)
    const auto pbe_params = choose_pbe_params(pbe_algo, key.algo_name());
@@ -223,9 +223,9 @@ std::vector<uint8_t> BER_encode(const Private_Key& key,
 */
 std::string PEM_encode(const Private_Key& key,
                        RandomNumberGenerator& rng,
-                       std::string_view pass,
+                       Botan::string_view pass,
                        std::chrono::milliseconds msec,
-                       std::string_view pbe_algo)
+                       Botan::string_view pbe_algo)
    {
    if(pass.empty())
       return PEM_encode(key);
@@ -239,10 +239,10 @@ std::string PEM_encode(const Private_Key& key,
 */
 std::vector<uint8_t> BER_encode_encrypted_pbkdf_iter(const Private_Key& key,
                                                      RandomNumberGenerator& rng,
-                                                     std::string_view pass,
+                                                     Botan::string_view pass,
                                                      size_t pbkdf_iterations,
-                                                     std::string_view cipher,
-                                                     std::string_view pbkdf_hash)
+                                                     Botan::string_view cipher,
+                                                     Botan::string_view pbkdf_hash)
    {
 #if defined(BOTAN_HAS_PKCS5_PBES2)
    const std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbe_info =
@@ -272,10 +272,10 @@ std::vector<uint8_t> BER_encode_encrypted_pbkdf_iter(const Private_Key& key,
 */
 std::string PEM_encode_encrypted_pbkdf_iter(const Private_Key& key,
                                             RandomNumberGenerator& rng,
-                                            std::string_view pass,
+                                            Botan::string_view pass,
                                             size_t pbkdf_iterations,
-                                            std::string_view cipher,
-                                            std::string_view pbkdf_hash)
+                                            Botan::string_view cipher,
+                                            Botan::string_view pbkdf_hash)
    {
    return PEM_Code::encode(
       PKCS8::BER_encode_encrypted_pbkdf_iter(key, rng, pass, pbkdf_iterations, cipher, pbkdf_hash),
@@ -287,11 +287,11 @@ std::string PEM_encode_encrypted_pbkdf_iter(const Private_Key& key,
 */
 std::vector<uint8_t> BER_encode_encrypted_pbkdf_msec(const Private_Key& key,
                                                      RandomNumberGenerator& rng,
-                                                     std::string_view pass,
+                                                     Botan::string_view pass,
                                                      std::chrono::milliseconds pbkdf_msec,
                                                      size_t* pbkdf_iterations,
-                                                     std::string_view cipher,
-                                                     std::string_view pbkdf_hash)
+                                                     Botan::string_view cipher,
+                                                     Botan::string_view pbkdf_hash)
    {
 #if defined(BOTAN_HAS_PKCS5_PBES2)
    const std::pair<AlgorithmIdentifier, std::vector<uint8_t>> pbe_info =
@@ -320,11 +320,11 @@ std::vector<uint8_t> BER_encode_encrypted_pbkdf_msec(const Private_Key& key,
 */
 std::string PEM_encode_encrypted_pbkdf_msec(const Private_Key& key,
                                             RandomNumberGenerator& rng,
-                                            std::string_view pass,
+                                            Botan::string_view pass,
                                             std::chrono::milliseconds pbkdf_msec,
                                             size_t* pbkdf_iterations,
-                                            std::string_view cipher,
-                                            std::string_view pbkdf_hash)
+                                            Botan::string_view cipher,
+                                            Botan::string_view pbkdf_hash)
    {
    return PEM_Code::encode(
       PKCS8::BER_encode_encrypted_pbkdf_msec(key, rng, pass, pbkdf_msec, pbkdf_iterations, cipher, pbkdf_hash),
@@ -372,7 +372,7 @@ std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
    }
 
 std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source,
-                                      std::string_view pass)
+                                      Botan::string_view pass)
    {
    Botan::DataSource_Memory ds(source);
    return load_key(ds, pass);
@@ -388,7 +388,7 @@ std::unique_ptr<Private_Key> load_key(Botan::span<const uint8_t> source)
 * Extract an encrypted private key and return it
 */
 std::unique_ptr<Private_Key> load_key(DataSource& source,
-                                      std::string_view pass)
+                                      Botan::string_view pass)
    {
    return load_key(source, [pass]() { return std::string(pass); }, true);
    }

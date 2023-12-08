@@ -10,6 +10,7 @@
 #define BOTAN_DATA_SINK_H_
 
 #include <botan/filter.h>
+#include <botan/string_view.h>
 #include <memory>
 #include <iosfwd>
 
@@ -41,7 +42,7 @@ class BOTAN_PUBLIC_API(2,0) DataSink_Stream final : public DataSink
       * @param name identifier
       */
       DataSink_Stream(std::ostream& stream,
-                      std::string_view name = "<std::ostream>");
+                      Botan::string_view name = "<std::ostream>");
 
 #if defined(BOTAN_TARGET_OS_HAS_FILESYSTEM)
 
@@ -51,7 +52,7 @@ class BOTAN_PUBLIC_API(2,0) DataSink_Stream final : public DataSink
       * @param use_binary indicates whether to treat the file
       * as a binary file or not
       */
-      DataSink_Stream(std::string_view pathname,
+      DataSink_Stream(Botan::string_view pathname,
                       bool use_binary = false);
 #endif
 

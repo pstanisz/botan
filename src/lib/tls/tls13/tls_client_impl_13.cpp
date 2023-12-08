@@ -128,7 +128,7 @@ bool Client_Impl_13::handshake_finished() const
    return m_handshake_state.handshake_finished();
    }
 
-std::optional<Session_with_Handle> Client_Impl_13::find_session_for_resumption()
+Botan::optional<Session_with_Handle> Client_Impl_13::find_session_for_resumption()
    {
    // RFC 8446 4.6.1
    //    Clients MUST only resume if the new SNI value is valid for the

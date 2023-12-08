@@ -9,7 +9,7 @@
 #ifndef BOTAN_TLS_HANDSHAKE_STATE_13_H_
 #define BOTAN_TLS_HANDSHAKE_STATE_13_H_
 
-#include <optional>
+#include <botan/optional.h>
 #include <variant>
 #include <vector>
 #include <functional>
@@ -66,7 +66,7 @@ class BOTAN_TEST_API Handshake_State_13_Base
 
    private:
       template<typename MessageT>
-      const MessageT& get(const std::optional<MessageT>& opt) const
+      const MessageT& get(const Botan::optional<MessageT>& opt) const
          {
          if(!opt.has_value())
             { throw Invalid_State("TLS handshake message not set"); }
@@ -74,7 +74,7 @@ class BOTAN_TEST_API Handshake_State_13_Base
          }
 
       template<typename MessageT>
-      MessageT& get(std::optional<MessageT>& opt)
+      MessageT& get(Botan::optional<MessageT>& opt)
          {
          if(!opt.has_value())
             { throw Invalid_State("TLS handshake message not set"); }
@@ -83,19 +83,19 @@ class BOTAN_TEST_API Handshake_State_13_Base
 
       Connection_Side m_side;
 
-      std::optional<Client_Hello_13> m_client_hello;
-      std::optional<Client_Hello_12> m_client_hello_12;
-      std::optional<Server_Hello_13> m_server_hello;
-      std::optional<Server_Hello_12> m_server_hello_12;
-      std::optional<Hello_Retry_Request> m_hello_retry_request;
-      std::optional<Encrypted_Extensions> m_encrypted_extensions;
-      std::optional<Certificate_Request_13> m_certificate_request;
-      std::optional<Certificate_13> m_server_certificate;
-      std::optional<Certificate_13> m_client_certificate;
-      std::optional<Certificate_Verify_13> m_server_certificate_verify;
-      std::optional<Certificate_Verify_13> m_client_certificate_verify;
-      std::optional<Finished_13> m_server_finished;
-      std::optional<Finished_13> m_client_finished;
+      Botan::optional<Client_Hello_13> m_client_hello;
+      Botan::optional<Client_Hello_12> m_client_hello_12;
+      Botan::optional<Server_Hello_13> m_server_hello;
+      Botan::optional<Server_Hello_12> m_server_hello_12;
+      Botan::optional<Hello_Retry_Request> m_hello_retry_request;
+      Botan::optional<Encrypted_Extensions> m_encrypted_extensions;
+      Botan::optional<Certificate_Request_13> m_certificate_request;
+      Botan::optional<Certificate_13> m_server_certificate;
+      Botan::optional<Certificate_13> m_client_certificate;
+      Botan::optional<Certificate_Verify_13> m_server_certificate_verify;
+      Botan::optional<Certificate_Verify_13> m_client_certificate_verify;
+      Botan::optional<Finished_13> m_server_finished;
+      Botan::optional<Finished_13> m_client_finished;
    };
 }
 

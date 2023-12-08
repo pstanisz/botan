@@ -21,12 +21,12 @@ namespace Botan {
 
 namespace {
 
-bool known_pbes_cipher_mode(std::string_view mode)
+bool known_pbes_cipher_mode(Botan::string_view mode)
    {
    return (mode == "CBC" || mode == "GCM" || mode == "SIV");
    }
 
-secure_vector<uint8_t> derive_key(std::string_view passphrase,
+secure_vector<uint8_t> derive_key(Botan::string_view passphrase,
                                   const AlgorithmIdentifier& kdf_algo,
                                   size_t default_key_size)
    {
@@ -98,8 +98,8 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
       }
    }
 
-secure_vector<uint8_t> derive_key(std::string_view passphrase,
-                                  std::string_view digest,
+secure_vector<uint8_t> derive_key(Botan::string_view passphrase,
+                                  Botan::string_view digest,
                                   RandomNumberGenerator& rng,
                                   size_t* msec_in_iterations_out,
                                   size_t iterations_if_msec_null,
@@ -199,11 +199,11 @@ secure_vector<uint8_t> derive_key(std::string_view passphrase,
 */
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt_shared(Botan::span<const uint8_t> key_bits,
-                     std::string_view passphrase,
+                     Botan::string_view passphrase,
                      size_t* msec_in_iterations_out,
                      size_t iterations_if_msec_null,
-                     std::string_view cipher,
-                     std::string_view prf,
+                     Botan::string_view cipher,
+                     Botan::string_view prf,
                      RandomNumberGenerator& rng)
    {
    auto enc = Cipher_Mode::create(cipher, Cipher_Dir::Encryption);
@@ -250,10 +250,10 @@ pbes2_encrypt_shared(Botan::span<const uint8_t> key_bits,
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt(Botan::span<const uint8_t> key_bits,
-              std::string_view passphrase,
+              Botan::string_view passphrase,
               std::chrono::milliseconds msec,
-              std::string_view cipher,
-              std::string_view digest,
+              Botan::string_view cipher,
+              Botan::string_view digest,
               RandomNumberGenerator& rng)
    {
    size_t msec_in_iterations_out = static_cast<size_t>(msec.count());
@@ -263,11 +263,11 @@ pbes2_encrypt(Botan::span<const uint8_t> key_bits,
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
-                   std::string_view passphrase,
+                   Botan::string_view passphrase,
                    std::chrono::milliseconds msec,
                    size_t* out_iterations_if_nonnull,
-                   std::string_view cipher,
-                   std::string_view digest,
+                   Botan::string_view cipher,
+                   Botan::string_view digest,
                    RandomNumberGenerator& rng)
    {
    size_t msec_in_iterations_out = static_cast<size_t>(msec.count());
@@ -282,10 +282,10 @@ pbes2_encrypt_msec(Botan::span<const uint8_t> key_bits,
 
 std::pair<AlgorithmIdentifier, std::vector<uint8_t>>
 pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
-                   std::string_view passphrase,
+                   Botan::string_view passphrase,
                    size_t pbkdf_iter,
-                   std::string_view cipher,
-                   std::string_view digest,
+                   Botan::string_view cipher,
+                   Botan::string_view digest,
                    RandomNumberGenerator& rng)
    {
    return pbes2_encrypt_shared(key_bits, passphrase, nullptr, pbkdf_iter, cipher, digest, rng);
@@ -293,7 +293,7 @@ pbes2_encrypt_iter(Botan::span<const uint8_t> key_bits,
 
 secure_vector<uint8_t>
 pbes2_decrypt(Botan::span<const uint8_t> key_bits,
-              std::string_view passphrase,
+              Botan::string_view passphrase,
               const std::vector<uint8_t>& params)
    {
    AlgorithmIdentifier kdf_algo, enc_algo;

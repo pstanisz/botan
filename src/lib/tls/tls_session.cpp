@@ -59,7 +59,7 @@ Opaque_Session_Handle Session_Handle::opaque_handle() const
    return Opaque_Session_Handle(std::visit([](const auto& handle) { return handle.get(); }, m_handle));
    }
 
-std::optional<Session_ID> Session_Handle::id() const
+Botan::optional<Session_ID> Session_Handle::id() const
    {
    if(is_id())
       { return std::get<Session_ID>(m_handle); }
@@ -75,7 +75,7 @@ std::optional<Session_ID> Session_Handle::id() const
    return std::nullopt;
    }
 
-std::optional<Session_Ticket> Session_Handle::ticket() const
+Botan::optional<Session_Ticket> Session_Handle::ticket() const
    {
    if(is_ticket())
       { return std::get<Session_Ticket>(m_handle); }
@@ -222,7 +222,7 @@ Session::Session(const secure_vector<uint8_t>& master_secret,
 #if defined(BOTAN_HAS_TLS_13)
 
 Session::Session(const secure_vector<uint8_t>& session_psk,
-                 const std::optional<uint32_t>& max_early_data_bytes,
+                 const Botan::optional<uint32_t>& max_early_data_bytes,
                  uint32_t ticket_age_add,
                  std::chrono::seconds lifetime_hint,
                  Protocol_Version version,
@@ -262,7 +262,7 @@ Session::Session(const secure_vector<uint8_t>& session_psk,
    }
 
 Session::Session(secure_vector<uint8_t>&& session_psk,
-                 const std::optional<uint32_t>& max_early_data_bytes,
+                 const Botan::optional<uint32_t>& max_early_data_bytes,
                  std::chrono::seconds lifetime_hint,
                  const std::vector<X509_Certificate>& peer_certs,
                  const Client_Hello_13& client_hello,
@@ -289,7 +289,7 @@ Session::Session(secure_vector<uint8_t>&& session_psk,
 
 #endif
 
-Session::Session(std::string_view pem)
+Session::Session(Botan::string_view pem)
    : Session(PEM_Code::decode_check_label(pem, "TLS SESSION")) {}
 
 Session::Session(Botan::span<const uint8_t> ber_data)

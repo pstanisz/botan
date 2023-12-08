@@ -113,8 +113,8 @@ XMSS_PublicKey::XMSS_PublicKey(XMSS_Parameters::xmss_algorithm_t xmss_oid,
    }
 
 std::unique_ptr<PK_Ops::Verification>
-XMSS_PublicKey::create_verification_op(std::string_view /*params*/,
-                                       std::string_view provider) const
+XMSS_PublicKey::create_verification_op(Botan::string_view /*params*/,
+                                       Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       {
@@ -125,7 +125,7 @@ XMSS_PublicKey::create_verification_op(std::string_view /*params*/,
 
 std::unique_ptr<PK_Ops::Verification>
 XMSS_PublicKey::create_x509_verification_op(const AlgorithmIdentifier& alg_id,
-                                            std::string_view provider) const
+                                            Botan::string_view provider) const
    {
    if(provider == "base" || provider.empty())
       {

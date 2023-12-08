@@ -17,7 +17,7 @@
 
 #include <functional>
 #include <thread>
-#include <optional>
+#include <botan/optional.h>
 
 #include <botan/asio_stream.h>
 #include <botan/auto_rng.h>
@@ -363,9 +363,9 @@ class Client : public Peer
    {
       static void accept_all(
          const std::vector<Botan::X509_Certificate>&,
-         const std::vector<std::optional<Botan::OCSP::Response>>&,
+         const std::vector<Botan::optional<Botan::OCSP::Response>>&,
          const std::vector<Botan::Certificate_Store*>&, Botan::Usage_Type,
-         std::string_view, const Botan::TLS::Policy&) {}
+         Botan::string_view, const Botan::TLS::Policy&) {}
 
    public:
       Client(std::shared_ptr<const Botan::TLS::Policy> policy, net::io_context& ioc)

@@ -9,7 +9,7 @@
 #define BOTAN_PARSING_UTILS_H_
 
 #include <botan/types.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <vector>
 #include <istream>
@@ -23,7 +23,7 @@ namespace Botan {
 * @return the name components
 */
 std::vector<std::string>
-parse_algorithm_name(std::string_view scan_name);
+parse_algorithm_name(Botan::string_view scan_name);
 
 /**
 * Split a string
@@ -32,7 +32,7 @@ parse_algorithm_name(std::string_view scan_name);
 * @return string split by delim
 */
 BOTAN_TEST_API std::vector<std::string> split_on(
-   std::string_view str, char delim);
+   Botan::string_view str, char delim);
 
 /**
 * Join a string
@@ -48,21 +48,21 @@ std::string string_join(const std::vector<std::string>& strs,
 * @param str the string to convert
 * @return number value of the string
 */
-BOTAN_TEST_API uint32_t to_u32bit(std::string_view str);
+BOTAN_TEST_API uint32_t to_u32bit(Botan::string_view str);
 
 /**
 * Convert a decimal string to a number
 * @param str the string to convert
 * @return number value of the string
 */
-uint16_t to_uint16(std::string_view str);
+uint16_t to_uint16(Botan::string_view str);
 
 /**
 * Convert a string representation of an IPv4 address to a number
 * @param ip_str the string representation
 * @return integer IPv4 address
 */
-uint32_t string_to_ipv4(std::string_view ip_str);
+uint32_t string_to_ipv4(Botan::string_view ip_str);
 
 /**
 * Convert an IPv4 address to a string
@@ -89,16 +89,16 @@ std::map<std::string, std::string> read_cfg(std::istream& is);
 * backslash. Backslash can also be escaped.
 */
 BOTAN_TEST_API
-std::map<std::string, std::string> read_kv(std::string_view kv);
+std::map<std::string, std::string> read_kv(Botan::string_view kv);
 
-std::string tolower_string(std::string_view s);
+std::string tolower_string(Botan::string_view s);
 
 /**
 * Check if the given hostname is a match for the specified wildcard
 */
 BOTAN_TEST_API
-bool host_wildcard_match(std::string_view wildcard,
-                         std::string_view host);
+bool host_wildcard_match(Botan::string_view wildcard,
+                         Botan::string_view host);
 
 
 }

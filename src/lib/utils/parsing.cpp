@@ -18,7 +18,7 @@
 
 namespace Botan {
 
-uint16_t to_uint16(std::string_view str)
+uint16_t to_uint16(Botan::string_view str)
    {
    const uint32_t x = to_u32bit(str);
 
@@ -28,7 +28,7 @@ uint16_t to_uint16(std::string_view str)
    return static_cast<uint16_t>(x);
    }
 
-uint32_t to_u32bit(std::string_view str_view)
+uint32_t to_u32bit(Botan::string_view str_view)
    {
    const std::string str(str_view);
 
@@ -58,7 +58,7 @@ uint32_t to_u32bit(std::string_view str_view)
 /*
 * Parse a SCAN-style algorithm name
 */
-std::vector<std::string> parse_algorithm_name(std::string_view namex)
+std::vector<std::string> parse_algorithm_name(Botan::string_view namex)
    {
    if(namex.find('(') == std::string::npos &&
       namex.find(')') == std::string::npos)
@@ -114,7 +114,7 @@ std::vector<std::string> parse_algorithm_name(std::string_view namex)
    return elems;
    }
 
-std::vector<std::string> split_on(std::string_view str, char delim)
+std::vector<std::string> split_on(Botan::string_view str, char delim)
    {
    std::vector<std::string> elems;
    if(str.empty()) return elems;
@@ -161,7 +161,7 @@ std::string string_join(const std::vector<std::string>& strs, char delim)
 /*
 * Convert a decimal-dotted string to binary IP
 */
-uint32_t string_to_ipv4(std::string_view str)
+uint32_t string_to_ipv4(Botan::string_view str)
    {
    const auto parts = split_on(str, '.');
 
@@ -208,7 +208,7 @@ std::string ipv4_to_string(uint32_t ip)
    return str;
    }
 
-std::string tolower_string(std::string_view in)
+std::string tolower_string(Botan::string_view in)
    {
    std::string s(in);
    for(size_t i = 0; i != s.size(); ++i)
@@ -220,7 +220,7 @@ std::string tolower_string(std::string_view in)
    return s;
    }
 
-bool host_wildcard_match(std::string_view issued_, std::string_view host_)
+bool host_wildcard_match(Botan::string_view issued_, Botan::string_view host_)
    {
    const std::string issued = tolower_string(issued_);
    const std::string host = tolower_string(host_);

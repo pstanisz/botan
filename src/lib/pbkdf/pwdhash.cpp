@@ -47,8 +47,8 @@ void PasswordHash::derive_key(uint8_t out[], size_t out_len,
    }
 
 std::unique_ptr<PasswordHashFamily>
-PasswordHashFamily::create(std::string_view algo_spec,
-                           std::string_view provider)
+PasswordHashFamily::create(Botan::string_view algo_spec,
+                           Botan::string_view provider)
    {
    const SCAN_Name req(algo_spec);
 
@@ -115,8 +115,8 @@ PasswordHashFamily::create(std::string_view algo_spec,
 
 //static
 std::unique_ptr<PasswordHashFamily>
-PasswordHashFamily::create_or_throw(std::string_view algo,
-                                    std::string_view provider)
+PasswordHashFamily::create_or_throw(Botan::string_view algo,
+                                    Botan::string_view provider)
    {
    if(auto pbkdf = PasswordHashFamily::create(algo, provider))
       {
@@ -125,7 +125,7 @@ PasswordHashFamily::create_or_throw(std::string_view algo,
    throw Lookup_Error("PasswordHashFamily", algo, provider);
    }
 
-std::vector<std::string> PasswordHashFamily::providers(std::string_view algo_spec)
+std::vector<std::string> PasswordHashFamily::providers(Botan::string_view algo_spec)
    {
    return probe_providers_of<PasswordHashFamily>(algo_spec);
    }

@@ -871,7 +871,7 @@ class Slot;
 * @param so_pin PIN of the security officer. Will be set if the token is uninitialized other this has to be the current SO_PIN
 * @param pin The user PIN that will be set
 */
-BOTAN_PUBLIC_API(2,0) void initialize_token(Slot& slot, std::string_view label, const secure_string& so_pin,
+BOTAN_PUBLIC_API(2,0) void initialize_token(Slot& slot, Botan::string_view label, const secure_string& so_pin,
                                 const secure_string& pin);
 
 /**
@@ -1150,7 +1150,7 @@ class BOTAN_PUBLIC_API(2,0) LowLevel
       template<typename TAlloc>
       bool C_InitToken(SlotId slot_id,
                        const std::vector<uint8_t, TAlloc>& so_pin,
-                       std::string_view label,
+                       Botan::string_view label,
                        ReturnValue* return_value = ThrowException) const
          {
          std::string padded_label(label);
@@ -2911,7 +2911,7 @@ class BOTAN_PUBLIC_API(2,0) LowLevel
 class BOTAN_PUBLIC_API(2,0) PKCS11_Error : public Exception
    {
    public:
-      explicit PKCS11_Error(std::string_view what) :
+      explicit PKCS11_Error(Botan::string_view what) :
          Exception("PKCS11 error", what)
          {
          }

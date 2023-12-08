@@ -112,7 +112,7 @@ Certificate_Request_13::Certificate_Request_13(std::vector<X509_DN> acceptable_C
    // callbacks.tls_modify_extensions(m_extensions, Connection_Side::Server);
    }
 
-std::optional<Certificate_Request_13>
+Botan::optional<Certificate_Request_13>
 Certificate_Request_13::maybe_create(const Client_Hello_13& client_hello,
                                      Credentials_Manager& cred_mgr,
                                      Callbacks& callbacks,

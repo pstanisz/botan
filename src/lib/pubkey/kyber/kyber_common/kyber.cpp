@@ -41,7 +41,7 @@
 #include <array>
 #include <iterator>
 #include <memory>
-#include <optional>
+#include <botan/optional.h>
 #include <vector>
 #include <limits>
 
@@ -49,7 +49,7 @@ namespace Botan {
 
 namespace {
 
-KyberMode::Mode kyber_mode_from_string(std::string_view str)
+KyberMode::Mode kyber_mode_from_string(Botan::string_view str)
    {
    if(str == "Kyber-512-90s-r3")
       return KyberMode::Kyber512_90s;
@@ -75,7 +75,7 @@ KyberMode::KyberMode(Mode mode)
 KyberMode::KyberMode(const OID& oid)
    : m_mode(kyber_mode_from_string(oid.to_formatted_string())) {}
 
-KyberMode::KyberMode(std::string_view str)
+KyberMode::KyberMode(Botan::string_view str)
    : m_mode(kyber_mode_from_string(str)) {}
 
 OID KyberMode::object_identifier() const
@@ -1271,7 +1271,7 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
                                   protected Kyber_KEM_Cryptor
    {
    public:
-      Kyber_KEM_Encryptor(const Kyber_PublicKey& key, std::string_view kdf)
+      Kyber_KEM_Encryptor(const Kyber_PublicKey& key, Botan::string_view kdf)
          : KEM_Encryption_with_KDF(kdf)
          , Kyber_KEM_Cryptor(key.m_public)
          , m_key(key)
@@ -1336,7 +1336,7 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
                                   protected Kyber_KEM_Cryptor
    {
    public:
-      Kyber_KEM_Decryptor(const Kyber_PrivateKey& key, std::string_view kdf)
+      Kyber_KEM_Decryptor(const Kyber_PrivateKey& key, Botan::string_view kdf)
          : PK_Ops::KEM_Decryption_with_KDF(kdf)
          , Kyber_KEM_Cryptor(key.m_public)
          , m_key(key)
@@ -1559,8 +1559,8 @@ secure_vector<uint8_t> Kyber_PrivateKey::private_key_bits() const
 
 std::unique_ptr<PK_Ops::KEM_Encryption>
 Kyber_PublicKey::create_kem_encryption_op(
-   std::string_view params,
-   std::string_view provider) const
+   Botan::string_view params,
+   Botan::string_view provider) const
    {
    if(provider.empty() || provider == "base")
       return std::make_unique<Kyber_KEM_Encryptor>(*this, params);
@@ -1568,8 +1568,8 @@ Kyber_PublicKey::create_kem_encryption_op(
    }
 
 std::unique_ptr<PK_Ops::KEM_Decryption> Kyber_PrivateKey::create_kem_decryption_op(RandomNumberGenerator& rng,
-      std::string_view params,
-      std::string_view provider) const
+      Botan::string_view params,
+      Botan::string_view provider) const
    {
    BOTAN_UNUSED(rng);
    if(provider.empty() || provider == "base")

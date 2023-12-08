@@ -25,9 +25,9 @@ Session_Manager_Stateless::Session_Manager_Stateless(
    BOTAN_ASSERT_NONNULL(m_credentials_manager);
    }
 
-std::optional<Session_Handle> Session_Manager_Stateless::establish(
+Botan::optional<Session_Handle> Session_Manager_Stateless::establish(
    const Session& session,
-   const std::optional<Session_ID>&,
+   const Botan::optional<Session_ID>&,
    bool tls12_no_ticket)
    {
    BOTAN_ASSERT(session.side() == Connection_Side::Server,
@@ -47,7 +47,7 @@ void Session_Manager_Stateless::store(const Session&, const Session_Handle&)
    throw Invalid_Argument("A stateless Session Manager cannot store Sessions with their handle");
    }
 
-std::optional<Session> Session_Manager_Stateless::retrieve_one(const Session_Handle& handle)
+Botan::optional<Session> Session_Manager_Stateless::retrieve_one(const Session_Handle& handle)
    {
    auto ticket = handle.ticket();
    if(!ticket.has_value())
@@ -75,7 +75,7 @@ bool Session_Manager_Stateless::emits_session_tickets()
    return get_ticket_key().has_value();
    }
 
-std::optional<SymmetricKey> Session_Manager_Stateless::get_ticket_key() noexcept
+Botan::optional<SymmetricKey> Session_Manager_Stateless::get_ticket_key() noexcept
    {
    try
       {

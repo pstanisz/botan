@@ -40,7 +40,7 @@ struct Server_PSK
 
    // Servers store the Session to resume from the selected PSK
    // Clients leave this as std::nullopt
-   std::optional<Session> session_to_resume;
+   Botan::optional<Session> session_to_resume;
    };
 
 }  // namespace

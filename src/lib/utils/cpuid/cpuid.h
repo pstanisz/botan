@@ -8,6 +8,7 @@
 #ifndef BOTAN_CPUID_H_
 #define BOTAN_CPUID_H_
 
+#include <botan/string_view.h>
 #include <botan/types.h>
 #include <vector>
 #include <string>
@@ -372,7 +373,7 @@ class BOTAN_TEST_API CPUID final
          return state().has_bit(elem32);
          }
 
-      static std::vector<CPUID::CPUID_bits> bit_from_string(std::string_view tok);
+      static std::vector<CPUID::CPUID_bits> bit_from_string(Botan::string_view tok);
    private:
       struct CPUID_Data
          {

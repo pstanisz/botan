@@ -56,10 +56,10 @@ class Fuzzer_TLS_Client_Callbacks : public Botan::TLS::Callbacks
 
       void tls_verify_cert_chain(
          const std::vector<Botan::X509_Certificate>& cert_chain,
-         const std::vector<std::optional<Botan::OCSP::Response>>& ocsp_responses,
+         const std::vector<Botan::optional<Botan::OCSP::Response>>& ocsp_responses,
          const std::vector<Botan::Certificate_Store*>& trusted_roots,
          Botan::Usage_Type usage,
-         std::string_view hostname,
+         Botan::string_view hostname,
          const Botan::TLS::Policy& policy) override
          {
          try

@@ -11,7 +11,7 @@
 #include <botan/secmem.h>
 #include <botan/asn1_obj.h>
 #include <botan/pk_ops_fwd.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <botan/span.h>
 
@@ -93,7 +93,7 @@ class BOTAN_PUBLIC_API(3,0) Asymmetric_Key
       * This is primarily used to implement the FFI botan_pubkey_get_field
       * and botan_privkey_get_field functions.
       */
-      virtual const BigInt& get_int_field(std::string_view field) const;
+      virtual const BigInt& get_int_field(Botan::string_view field) const;
 
       /**
       * Return true if this key could be used for the specified type
@@ -152,7 +152,7 @@ class BOTAN_PUBLIC_API(2,0) Public_Key : public virtual Asymmetric_Key
       /**
        * @return Hash of the subject public key
        */
-      std::string fingerprint_public(std::string_view alg = "SHA-256") const;
+      std::string fingerprint_public(Botan::string_view alg = "SHA-256") const;
 
       // Internal or non-public declarations follow
 
@@ -200,8 +200,8 @@ class BOTAN_PUBLIC_API(2,0) Public_Key : public virtual Asymmetric_Key
       */
       virtual std::unique_ptr<PK_Ops::Encryption>
          create_encryption_op(RandomNumberGenerator& rng,
-                              std::string_view params,
-                              std::string_view provider) const;
+                              Botan::string_view params,
+                              Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -213,8 +213,8 @@ class BOTAN_PUBLIC_API(2,0) Public_Key : public virtual Asymmetric_Key
       * @param provider the provider to use
       */
       virtual std::unique_ptr<PK_Ops::KEM_Encryption>
-         create_kem_encryption_op(std::string_view params,
-                                  std::string_view provider) const;
+         create_kem_encryption_op(Botan::string_view params,
+                                  Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -225,8 +225,8 @@ class BOTAN_PUBLIC_API(2,0) Public_Key : public virtual Asymmetric_Key
       * @param provider the provider to use
       */
       virtual std::unique_ptr<PK_Ops::Verification>
-         create_verification_op(std::string_view params,
-                                std::string_view provider) const;
+         create_verification_op(Botan::string_view params,
+                                Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -242,7 +242,7 @@ class BOTAN_PUBLIC_API(2,0) Public_Key : public virtual Asymmetric_Key
       */
       virtual std::unique_ptr<PK_Ops::Verification>
          create_x509_verification_op(const AlgorithmIdentifier& signature_algorithm,
-                                     std::string_view provider) const;
+                                     Botan::string_view provider) const;
    };
 
 /**
@@ -296,7 +296,7 @@ class BOTAN_PUBLIC_API(2,0) Private_Key : public virtual Public_Key
       /**
        * @return Hash of the PKCS #8 encoding for this key object
        */
-      std::string fingerprint_private(std::string_view alg) const;
+      std::string fingerprint_private(Botan::string_view alg) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -313,8 +313,8 @@ class BOTAN_PUBLIC_API(2,0) Private_Key : public virtual Public_Key
       */
       virtual std::unique_ptr<PK_Ops::Decryption>
          create_decryption_op(RandomNumberGenerator& rng,
-                              std::string_view params,
-                              std::string_view provider) const;
+                              Botan::string_view params,
+                              Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -330,8 +330,8 @@ class BOTAN_PUBLIC_API(2,0) Private_Key : public virtual Public_Key
       */
       virtual std::unique_ptr<PK_Ops::KEM_Decryption>
          create_kem_decryption_op(RandomNumberGenerator& rng,
-                                  std::string_view params,
-                                  std::string_view provider) const;
+                                  Botan::string_view params,
+                                  Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -347,8 +347,8 @@ class BOTAN_PUBLIC_API(2,0) Private_Key : public virtual Public_Key
       */
       virtual std::unique_ptr<PK_Ops::Signature>
          create_signature_op(RandomNumberGenerator& rng,
-                             std::string_view params,
-                             std::string_view provider) const;
+                             Botan::string_view params,
+                             Botan::string_view provider) const;
 
       /**
       * This is an internal library function exposed on key types.
@@ -364,8 +364,8 @@ class BOTAN_PUBLIC_API(2,0) Private_Key : public virtual Public_Key
       */
       virtual std::unique_ptr<PK_Ops::Key_Agreement>
          create_key_agreement_op(RandomNumberGenerator& rng,
-                                 std::string_view params,
-                                 std::string_view provider) const;
+                                 Botan::string_view params,
+                                 Botan::string_view provider) const;
    };
 
 /**
@@ -382,10 +382,10 @@ class BOTAN_PUBLIC_API(2,0) PK_Key_Agreement_Key : public virtual Private_Key
 
 std::string BOTAN_PUBLIC_API(2,4)
    create_hex_fingerprint(const uint8_t bits[], size_t len,
-                          std::string_view hash_name);
+                          Botan::string_view hash_name);
 
 inline std::string create_hex_fingerprint(Botan::span<const uint8_t> vec,
-                                          std::string_view hash_name)
+                                          Botan::string_view hash_name)
    {
    return create_hex_fingerprint(vec.data(), vec.size(), hash_name);
    }

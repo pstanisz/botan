@@ -153,7 +153,7 @@ Signature_Scheme choose_signature_scheme(
 Certificate_Verify_13::Certificate_Verify_13(
       const Certificate_13& certificate_msg,
       const std::vector<Signature_Scheme>& peer_allowed_schemes,
-      std::string_view hostname,
+      Botan::string_view hostname,
       const Transcript_Hash& hash,
       Connection_Side whoami,
       Credentials_Manager& creds_mgr,

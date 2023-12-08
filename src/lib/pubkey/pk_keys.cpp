@@ -14,7 +14,7 @@
 
 namespace Botan {
 
-const BigInt& Asymmetric_Key::get_int_field(std::string_view field) const
+const BigInt& Asymmetric_Key::get_int_field(Botan::string_view field) const
    {
    throw Unknown_PK_Field_Name(algo_name(), field);
    }
@@ -33,7 +33,7 @@ OID Asymmetric_Key::object_identifier() const
 
 std::string create_hex_fingerprint(const uint8_t bits[],
                                    size_t bits_len,
-                                   std::string_view hash_name)
+                                   Botan::string_view hash_name)
    {
    auto hash_fn = HashFunction::create_or_throw(hash_name);
    const std::string hex_hash = hex_encode(hash_fn->process(bits, bits_len));
@@ -85,7 +85,7 @@ secure_vector<uint8_t> Private_Key::raw_private_key_bits() const
 /*
 * Hash of the X.509 subjectPublicKey encoding
 */
-std::string Public_Key::fingerprint_public(std::string_view hash_algo) const
+std::string Public_Key::fingerprint_public(Botan::string_view hash_algo) const
    {
    return create_hex_fingerprint(subject_public_key(), hash_algo);
    }
@@ -93,68 +93,68 @@ std::string Public_Key::fingerprint_public(std::string_view hash_algo) const
 /*
 * Hash of the PKCS #8 encoding for this key object
 */
-std::string Private_Key::fingerprint_private(std::string_view hash_algo) const
+std::string Private_Key::fingerprint_private(Botan::string_view hash_algo) const
    {
    return create_hex_fingerprint(private_key_bits(), hash_algo);
    }
 
 std::unique_ptr<PK_Ops::Encryption>
 Public_Key::create_encryption_op(RandomNumberGenerator& /*rng*/,
-                                 std::string_view /*params*/,
-                                 std::string_view /*provider*/) const
+                                 Botan::string_view /*params*/,
+                                 Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support encryption", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::KEM_Encryption>
-Public_Key::create_kem_encryption_op(std::string_view /*params*/,
-                                     std::string_view /*provider*/) const
+Public_Key::create_kem_encryption_op(Botan::string_view /*params*/,
+                                     Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support KEM encryption", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::Verification>
-Public_Key::create_verification_op(std::string_view /*params*/,
-                                   std::string_view /*provider*/) const
+Public_Key::create_verification_op(Botan::string_view /*params*/,
+                                   Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support verification", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::Verification>
 Public_Key::create_x509_verification_op(const AlgorithmIdentifier& /*params*/,
-                                        std::string_view /*provider*/) const
+                                        Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support X.509 verification", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::Decryption>
 Private_Key::create_decryption_op(RandomNumberGenerator& /*rng*/,
-                                  std::string_view /*params*/,
-                                  std::string_view /*provider*/) const
+                                  Botan::string_view /*params*/,
+                                  Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support decryption", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::KEM_Decryption>
 Private_Key::create_kem_decryption_op(RandomNumberGenerator& /*rng*/,
-                                      std::string_view /*params*/,
-                                      std::string_view /*provider*/) const
+                                      Botan::string_view /*params*/,
+                                      Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support KEM decryption", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::Signature>
 Private_Key::create_signature_op(RandomNumberGenerator& /*rng*/,
-                                 std::string_view /*params*/,
-                                 std::string_view /*provider*/) const
+                                 Botan::string_view /*params*/,
+                                 Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support signatures", algo_name()));
    }
 
 std::unique_ptr<PK_Ops::Key_Agreement>
 Private_Key::create_key_agreement_op(RandomNumberGenerator& /*rng*/,
-                                     std::string_view /*params*/,
-                                     std::string_view /*provider*/) const
+                                     Botan::string_view /*params*/,
+                                     Botan::string_view /*provider*/) const
    {
    throw Lookup_Error(fmt("{} does not support key agreement", algo_name()));
    }

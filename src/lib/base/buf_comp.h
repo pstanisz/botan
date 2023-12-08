@@ -10,7 +10,7 @@
 
 #include <botan/concepts.h>
 #include <botan/secmem.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <botan/span.h>
 
 namespace Botan {
@@ -53,10 +53,10 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
 
       /**
       * Add new input to process.
-      * @param str the input to process as a std::string_view. Will be interpreted
+      * @param str the input to process as a Botan::string_view. Will be interpreted
       * as a byte array based on the strings encoding.
       */
-      void update(std::string_view str)
+      void update(Botan::string_view str)
          {
          add_data(cast_char_ptr_to_uint8(str.data()), str.size());
          }
@@ -127,7 +127,7 @@ class BOTAN_PUBLIC_API(2,0) Buffered_Computation
       * @result the result of the call to final()
       */
       template<typename T = secure_vector<uint8_t>, typename = concepts::resizable_byte_buffer<T>>
-      T process(std::string_view in)
+      T process(Botan::string_view in)
          {
          update(in);
          return final<T>();

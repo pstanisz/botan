@@ -12,7 +12,7 @@
 #include <botan/secmem.h>
 #include <botan/sym_algo.h>
 #include <botan/exceptn.h>
-#include <string_view>
+#include <botan/string_view.h>
 #include <string>
 #include <botan/span.h>
 #include <vector>
@@ -41,7 +41,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @return list of available providers for this algorithm, empty if not available
       * @param algo_spec algorithm name
       */
-      static std::vector<std::string> providers(std::string_view algo_spec);
+      static std::vector<std::string> providers(Botan::string_view algo_spec);
 
       /**
       * Create an AEAD mode
@@ -50,9 +50,9 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param provider optional specification for provider to use
       * @return an AEAD mode or a null pointer if not available
       */
-      static std::unique_ptr<Cipher_Mode> create(std::string_view algo,
+      static std::unique_ptr<Cipher_Mode> create(Botan::string_view algo,
                                                  Cipher_Dir direction,
-                                                 std::string_view provider = "");
+                                                 Botan::string_view provider = "");
 
       /**
       * Create an AEAD mode, or throw
@@ -61,9 +61,9 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       * @param provider optional specification for provider to use
       * @return an AEAD mode, or throw an exception
       */
-      static std::unique_ptr<Cipher_Mode> create_or_throw(std::string_view algo,
+      static std::unique_ptr<Cipher_Mode> create_or_throw(Botan::string_view algo,
                                                           Cipher_Dir direction,
-                                                          std::string_view provider = "");
+                                                          Botan::string_view provider = "");
 
    protected:
       /*
@@ -257,9 +257,9 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
 * @param provider provider implementation to choose
 */
 BOTAN_DEPRECATED("Use Cipher_Mode::create")
-inline Cipher_Mode* get_cipher_mode(std::string_view algo_spec,
+inline Cipher_Mode* get_cipher_mode(Botan::string_view algo_spec,
                                     Cipher_Dir direction,
-                                    std::string_view provider = "")
+                                    Botan::string_view provider = "")
    {
    return Cipher_Mode::create(algo_spec, direction, provider).release();
    }

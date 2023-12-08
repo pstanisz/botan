@@ -12,6 +12,7 @@
 #include <map>
 
 #include <botan/build.h>
+#include <botan/string_view.h>
 #include <botan/secmem.h>
 
 namespace Botan {
@@ -48,10 +49,10 @@ class BOTAN_PUBLIC_API(2,0) XMSS_WOTS_Parameters final
          WOTSP_SHAKE_256_192 = 0x00000007,
          };
 
-      explicit XMSS_WOTS_Parameters(std::string_view algo_name);
+      explicit XMSS_WOTS_Parameters(Botan::string_view algo_name);
       XMSS_WOTS_Parameters(ots_algorithm_t ots_spec);
 
-      static ots_algorithm_t xmss_wots_id_from_string(std::string_view param_set);
+      static ots_algorithm_t xmss_wots_id_from_string(Botan::string_view param_set);
 
       /**
        * Algorithm 1: convert input string to base.
@@ -168,9 +169,9 @@ class BOTAN_PUBLIC_API(2,0) XMSS_Parameters
          XMSS_SHAKE256_20_192 = 0x00000015,
          };
 
-      static xmss_algorithm_t xmss_id_from_string(std::string_view algo_name);
+      static xmss_algorithm_t xmss_id_from_string(Botan::string_view algo_name);
 
-      explicit XMSS_Parameters(std::string_view algo_name);
+      explicit XMSS_Parameters(Botan::string_view algo_name);
       explicit XMSS_Parameters(xmss_algorithm_t oid);
 
       /**

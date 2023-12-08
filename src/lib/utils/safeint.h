@@ -10,8 +10,8 @@
 
 #include <botan/exceptn.h>
 #include <botan/internal/fmt.h>
-#include <optional>
-#include <string_view>
+#include <botan/optional.h>
+#include <botan/string_view.h>
 
 #if defined(_MSC_VER)
 #include <intsafe.h>
@@ -22,7 +22,7 @@ namespace Botan {
 class Integer_Overflow_Detected final : public Exception
    {
    public:
-      Integer_Overflow_Detected(std::string_view file, int line) :
+      Integer_Overflow_Detected(Botan::string_view file, int line) :
          Exception(fmt("Integer overflow detected at {}:{}", file, line))
          {}
 
@@ -47,7 +47,7 @@ inline size_t checked_add(size_t x, size_t y, const char* file, int line)
    return z;
    }
 
-inline std::optional<size_t> checked_mul(size_t x, size_t y)
+inline Botan::optional<size_t> checked_mul(size_t x, size_t y)
    {
 #if BOTAN_COMPILER_HAS_BUILTIN(__builtin_add_overflow)
    size_t z;

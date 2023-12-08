@@ -29,7 +29,7 @@ class BOTAN_TEST_API Transcript_Hash_State
    {
    public:
       Transcript_Hash_State() = default;
-      Transcript_Hash_State(std::string_view algo_spec);
+      Transcript_Hash_State(Botan::string_view algo_spec);
       ~Transcript_Hash_State() = default;
 
       /**
@@ -42,7 +42,7 @@ class BOTAN_TEST_API Transcript_Hash_State
        * the previously used object in client and server implementations.
        */
       static Transcript_Hash_State recreate_after_hello_retry_request(
-                        std::string_view algo_spec,
+                        Botan::string_view algo_spec,
                         const Transcript_Hash_State& prev_transcript_hash_state);
 
       Transcript_Hash_State& operator=(const Transcript_Hash_State&) = delete;
@@ -76,7 +76,7 @@ class BOTAN_TEST_API Transcript_Hash_State
        */
       const Transcript_Hash& truncated() const;
 
-      void set_algorithm(std::string_view algo_spec);
+      void set_algorithm(Botan::string_view algo_spec);
 
       Transcript_Hash_State clone() const;
 
