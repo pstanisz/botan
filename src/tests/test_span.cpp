@@ -416,21 +416,21 @@ std::vector<Test::Result> test_misc()
       Botan_Tests::CHECK("implicit from std::vector", [](auto& result)
          {
          std::vector<int> vec {1, 2, 3};
-         Botan::span s(vec);
+         auto s = Botan::make_span(vec);
 
          result.test_is_eq("span from std::vector", s.size(), vec.size());
          }), 
       Botan_Tests::CHECK("implicit from secure_vector", [](auto& result)
          {
          Botan::secure_vector<uint8_t> vec {1, 2, 3};
-         Botan::span s(vec);
+         auto s = Botan::make_span(vec);
 
          result.test_is_eq("span from secure_vector", s.size(), vec.size());
          }),
       Botan_Tests::CHECK("implicit from std::string", [](auto& result)
          {
          std::string str = "abc";
-         Botan::span s(str);
+         auto s = Botan::make_span(str);
 
          result.test_is_eq("span from std::string", s.size(), str.size());
          })

@@ -134,7 +134,7 @@ Botan::optional<Handshake_Message_13> Handshake_Layer::next_message(const Policy
    if(msg.has_value())
       {
       BOTAN_ASSERT_NOMSG(m_read_buffer.size() >= reader.read_so_far());
-      transcript_hash.update(Botan::span{m_read_buffer.data(), reader.read_so_far()});
+      transcript_hash.update(Botan::make_span(m_read_buffer.data(), reader.read_so_far()));
       m_read_buffer.erase(m_read_buffer.cbegin(), m_read_buffer.cbegin() + reader.read_so_far());
       }
 

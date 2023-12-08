@@ -47,7 +47,7 @@ class BOTAN_PUBLIC_API(2,0) Channel
       size_t received_data(Botan::span<const uint8_t> data)
          { return this->from_peer(data); }
       size_t received_data(const uint8_t buf[], size_t buf_size)
-         { return this->from_peer(Botan::span(buf, buf_size)); }
+         { return this->from_peer(Botan::make_span(buf, buf_size)); }
       
       /**
       * Inject plaintext intended for counterparty
@@ -56,14 +56,14 @@ class BOTAN_PUBLIC_API(2,0) Channel
       void send(Botan::span<const uint8_t> data)
          { this->to_peer(data); }
       void send(const uint8_t buf[], size_t buf_size)
-         { this->to_peer(Botan::span(buf, buf_size)); }
+         { this->to_peer(Botan::make_span(buf, buf_size)); }
 
       /**
       * Inject plaintext intended for counterparty
       * Throws an exception if is_active() is false
       */
       void send(Botan::string_view val)
-         { this->send(Botan::span(cast_char_ptr_to_uint8(val.data()), val.size())); }
+         { this->send(Botan::make_span(cast_char_ptr_to_uint8(val.data()), val.size())); }
 
       /**
       * Inject plaintext intended for counterparty

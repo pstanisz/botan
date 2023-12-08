@@ -12,12 +12,16 @@
 #include <limits>
 #include <array>
 
+#include <botan/cpp17_traits.h>
 #include <botan/cpp20_traits.h>
 
 namespace Botan {
 
 // Non-member span constant
-inline constexpr std::size_t dynamic_extent = std::numeric_limits<std::size_t>::max();
+constexpr std::size_t dynamic_extent = std::numeric_limits<std::size_t>::max();
+
+// Mimics std::byte
+enum class byte : unsigned char {};
 
 // Forward
 template <typename Type, std::size_t Extent = dynamic_extent>
@@ -27,11 +31,11 @@ namespace detail {
 
 template <typename T, typename U>
 struct is_span_convertible {
-    static constexpr bool value = std::is_convertible_v<T(*)[], U(*)[]>;
+    static constexpr bool value = std::is_convertible<T(*)[], U(*)[]>::value;
 };
 
 template <typename T, typename U>
-inline constexpr bool is_span_convertible_v = is_span_convertible<T, U>::value;
+constexpr bool is_span_convertible_v = is_span_convertible<T, U>::value;
 
 template <std::size_t E>
 struct is_dynamic_extent {
@@ -39,7 +43,7 @@ struct is_dynamic_extent {
 };
 
 template <std::size_t E>
-inline constexpr bool is_dynamic_extent_v = is_dynamic_extent<E>::value;
+constexpr bool is_dynamic_extent_v = is_dynamic_extent<E>::value;
 
 template <std::size_t E, std::size_t N>
 struct is_span_capacity {
@@ -47,7 +51,7 @@ struct is_span_capacity {
 };
 
 template <std::size_t E, std::size_t N>
-inline constexpr bool is_span_capacity_v = is_span_capacity<E, N>::value;
+constexpr bool is_span_capacity_v = is_span_capacity<E, N>::value;
 
 template <typename T, std::size_t E, typename U, std::size_t N>
 struct is_span_compatible {
@@ -55,7 +59,7 @@ struct is_span_compatible {
 };
 
 template <typename T, std::size_t E, typename U, std::size_t N>
-inline constexpr bool is_span_compatible_v = is_span_compatible<T, E, U, N>::value;
+constexpr bool is_span_compatible_v = is_span_compatible<T, E, U, N>::value;
 
 template <std::size_t E, std::size_t N>
 struct is_span_explicit {
@@ -63,7 +67,7 @@ struct is_span_explicit {
 };
 
 template <std::size_t E, std::size_t N>
-inline constexpr bool is_span_explicit_v = is_span_explicit<E, N>::value;
+constexpr bool is_span_explicit_v = is_span_explicit<E, N>::value;
 
 template <typename T, std::size_t E, typename U, std::size_t N>
 struct is_span_copyable {
@@ -71,7 +75,7 @@ struct is_span_copyable {
 };
 
 template <typename T, std::size_t E, typename U, std::size_t N>
-inline constexpr bool is_span_copyable_v = is_span_copyable<T, E, U, N>::value;
+constexpr bool is_span_copyable_v = is_span_copyable<T, E, U, N>::value;
 
 template <typename>
 struct is_span : std::false_type {};
@@ -80,7 +84,7 @@ template <typename T, std::size_t E>
 struct is_span<span<T, E>> : std::true_type {};
 
 template <typename C>
-inline constexpr bool is_span_v = is_span<C>::value;
+constexpr bool is_span_v = is_span<C>::value;
 
 template <typename>
 struct is_std_array : std::false_type {};
@@ -89,7 +93,7 @@ template <typename T, std::size_t N>
 struct is_std_array<std::array<T, N>> : std::true_type {};
 
 template <typename C>
-inline constexpr bool is_std_array_v = is_std_array<C>::value;
+constexpr bool is_std_array_v = is_std_array<C>::value;
 
 template <typename Container>
 constexpr auto size(const Container& c) -> decltype(c.size()) {
@@ -120,38 +124,38 @@ template <typename, typename = void>
 struct has_size : std::false_type {};
 
 template <typename C>
-struct has_size<C, std::void_t<decltype(Botan::detail::size(std::declval<C>()))>> : std::true_type {};
+struct has_size<C, Botan::void_t<decltype(Botan::detail::size(std::declval<C>()))>> : std::true_type {};
 
 template <typename C>
-inline constexpr bool has_size_v = has_size<C>::value;
+constexpr bool has_size_v = has_size<C>::value;
 
 template <typename, typename = void>
 struct has_data : std::false_type {};
 
 template <typename C>
-struct has_data<C, std::void_t<decltype(Botan::detail::data(std::declval<C>()))>> : std::true_type {};
+struct has_data<C, Botan::void_t<decltype(Botan::detail::data(std::declval<C>()))>> : std::true_type {};
 
 template <typename C>
-inline constexpr bool has_data_v = has_data<C>::value;
+constexpr bool has_data_v = has_data<C>::value;
 
 template <typename C, typename U = Botan::remove_cvref_t<C>>
 struct is_container {
-    static constexpr bool value = !is_span_v<U> && !is_std_array_v<U> && !std::is_array_v<U> && 
+    static constexpr bool value = !is_span_v<U> && !is_std_array_v<U> && !std::is_array<U>::value && 
         has_size_v<C> && has_data_v<C>;
 };
 
 template <typename C>
-inline constexpr bool is_container_v = is_container<C>::value;
+constexpr bool is_container_v = is_container<C>::value;
 
 template <typename, typename, typename = void>
 struct is_container_type_compatible : std::false_type {};
 
 template <typename C, typename U>
 struct is_container_type_compatible<C, U,
-    typename std::enable_if_t<std::is_convertible_v<std::remove_pointer_t<decltype(Botan::detail::data(std::declval<C>()))> (*)[], U (*)[]>>> : std::true_type {};
+    typename std::enable_if_t<std::is_convertible<std::remove_pointer_t<decltype(Botan::detail::data(std::declval<C>()))> (*)[], U (*)[]>::value>> : std::true_type {};
 
 template <typename C, typename U>
-inline constexpr bool is_container_type_compatible_v = is_container_type_compatible<C, U>::value;
+constexpr bool is_container_type_compatible_v = is_container_type_compatible<C, U>::value;
 
 } // detail
 
@@ -285,35 +289,38 @@ private:
     size_type       m_size;
 };
 
-// Deduction guidelines as described in https://en.cppreference.com/w/cpp/container/span/deduction_guides
-template <typename Iter_first, typename End_or_size >
-span(Iter_first*, End_or_size) -> span<std::remove_reference_t<Iter_first>>;
+// Introduced make_span in place of deduction guidelines
+template <typename T, typename U>
+auto make_span(T* begin, U* end) noexcept { return span<T>(begin, end); }
 
-template <typename Type, std::size_t N>
-span(Type (&)[N] ) -> span<Type, N>;
+template <typename T>
+auto make_span(T* arr, std::size_t n) noexcept { return span<T>(arr, n); }
 
-template <typename Type, std::size_t N>
-span(std::array<Type, N>&) -> span<Type, N>;
+template <typename T, std::size_t N>
+auto make_span(T (&arr)[N]) noexcept { return span<T, N>(&arr[0], N); }
 
-template <typename Type, std::size_t N>
-span(const std::array<Type, N>&) -> span<const Type, N>;
+template <typename T, std::size_t N>
+auto make_span(std::array<T, N>& arr) noexcept { return span<T, N>(arr.data(), N); }
 
-// Instead of ranges
+template <typename T, std::size_t N>
+auto make_span(const std::array<T, N>& arr) noexcept { return span<const T, N>(arr.data(), N); }
+
 template <typename Container>
-span(Container&) -> span<typename std::remove_reference_t<decltype(*Botan::detail::data(std::declval<Container&>()))>>;
+auto make_span(Container& c) noexcept { return span<typename std::remove_reference_t<decltype(*Botan::detail::data(std::declval<Container&>()))>>(c.data(), c.size()); }
 
 template <typename Container>
-span(const Container&) -> span<const typename Container::value_type>;
+auto make_span(const Container& c) noexcept { return span<const typename Container::value_type>(c.data(), c.size()); }
+
 
 // Non-member span functions
 template <typename Type, std::size_t Extent>
-span<const std::byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_bytes(span<Type, Extent> s) noexcept {
-    return {reinterpret_cast<const std::byte*>(s.data()), s.size_bytes()};
+span<const byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_bytes(span<Type, Extent> s) noexcept {
+    return {reinterpret_cast<const byte*>(s.data()), s.size_bytes()};
 }
 
 template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const_v<Type>, bool> = true>
-span<std::byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
-    return {reinterpret_cast<std::byte*>(s.data()), s.size_bytes()};
+span<byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
+    return {reinterpret_cast<byte*>(s.data()), s.size_bytes()};
 }
 
 }

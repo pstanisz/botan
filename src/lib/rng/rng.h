@@ -53,7 +53,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       void randomize(Botan::span<uint8_t> output)
          { this->fill_bytes_with_input(output, {}); }
       void randomize(uint8_t output[], size_t length)
-         { this->randomize(Botan::span(output, length)); }
+         { this->randomize(Botan::make_span(output, length)); }
 
       /**
       * Returns false if it is known that this RNG object is not able to accept
@@ -76,7 +76,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       */
       void add_entropy(Botan::span<const uint8_t> input) { this->fill_bytes_with_input({}, input); }
       void add_entropy(const uint8_t input[], size_t length)
-         { this->add_entropy(Botan::span(input, length)); }
+         { this->add_entropy(Botan::make_span(input, length)); }
 
       /**
       * Incorporate some additional data into the RNG state.
@@ -107,7 +107,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
          { this->fill_bytes_with_input(output, input); }
       void randomize_with_input(uint8_t output[], size_t output_len,
                                 const uint8_t input[], size_t input_len)
-         { this->randomize_with_input(Botan::span(output, output_len), Botan::span(input, input_len)); }
+         { this->randomize_with_input(Botan::make_span(output, output_len), Botan::make_span(input, input_len)); }
 
       /**
       * This calls `randomize_with_input` using some timestamps as extra input.
@@ -125,7 +125,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       */
       void randomize_with_ts_input(Botan::span<uint8_t> output);
       void randomize_with_ts_input(uint8_t output[], size_t output_len)
-         { this->randomize_with_ts_input(Botan::span(output, output_len)); }
+         { this->randomize_with_ts_input(Botan::make_span(output, output_len)); }
 
       /**
       * @return the name of this RNG type
@@ -218,7 +218,7 @@ class BOTAN_PUBLIC_API(2,0) RandomNumberGenerator
       uint8_t next_byte()
          {
          uint8_t b;
-         this->fill_bytes_with_input(Botan::span(&b, 1), {});
+         this->fill_bytes_with_input(Botan::make_span(&b, 1), {});
          return b;
          }
 

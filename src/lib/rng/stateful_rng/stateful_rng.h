@@ -75,7 +75,7 @@ class BOTAN_PUBLIC_API(2,0) Stateful_RNG : public RandomNumberGenerator
       void initialize_with(Botan::span<const uint8_t> input);
       void initialize_with(const uint8_t input[], size_t length)
          {
-         this->initialize_with(Botan::span(input, length));
+         this->initialize_with(Botan::make_span(input, length));
          }
 
       bool is_seeded() const override final;

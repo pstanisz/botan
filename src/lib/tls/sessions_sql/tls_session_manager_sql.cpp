@@ -117,7 +117,7 @@ void Session_Manager_SQL::create_with_latest_schema(Botan::string_view passphras
 
    const size_t iterations = pbkdf->iterations();
    const size_t check_val = make_uint16(derived_key[0], derived_key[1]);
-   m_session_key = SymmetricKey(Botan::span(derived_key).subspan(2));
+   m_session_key = SymmetricKey(Botan::make_span(derived_key).subspan(2));
 
    auto stmt = m_db->new_statement("INSERT INTO tls_sessions_metadata VALUES (?1, ?2, ?3, ?4, ?5)");
 
@@ -157,7 +157,7 @@ void Session_Manager_SQL::initialize_existing_database(Botan::string_view passph
    if(check_val_created != check_val_db)
       throw Invalid_Argument("Session database password not valid");
 
-   m_session_key = SymmetricKey(Botan::span(derived_key).subspan(2));
+   m_session_key = SymmetricKey(Botan::make_span(derived_key).subspan(2));
    }
 
 void Session_Manager_SQL::store(const Session& session, const Session_Handle& handle)
@@ -242,7 +242,7 @@ std::vector<Session_with_Handle> Session_Manager_SQL::find_some(const Server_Inf
          auto ticket_blob = stmt->get_blob(1);
          if(ticket_blob.second > 0)
             {
-            return Session_Ticket(Botan::span(ticket_blob.first, ticket_blob.second));
+            return Session_Ticket(Botan::make_span(ticket_blob.first, ticket_blob.second));
             }
          else
             {

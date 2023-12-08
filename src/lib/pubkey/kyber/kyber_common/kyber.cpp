@@ -1318,8 +1318,8 @@ class Kyber_KEM_Encryptor final : public PK_Ops::KEM_Encryption_with_KDF,
 
          BOTAN_ASSERT_EQUAL(g_out.size(), 64, "Expected output length of Kyber G");
 
-         const auto lower_g_out = Botan::span(g_out).subspan(0, 32);
-         const auto upper_g_out = Botan::span(g_out).subspan(32, 32);
+         const auto lower_g_out = Botan::make_span(g_out).subspan(0, 32);
+         const auto upper_g_out = Botan::make_span(g_out).subspan(32, 32);
 
          out_encapsulated_key = indcpa_enc(shared_secret, upper_g_out);
 
@@ -1365,8 +1365,8 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
 
          BOTAN_ASSERT_EQUAL(g_out.size(), 64, "Expected output length of Kyber G");
 
-         const auto lower_g_out = Botan::span(g_out).subspan(0, 32);
-         const auto upper_g_out = Botan::span(g_out).subspan(32, 32);
+         const auto lower_g_out = Botan::make_span(g_out).subspan(0, 32);
+         const auto upper_g_out = Botan::make_span(g_out).subspan(32, 32);
 
          H->update(encap_key, len_encap_key);
 
@@ -1390,7 +1390,7 @@ class Kyber_KEM_Decryptor final : public PK_Ops::KEM_Decryption_with_KDF,
    private:
       secure_vector<uint8_t> indcpa_dec(const uint8_t c[], size_t c_len)
          {
-         auto ct = Ciphertext::from_bytes(Botan::span(c, c_len), mode());
+         auto ct = Ciphertext::from_bytes(Botan::make_span(c, c_len), mode());
          return ct.indcpa_decrypt(m_key.m_private->polynomials());
          }
 

@@ -60,7 +60,7 @@ class BOTAN_PUBLIC_API(2,0) AEAD_Mode : public Cipher_Mode
       void set_associated_data(Botan::span<const uint8_t> ad)
          { set_associated_data_n(0, ad); }
       void set_associated_data(const uint8_t ad[], size_t ad_len)
-         { set_associated_data(Botan::span(ad, ad_len)); }
+         { set_associated_data(Botan::make_span(ad, ad_len)); }
 
       /**
       * Set associated data that is not included in the ciphertext but

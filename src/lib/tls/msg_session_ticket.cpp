@@ -132,7 +132,7 @@ std::vector<uint8_t> New_Session_Ticket_13::serialize() const
    {
    std::vector<uint8_t> result(8);
 
-   store_lifetime(Botan::span(result.data(), 4), m_ticket_lifetime_hint);
+   store_lifetime(Botan::make_span(result.data(), 4), m_ticket_lifetime_hint);
    store_be(m_ticket_age_add, result.data() + 4);
    append_tls_length_value(result, m_ticket_nonce.get(), 1);
    append_tls_length_value(result, m_handle.get(), 2);

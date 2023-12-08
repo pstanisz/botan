@@ -144,7 +144,7 @@ class BOTAN_PUBLIC_API(2,0) Cipher_Mode : public SymmetricAlgorithm
       void update(T& buffer, size_t offset = 0)
          {
          BOTAN_ASSERT(buffer.size() >= offset, "Offset ok");
-         const size_t written = process(Botan::span(buffer).subspan(offset));
+         const size_t written = process(Botan::make_span(buffer).subspan(offset));
          buffer.resize(offset + written);
          }
 
