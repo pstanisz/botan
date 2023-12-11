@@ -301,7 +301,7 @@ Botan::optional<Signature_Format> Signature_Scheme::format() const noexcept
          return Signature_Format::DerSequence;
 
       default:
-         return std::nullopt;
+         return Botan::nullopt;
       }
    }
 

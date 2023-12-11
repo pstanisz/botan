@@ -30,8 +30,11 @@ enum class Signature_Format {
    Standard,
    DerSequence,
 
-   IEEE_1363 BOTAN_DEPRECATED("Use Standard") = Standard,
-   DER_SEQUENCE BOTAN_DEPRECATED("Use DerSequence") = DerSequence,
+   // TODO: pstanisz to check
+   //IEEE_1363 BOTAN_DEPRECATED("Use Standard") = Standard,
+   //DER_SEQUENCE BOTAN_DEPRECATED("Use DerSequence") = DerSequence,
+   IEEE_1363 = Standard,
+   DER_SEQUENCE = DerSequence,
 };
 
 /**

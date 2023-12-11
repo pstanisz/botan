@@ -19,7 +19,7 @@ operator+(const Botan::optional<T>& a, const Botan::optional<T>& b)
    {
    if(!a.has_value() || !b.has_value())
       {
-      return std::nullopt;
+      return Botan::nullopt;
       }
 
    return a.value() + b.value();

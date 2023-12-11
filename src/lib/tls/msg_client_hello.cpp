@@ -373,7 +373,7 @@ Botan::optional<Session_Handle> Client_Hello_12::session_handle() const
    else if(const auto& id = session_id(); !id.empty())
       { return id; }
    else
-      { return std::nullopt; }
+      { return Botan::nullopt; }
    }
 
 bool Client_Hello::supports_alpn() const

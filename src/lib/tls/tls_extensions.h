@@ -793,9 +793,9 @@ class BOTAN_UNSTABLE_API EarlyDataIndication final : public Extension
       /**
        * The max_early_data_size is exclusively provided by servers when using
        * this extension in the NewSessionTicket message! Otherwise it stays
-       * std::nullopt and results in an empty extension. (RFC 8446 4.2.10).
+       * Botan::nullopt and results in an empty extension. (RFC 8446 4.2.10).
        */
-      EarlyDataIndication(Botan::optional<uint32_t> max_early_data_size = std::nullopt)
+      EarlyDataIndication(Botan::optional<uint32_t> max_early_data_size = Botan::nullopt)
          : m_max_early_data_size(std::move(max_early_data_size)) {}
 
    private:

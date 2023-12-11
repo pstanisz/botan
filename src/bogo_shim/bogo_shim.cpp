@@ -1493,7 +1493,7 @@ class Shim_Callbacks final : public Botan::TLS::Callbacks
 
          // Bogo uses invalid dummy OCSP responses. Don't even bother trying to
          // decode them.
-         return std::nullopt;
+         return Botan::nullopt;
          }
 
       std::string tls_server_choose_app_protocol(const std::vector<std::string>& client_protos) override

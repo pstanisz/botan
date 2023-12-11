@@ -136,7 +136,7 @@ Botan::optional<std::string> Command::get_arg_maybe(const std::string& opt_name)
    {
    auto arg = m_args->get_arg(opt_name);
    if(arg.empty())
-      return std::nullopt;
+      return Botan::nullopt;
    else
       return arg;
    }

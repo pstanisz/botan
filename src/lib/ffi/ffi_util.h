@@ -84,8 +84,9 @@ int ffi_guard_thunk(const char* func_name, const std::function<int ()>& thunk);
 template<typename T, uint32_t M, typename F>
 int botan_ffi_visit(botan_struct<T, M>* o, F func, const char* func_name)
    {
-   using RetT = std::invoke_result_t<F, T&>;
-   static_assert(std::is_void_v<RetT> || std::is_same_v<RetT, BOTAN_FFI_ERROR> || std::is_same_v<RetT, int>,
+   //using RetT = std::invoke_result_t<F, T&>;
+   using RetT = std::result_of_t<F(T&)>;
+   static_assert(std::is_void<RetT>::value || std::is_same<RetT, BOTAN_FFI_ERROR>::value || std::is_same<RetT, int>::value,
                  "BOTAN_FFI_DO must be used with a block that returns either nothing, int or BOTAN_FFI_ERROR");
 
    if(!o)
@@ -98,7 +99,7 @@ int botan_ffi_visit(botan_struct<T, M>* o, F func, const char* func_name)
    if(p == nullptr)
       return BOTAN_FFI_ERROR_INVALID_OBJECT;
 
-   if constexpr(std::is_void_v<RetT>)
+   if constexpr(std::is_void<RetT>::value)
       {
       return ffi_guard_thunk(func_name, [&] { func(*p); return BOTAN_FFI_SUCCESS; });
       }

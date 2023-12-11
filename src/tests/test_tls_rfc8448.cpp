@@ -596,7 +596,7 @@ class RFC8448_Session_Manager : public Botan::TLS::Session_Manager
          {
          auto itr = std::find_if(m_sessions.begin(), m_sessions.end(), find_by_handle(handle));
          if(itr == m_sessions.end())
-            return std::nullopt;
+            return Botan::nullopt;
          else
             return itr->session;
          }
@@ -752,7 +752,7 @@ class Client_Context : public TLS_Context
                      std::shared_ptr<const RFC8448_Text_Policy> policy,
                      uint64_t timestamp,
                      Modify_Exts_Fn modify_exts_cb,
-                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt,
+                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = Botan::nullopt,
                      std::vector<MockSignature> mock_signatures = {})
          : TLS_Context(std::move(rng_in), std::move(policy), std::move(modify_exts_cb), std::move(mock_signatures), timestamp, std::move(session_and_ticket), false)
          , client(m_callbacks, m_session_mgr, m_creds, m_policy, m_rng,
@@ -777,7 +777,7 @@ class Server_Context : public TLS_Context
                      Modify_Exts_Fn modify_exts_cb,
                      std::vector<MockSignature> mock_signatures,
                      bool use_alternative_server_certificate = false,
-                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = std::nullopt)
+                     Botan::optional<std::pair<Session, Session_Ticket>> session_and_ticket = Botan::nullopt)
          : TLS_Context(std::move(rng), std::move(policy),
             std::move(modify_exts_cb),
             std::move(mock_signatures),
@@ -1357,7 +1357,7 @@ class Test_TLS_RFC8448_Client : public Test_TLS_RFC8448
                                                       std::make_shared<RFC8448_Text_Policy>("rfc8448_1rtt"),
                                                       vars.get_req_u64("CurrentTimestamp"),
                                                       add_extensions_and_sort,
-                                                      std::nullopt,
+                                                      Botan::nullopt,
                                                       make_mock_signatures(vars));
 
                ctx->check_callback_invocations(result, "initial callbacks", {

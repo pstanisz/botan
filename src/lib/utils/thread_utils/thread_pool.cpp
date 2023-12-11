@@ -25,7 +25,7 @@ Botan::optional<size_t> global_thread_pool_size()
       catch(std::exception&) { /* ignore it */ }
 
       if(var == "none")
-         return std::nullopt;
+         return Botan::nullopt;
       }
 
    // If it was neither a number nor a special value, then ignore it.

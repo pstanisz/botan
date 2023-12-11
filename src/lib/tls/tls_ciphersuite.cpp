@@ -105,7 +105,7 @@ Botan::optional<Ciphersuite> Ciphersuite::by_id(uint16_t suite)
       return *s;
       }
 
-   return std::nullopt; // some unknown ciphersuite
+   return Botan::nullopt; // some unknown ciphersuite
    }
 
 Botan::optional<Ciphersuite> Ciphersuite::from_name(Botan::string_view name)
@@ -118,7 +118,7 @@ Botan::optional<Ciphersuite> Ciphersuite::from_name(Botan::string_view name)
          return suite;
       }
 
-   return std::nullopt; // some unknown ciphersuite
+   return Botan::nullopt; // some unknown ciphersuite
    }
 
 namespace {

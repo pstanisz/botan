@@ -20,7 +20,9 @@
 
 #define NO_CPP20
 
-namespace Botan::concepts {
+namespace Botan {
+
+namespace concepts {
 
 #ifndef NO_CPP20
 
@@ -61,7 +63,7 @@ concept destructible = std::is_nothrow_destructible_v<T>;
 
 template<class T, class... Args>
 concept constructible_from =
-   destructible<T> && std::is_constructible_v<T, Args...>;
+   destructible<T> && std::is_constructible<T, Args...>::value;
 
 template<class T>
 concept default_initializable =
@@ -133,7 +135,7 @@ concept streamable = requires(std::ostream& os, T a)
 // TODO: C++20 use std::convertible_to<> that was not available in Android NDK
 //       as of this writing. Tested with API Level up to 33.
 template <class FromT, class ToT>
-using convertible_to = typename Botan::void_t<decltype(std::is_convertible_v<FromT, ToT>), decltype(static_cast<ToT>(std::declval<FromT>()))>;
+using convertible_to = typename Botan::void_t<decltype(std::is_convertible<FromT, ToT>::value), decltype(static_cast<ToT>(std::declval<FromT>()))>;
 
 template <class FromT, class ToT, typename = void>
 struct is_convertible_to : std::false_type {};
@@ -172,10 +174,10 @@ template <class T>
 constexpr bool is_destructible_v = destructible<T>::value;
 
 template <class T, class... Args>
-using constructible_from = typename std::enable_if_t<is_destructible_v<T> && std::is_constructible_v<T, Args...>>;
+using constructible_from = typename std::enable_if_t<is_destructible_v<T> && std::is_constructible<T, Args...>::value>;
 
 template <class T, class... Args>
-constexpr bool is_constructible_from_v = is_destructible_v<T> && std::is_constructible_v<T, Args...>;
+constexpr bool is_constructible_from_v = is_destructible_v<T> && std::is_constructible<T, Args...>::value;
 
 template <typename T>
 using default_initializable = typename Botan::void_t<std::enable_if_t<is_constructible_from_v<T>>, decltype(T{}), decltype(::new (static_cast<void *>(nullptr)) T)>;
@@ -193,7 +195,7 @@ template <typename T, typename U, typename = void>
 struct same_as : std::false_type {};
 
 template <typename T, typename U>
-struct same_as<T, U, std::enable_if_t<std::is_same_v<T, U> && std::is_same_v<U, T>>> : std::true_type {};
+struct same_as<T, U, std::enable_if_t<std::is_same<T, U>::value && std::is_same<U, T>::value>> : std::true_type {};
 
 template <typename T, typename U>
 constexpr bool same_as_v = same_as<T, U>::value;
@@ -310,6 +312,8 @@ struct is_streamable<T, streamable<T>> : std::true_type {};
 
 template <typename T>
 constexpr bool is_streamable_v = is_streamable<T>::value;
+
+}
 
 }
 

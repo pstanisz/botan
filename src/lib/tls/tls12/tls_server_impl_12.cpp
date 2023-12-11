@@ -69,28 +69,28 @@ Botan::optional<Session> check_for_resume(const Session_Handle& handle_to_resume
    {
    auto session = session_manager.retrieve(handle_to_resume, cb, policy);
    if(!session.has_value())
-      return std::nullopt;
+      return Botan::nullopt;
 
    // wrong version
    if(client_hello->legacy_version() != session->version())
-      return std::nullopt;
+      return Botan::nullopt;
 
    // client didn't send original ciphersuite
    if(!value_exists(client_hello->ciphersuites(),
                     session->ciphersuite_code()))
-      return std::nullopt;
+      return Botan::nullopt;
 
    // client sent a different SNI hostname
    if(!client_hello->sni_hostname().empty() &&
        client_hello->sni_hostname() != session->server_info().hostname())
-      return std::nullopt;
+      return Botan::nullopt;
 
    // Checking extended_master_secret on resume (RFC 7627 section 5.3)
    if(client_hello->supports_extended_master_secret() != session->supports_extended_master_secret())
       {
       if(!session->supports_extended_master_secret())
          {
-         return std::nullopt; // force new handshake with extended master secret
+         return Botan::nullopt; // force new handshake with extended master secret
          }
       else
          {
@@ -753,7 +753,7 @@ void Server_Impl_12::session_resume(Server_Handshake_State& pending_state,
       if(!callbacks().tls_should_persist_resumption_information(session.session))
          {
          session_manager().remove(session.handle);
-         return std::nullopt;
+         return Botan::nullopt;
          }
       else
          {

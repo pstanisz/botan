@@ -48,7 +48,7 @@ Botan::optional<Session> Session_Manager::retrieve(const Session_Handle& handle,
 
    auto session = retrieve_one(handle);
    if(!session.has_value())
-      return std::nullopt;
+      return Botan::nullopt;
 
    // A value of '0' means: No policy restrictions.
    const std::chrono::seconds policy_lifetime =
@@ -82,7 +82,7 @@ Botan::optional<Session> Session_Manager::retrieve(const Session_Handle& handle,
    if(expired)
       {
       remove(handle);
-      return std::nullopt;
+      return Botan::nullopt;
       }
    else
       {
@@ -252,7 +252,7 @@ Botan::optional<std::pair<Session, uint16_t>>
       ++i;
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 #endif

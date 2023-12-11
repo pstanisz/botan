@@ -1162,7 +1162,7 @@ class Path_Validation_With_OCSP_Tests final : public Test
          auto check_path = [&](const std::chrono::system_clock::time_point valid_time,
                                const Botan::OCSP::Response& ocsp_ee,
                                const Botan::Certificate_Status_Code expected,
-                               const Botan::optional<Botan::Certificate_Status_Code> also_expected = std::nullopt)
+                               const Botan::optional<Botan::Certificate_Status_Code> also_expected = Botan::nullopt)
             {
             const auto path_result = Botan::x509_path_validate(cert_path, restrictions, trusted, "", Botan::Usage_Type::UNSPECIFIED,
                                      valid_time, std::chrono::milliseconds(0), {ocsp_ee});

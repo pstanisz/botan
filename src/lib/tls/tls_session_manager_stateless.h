@@ -44,7 +44,7 @@ class BOTAN_PUBLIC_API(3,0) Session_Manager_Stateless : public Session_Manager
          const std::shared_ptr<RandomNumberGenerator>& rng);
 
       Botan::optional<Session_Handle> establish(const Session& session,
-                                              const Botan::optional<Session_ID>& id = std::nullopt,
+                                              const Botan::optional<Session_ID>& id = Botan::nullopt,
                                               bool tls12_no_ticket = false) override;
 
       void store(const Session& session, const Session_Handle& handle) override;

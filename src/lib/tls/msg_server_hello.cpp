@@ -475,7 +475,7 @@ Botan::optional<Protocol_Version> Server_Hello_12::random_signals_downgrade() co
    if(last8 == DOWNGRADE_TLS12)
       { return Version_Code::TLS_V12; }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 
@@ -832,7 +832,7 @@ Botan::optional<Protocol_Version> Server_Hello_13::random_signals_downgrade() co
    if(last8 == DOWNGRADE_TLS12)
       { return Version_Code::TLS_V12; }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Protocol_Version Server_Hello_13::selected_version() const

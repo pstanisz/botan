@@ -244,7 +244,7 @@ class BOTAN_UNSTABLE_API Client_Hello_13 final : public Client_Hello
       /**
        * Select the highest protocol version from the list of versions
        * supported by the client. If no such version can be determind this
-       * returns std::nullopt.
+       * returns Botan::nullopt.
        */
       Botan::optional<Protocol_Version> highest_supported_version(const Policy& policy) const;
 
@@ -691,7 +691,7 @@ class BOTAN_UNSTABLE_API Certificate_Request_13 final : public Handshake_Message
       Certificate_Request_13(const std::vector<uint8_t>& buf, const Connection_Side side);
 
       //! Creates a Certificate_Request message if it is required by the configuration
-      //! @return std::nullopt if configuration does not require client authentication
+      //! @return Botan::nullopt if configuration does not require client authentication
       static Botan::optional<Certificate_Request_13> maybe_create(const Client_Hello_13& sni_hostname,
                                                                 Credentials_Manager& cred_mgr,
                                                                 Callbacks& callbacks,
@@ -967,7 +967,7 @@ class BOTAN_UNSTABLE_API New_Session_Ticket_13 final : public Handshake_Message
       std::chrono::seconds lifetime_hint() const { return m_ticket_lifetime_hint; }
 
       /**
-       * @return  the number of bytes allowed for early data or std::nullopt
+       * @return  the number of bytes allowed for early data or Botan::nullopt
        *          when early data is not allowed at all
        */
       Botan::optional<uint32_t> early_data_byte_limit() const;

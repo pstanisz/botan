@@ -217,7 +217,7 @@ Response::find_signing_certificate(const X509_Certificate& issuer_certificate,
          }
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 

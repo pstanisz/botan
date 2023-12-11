@@ -33,7 +33,7 @@ struct Record
    Record(Record_Type record_type, secure_vector<uint8_t> frgmnt)
       : type(record_type)
       , fragment(std::move(frgmnt))
-      , seq_no(std::nullopt) {}
+      , seq_no(Botan::nullopt) {}
    };
 
 using BytesNeeded = size_t;

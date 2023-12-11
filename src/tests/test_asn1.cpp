@@ -269,11 +269,11 @@ Test::Result test_asn1_tag_underlying_type()
    {
    Test::Result result("ASN.1 class and type underlying type");
 
-   if constexpr(std::is_same_v<std::underlying_type_t<Botan::ASN1_Class>,
-                               std::underlying_type_t<Botan::ASN1_Type>>)
+   if constexpr(std::is_same<std::underlying_type_t<Botan::ASN1_Class>,
+                               std::underlying_type_t<Botan::ASN1_Type>>::value)
    {
-      if constexpr(!std::is_same_v<std::underlying_type_t<Botan::ASN1_Class>,
-                                   std::invoke_result_t<decltype(&Botan::BER_Object::tagging), Botan::BER_Object>>)
+      if constexpr(!std::is_same<std::underlying_type_t<Botan::ASN1_Class>,
+                                   std::invoke_result_t<decltype(&Botan::BER_Object::tagging), Botan::BER_Object>>::value)
       {
          result.test_failure("Return type of BER_Object::tagging() is different than the underlying type of ASN1_Class");
       }

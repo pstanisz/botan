@@ -30,7 +30,7 @@ Handshake_Type handshake_type_from_byte(uint8_t byte_value)
    {
    const auto type = static_cast<Handshake_Type>(byte_value);
 
-   if constexpr(std::is_same_v<Msg_Type, Handshake_Message_13>)
+   if constexpr(std::is_same<Msg_Type, Handshake_Message_13>::value)
       {
       switch(type)
          {
@@ -67,18 +67,18 @@ Botan::optional<Msg_Type> parse_message(TLS::TLS_Data_Reader& reader, const Poli
    {
    // read the message header
    if(reader.remaining_bytes() < HEADER_LENGTH)
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    Handshake_Type type = handshake_type_from_byte<Msg_Type>(reader.get_byte());
 
    // make sure we have received the full message
    const size_t msg_len = reader.get_uint24_t();
    if(reader.remaining_bytes() < msg_len)
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    // create the message
    const auto msg = reader.get_fixed<uint8_t>(msg_len);
-   if constexpr(std::is_same_v<Msg_Type, Handshake_Message_13>)
+   if constexpr(std::is_same<Msg_Type, Handshake_Message_13>::value)
       {
       switch(type)
          {

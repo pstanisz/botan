@@ -26,15 +26,15 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_Noop final : public Session_Manager
       Session_Manager_Noop();
 
       Botan::optional<Session_Handle> establish(const Session&,
-                                              const Botan::optional<Session_ID>& = std::nullopt,
-                                              bool = false) override { return std::nullopt; }
+                                              const Botan::optional<Session_ID>& = Botan::nullopt,
+                                              bool = false) override { return Botan::nullopt; }
 
       void store(const Session&, const Session_Handle&) override {}
       size_t remove(const Session_Handle&) override { return 0; }
       size_t remove_all() override { return 0; }
 
    protected:
-      Botan::optional<Session> retrieve_one(const Session_Handle&) override { return std::nullopt; }
+      Botan::optional<Session> retrieve_one(const Session_Handle&) override { return Botan::nullopt; }
       std::vector<Session_with_Handle> find_some(const Server_Information&, const size_t) override { return {}; }
    };
 

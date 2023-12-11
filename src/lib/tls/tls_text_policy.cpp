@@ -100,7 +100,7 @@ Botan::optional<uint16_t> Text_Policy::record_size_limit() const
    // RFC 8449 4.
    //    TLS 1.3 uses a limit of 2^14+1 octets.
    BOTAN_ARG_CHECK(limit <= 16385, "record size limit too large");
-   return (limit > 0) ? std::make_optional(static_cast<uint16_t>(limit)) : std::nullopt;
+   return (limit > 0) ? std::make_optional(static_cast<uint16_t>(limit)) : Botan::nullopt;
    }
 
 bool Text_Policy::support_cert_status_message() const

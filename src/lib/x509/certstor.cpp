@@ -23,7 +23,7 @@ Certificate_Store::find_cert(const X509_DN& subject_dn, const std::vector<uint8_
 
    if(certs.empty())
       {
-      return std::nullopt;
+      return Botan::nullopt;
       }
 
    // `count` might be greater than 1, but we'll just select the first match
@@ -32,7 +32,7 @@ Certificate_Store::find_cert(const X509_DN& subject_dn, const std::vector<uint8_
 
 Botan::optional<X509_CRL> Certificate_Store::find_crl_for(const X509_Certificate& /*unused*/) const
    {
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 void Certificate_Store_In_Memory::add_certificate(const X509_Certificate& cert)
@@ -72,7 +72,7 @@ Certificate_Store_In_Memory::find_cert(const X509_DN& subject_dn,
          return cert;
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 std::vector<X509_Certificate> Certificate_Store_In_Memory::find_all_certs(
@@ -112,7 +112,7 @@ Certificate_Store_In_Memory::find_cert_by_pubkey_sha1(const std::vector<uint8_t>
          return cert;
    }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Botan::optional<X509_Certificate>
@@ -129,7 +129,7 @@ Certificate_Store_In_Memory::find_cert_by_raw_subject_dn_sha256(const std::vecto
          return cert;
    }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 void Certificate_Store_In_Memory::add_crl(const X509_CRL& crl)

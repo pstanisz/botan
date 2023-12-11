@@ -301,7 +301,7 @@ class Key_Share_ClientHello
 
          if(match == m_client_shares.end())
             {
-            return std::nullopt;
+            return Botan::nullopt;
             }
 
          return *match;

@@ -168,7 +168,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
       * @param trusted_ocsp_responders optionally, a certificate store containing
       *        additionally trusted responder certificates
       *
-      * @return the certificate that signed this response or std::nullopt if not found
+      * @return the certificate that signed this response or Botan::nullopt if not found
       */
       Botan::optional<X509_Certificate>
       find_signing_certificate(const X509_Certificate& issuer_certificate,
@@ -236,7 +236,7 @@ class BOTAN_PUBLIC_API(2,0) Response final
       const std::vector<X509_Certificate> &certificates() const { return  m_certs; }
 
       /**
-      * @return the dummy response if this is a 'fake' OCSP response otherwise std::nullopt
+      * @return the dummy response if this is a 'fake' OCSP response otherwise Botan::nullopt
       */
       Botan::optional<Certificate_Status_Code> dummy_status() const { return m_dummy_response_status; }
 

@@ -121,7 +121,7 @@ Flatfile_Certificate_Store::find_cert_by_pubkey_sha1(const std::vector<uint8_t>&
       return found_cert->second;
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Botan::optional<X509_Certificate>
@@ -137,7 +137,7 @@ Flatfile_Certificate_Store::find_cert_by_raw_subject_dn_sha256(const std::vector
       return found_cert->second;
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Botan::optional<X509_CRL> Flatfile_Certificate_Store::find_crl_for(const X509_Certificate& subject) const

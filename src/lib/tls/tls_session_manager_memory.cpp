@@ -64,7 +64,7 @@ Botan::optional<Session> Session_Manager_In_Memory::retrieve_one(const Session_H
          { return session->second.session; }
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 std::vector<Session_with_Handle> Session_Manager_In_Memory::find_some(const Server_Information& info,

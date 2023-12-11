@@ -39,7 +39,7 @@ struct Server_PSK
    uint16_t selected_identity;
 
    // Servers store the Session to resume from the selected PSK
-   // Clients leave this as std::nullopt
+   // Clients leave this as Botan::nullopt
    Botan::optional<Session> session_to_resume;
    };
 
@@ -70,7 +70,7 @@ PSK::PSK(TLS_Data_Reader& reader,
             Server_PSK
                {
                reader.get_uint16_t(),  //selected_identity
-               std::nullopt            //session_to_resume
+               Botan::nullopt            //session_to_resume
                });
       }
    else if(message_type == Handshake_Type::ClientHello)
@@ -291,7 +291,7 @@ Session PSK::take_session_to_resume()
    auto& session_to_resume = std::get<Server_PSK>(m_impl->psk).session_to_resume;
    BOTAN_STATE_CHECK(session_to_resume.has_value());
    Session s = std::move(session_to_resume.value());
-   session_to_resume = std::nullopt;
+   session_to_resume = Botan::nullopt;
    return s;
    }
 

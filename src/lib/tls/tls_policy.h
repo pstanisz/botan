@@ -337,7 +337,7 @@ class BOTAN_PUBLIC_API(2,0) Policy
       /**
        * Defines the maximum TLS record length for TLS connections.
        * This is based on the Record Size Limit extension described in RFC 8449.
-       * By default (i.e. if std::nullopt is returned), TLS clients will omit
+       * By default (i.e. if Botan::nullopt is returned), TLS clients will omit
        * this extension altogether.
        *
        * This value may be between 64 and 16385 (TLS 1.3) or 16384 (TLS 1.2).

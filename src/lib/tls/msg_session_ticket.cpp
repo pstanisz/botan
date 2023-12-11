@@ -121,7 +121,7 @@ New_Session_Ticket_13::New_Session_Ticket_13(const std::vector<uint8_t>& buf,
 Botan::optional<uint32_t> New_Session_Ticket_13::early_data_byte_limit() const
    {
    if(!m_extensions.has<EarlyDataIndication>())
-      return std::nullopt;
+      return Botan::nullopt;
 
    const EarlyDataIndication* ext = m_extensions.get<EarlyDataIndication>();
    BOTAN_ASSERT_NOMSG(ext->max_early_data_size().has_value());

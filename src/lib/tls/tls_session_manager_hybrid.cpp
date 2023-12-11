@@ -34,7 +34,7 @@ Session_Manager_Hybrid::establish(const Session& session,
    auto create_ticket = [&]() -> Botan::optional<Session_Handle>
       {
       if(tls12_no_ticket)
-         { return std::nullopt; }
+         { return Botan::nullopt; }
 
       auto ticket_handle = m_stateless.establish(session, id, false /* always allow tickets */);
       BOTAN_ASSERT_IMPLICATION(ticket_handle.has_value(), ticket_handle->is_ticket(),

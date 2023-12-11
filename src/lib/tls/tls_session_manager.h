@@ -54,23 +54,23 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * be able to save the session for whatever reason; this is not an error.
        * Callers cannot assume that calling establish() followed immediately by
        * retrieve() or choose_from_offered_tickets() will result in a successful
-       * lookup. In case no session was stored, std::nullopt is returned.
+       * lookup. In case no session was stored, Botan::nullopt is returned.
        *
        * This method is only called on TLS servers.
        *
        * Note that implementations will silently refrain from sending session
-       * tickets to the client when this method returns std::nullopt.
+       * tickets to the client when this method returns Botan::nullopt.
        *
        * @param session to save
        * @param id to use (instead of an ID chosen by the manager)
        * @param tls12_no_ticket disable tickets for this establishment
        *                        (set when TLS 1.2 client does not support them)
        * @return a Session_Handle containing either an ID or a ticket
-       *         if the session was saved, otherwise std::nullopt
+       *         if the session was saved, otherwise Botan::nullopt
        */
       virtual Botan::optional<Session_Handle> establish(
          const Session& session,
-         const Botan::optional<Session_ID>& id = std::nullopt,
+         const Botan::optional<Session_ID>& id = Botan::nullopt,
          bool tls12_no_ticket = false);
 
       /**
@@ -112,7 +112,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        *                      the to-be-negotiated connection
        *
        * @return a std::pair of the Session associated to the choosen PSK and
-       *         the index of the selected ticket; std::nullopt if no PSK was
+       *         the index of the selected ticket; Botan::nullopt if no PSK was
        *         chosen for usage (will result in a full handshake)
        *
        * @note if no PSK is chosen, the server will attempt a regular handshake.
@@ -144,7 +144,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * @param handle     the Session_Handle to be retrieved
        * @param callbacks  callbacks to be used for session policy decisions
        * @param policy     policy to be used for session policy decisions
-       * @return           the obtained session or std::nullopt if no session
+       * @return           the obtained session or Botan::nullopt if no session
        *                   was found or the policy checks failed
        */
       virtual Botan::optional<Session> retrieve(const Session_Handle& handle,
@@ -232,7 +232,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
        * This method is called only by servers.
        *
        * @param handle a Session_Handle containing either an ID or a ticket
-       * @return the obtained session or std::nullopt if none can be obtained
+       * @return the obtained session or Botan::nullopt if none can be obtained
        */
       virtual Botan::optional<Session> retrieve_one(const Session_Handle& handle) = 0;
 

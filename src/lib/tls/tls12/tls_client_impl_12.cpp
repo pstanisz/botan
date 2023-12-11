@@ -77,7 +77,7 @@ Client_Impl_12::Client_Impl_12(std::shared_ptr<Callbacks> callbacks,
    BOTAN_ASSERT_NONNULL(m_creds);
    const auto version = datagram ? Version_Code::DTLS_V12 : Version_Code::TLS_V12;
    Handshake_State& state = create_handshake_state(version);
-   send_client_hello(state, false, version, std::nullopt /* no a-priori session to resume */, next_protocols);
+   send_client_hello(state, false, version, Botan::nullopt /* no a-priori session to resume */, next_protocols);
    }
 
 Client_Impl_12::Client_Impl_12(const Channel_Impl::Downgrade_Information& downgrade_info) :
@@ -795,7 +795,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
          else if(const auto& session_id = state.server_hello()->session_id(); !session_id.empty())
             { return session_id; }
          else
-            { return std::nullopt; }
+            { return Botan::nullopt; }
          }();
 
       // Give the application a chance for a final veto before fully

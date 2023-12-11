@@ -147,7 +147,7 @@ Botan::optional<Session_with_Handle> Client_Impl_13::find_session_for_resumption
    // suitable for resumption in this context.
    auto sessions = session_manager().find(m_info, callbacks(), policy());
    if(sessions.empty())
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    // TODO: TLS 1.3 allows sending more than one ticket (for resumption) in a
    //       Client Hello. Currently, we do not support that. The Session_Manager

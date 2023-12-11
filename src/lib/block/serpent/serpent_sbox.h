@@ -12,7 +12,9 @@
 
 #include <botan/build.h>
 
-namespace Botan::Serpent_F {
+namespace Botan {
+   
+namespace Serpent_F {
 
 template<typename T>
 BOTAN_FORCE_INLINE void SBoxE0(T& a, T& b, T& c, T& d)
@@ -503,6 +505,8 @@ class Key_Inserter final
    private:
       const uint32_t* m_RK;
    };
+
+}
 
 }
 

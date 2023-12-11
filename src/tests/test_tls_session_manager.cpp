@@ -135,7 +135,7 @@ decltype(auto) default_session(Botan::TLS::Connection_Side side,
       {
 #if defined(BOTAN_HAS_TLS_13)
       return Botan::TLS::Session(
-            {}, std::nullopt, 0, std::chrono::seconds(1024),
+            {}, Botan::nullopt, 0, std::chrono::seconds(1024),
             Botan::TLS::Version_Code::TLS_V13,
             Botan::TLS::Ciphersuite::from_name("AES_128_GCM_SHA256")->ciphersuite_code(),
             side,
@@ -231,16 +231,16 @@ std::vector<Test::Result> test_session_manager_in_memory()
          result.confirm("session was not found", !session.has_value());
          }),
 
-      Botan_Tests::CHECK("invalid ticket causes std::nullopt", [&](auto& result)
+      Botan_Tests::CHECK("invalid ticket causes Botan::nullopt", [&](auto& result)
          {
          auto no_session = mgr->retrieve(random_ticket(), cbs, plcy);
-         result.confirm("std::nullopt on bogus ticket", !no_session.has_value());
+         result.confirm("Botan::nullopt on bogus ticket", !no_session.has_value());
          }),
 
-      Botan_Tests::CHECK("invalid ID causes std::nullopt", [&](auto& result)
+      Botan_Tests::CHECK("invalid ID causes Botan::nullopt", [&](auto& result)
          {
          auto no_session = mgr->retrieve(random_id(), cbs, plcy);
-         result.confirm("std::nullopt on bogus ID", !no_session.has_value());
+         result.confirm("Botan::nullopt on bogus ID", !no_session.has_value());
          }),
 
       Botan_Tests::CHECK("remove_all", [&](auto& result)
@@ -400,7 +400,7 @@ std::vector<Test::Result> test_session_manager_choose_ticket()
             true, true, {}, server_info, 0,
             mycbs.tls_current_timestamp())
          : Botan::TLS::Session(
-            {}, std::nullopt, 0, std::chrono::seconds(1024),
+            {}, Botan::nullopt, 0, std::chrono::seconds(1024),
             version,
             Botan::TLS::Ciphersuite::from_name(suite)->ciphersuite_code(),
             Botan::TLS::Connection_Side::Server,
@@ -528,8 +528,8 @@ std::vector<Test::Result> test_session_manager_stateless()
       Botan_Tests::CHECK("establish with disabled tickets", [&](auto& result)
          {
          result.confirm("will emit tickets", mgr.emits_session_tickets());
-         auto ticket = mgr.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), std::nullopt, true);
-         result.confirm("returned std::nullopt", !ticket.has_value());
+         auto ticket = mgr.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), Botan::nullopt, true);
+         result.confirm("returned Botan::nullopt", !ticket.has_value());
          }),
 
       Botan_Tests::CHECK("establish without ticket key in credentials manager", [&](auto& result)
@@ -538,7 +538,7 @@ std::vector<Test::Result> test_session_manager_stateless()
 
          result.confirm("won't emit tickets", !local_mgr.emits_session_tickets());
          auto ticket = local_mgr.establish(default_session(Botan::TLS::Connection_Side::Server, cbs));
-         result.confirm("returned std::nullopt", !ticket.has_value());
+         result.confirm("returned Botan::nullopt", !ticket.has_value());
          }),
 
       Botan_Tests::CHECK("retrieve via ticket", [&](auto& result)
@@ -675,10 +675,10 @@ std::vector<Test::Result> test_session_manager_hybrid()
          auto ticket2 = mgr_prefers_ids.establish(default_session(Botan::TLS::Connection_Side::Server, cbs));
          result.confirm("emits an ID", ticket2.has_value() && ticket2->is_id());
 
-         auto ticket3 = mgr_prefers_ids.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), std::nullopt, true /* TLS 1.2 no ticket support */);
+         auto ticket3 = mgr_prefers_ids.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), Botan::nullopt, true /* TLS 1.2 no ticket support */);
          result.confirm("emits an ID", ticket3.has_value() && ticket3->is_id());
 
-         auto ticket4 = mgr_prefers_ids.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), std::nullopt, true /* TLS 1.2 no ticket support */);
+         auto ticket4 = mgr_prefers_ids.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), Botan::nullopt, true /* TLS 1.2 no ticket support */);
          result.confirm("emits an ID", ticket4.has_value() && ticket4->is_id());
          }),
 
@@ -831,7 +831,7 @@ std::vector<Test::Result> test_session_manager_sqlite()
          auto some_random_handle = mgr.establish(default_session(Botan::TLS::Connection_Side::Server, cbs), random_id());
          auto some_virtual_handle = mgr.establish(default_session(Botan::TLS::Connection_Side::Server, cbs));
 
-         result.confirm("std::nullopt on random ticket", !mgr.retrieve(random_ticket(), cbs, plcy).has_value());
+         result.confirm("Botan::nullopt on random ticket", !mgr.retrieve(random_ticket(), cbs, plcy).has_value());
          }),
 
       Botan_Tests::CHECK("storing sessions and finding them by server info", [&](auto& result)

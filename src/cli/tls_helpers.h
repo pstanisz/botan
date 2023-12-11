@@ -64,8 +64,8 @@ class Basic_Credentials_Manager : public Botan::Credentials_Manager
    public:
       Basic_Credentials_Manager(bool use_system_store,
                                 std::string ca_path,
-                                Botan::optional<std::string> client_crt = std::nullopt,
-                                Botan::optional<std::string> client_key = std::nullopt)
+                                Botan::optional<std::string> client_crt = Botan::nullopt,
+                                Botan::optional<std::string> client_key = Botan::nullopt)
          {
          if(ca_path.empty() == false)
             {

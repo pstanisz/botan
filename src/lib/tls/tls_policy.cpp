@@ -45,7 +45,7 @@ std::vector<Signature_Scheme> Policy::acceptable_signature_schemes() const
 Botan::optional<std::vector<Signature_Scheme>> Policy::acceptable_certificate_signature_schemes() const
    {
    // the restrictions of ::acceptable_signature_schemes() shall apply
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 std::vector<std::string> Policy::allowed_ciphers() const
@@ -370,7 +370,7 @@ bool Policy::include_time_in_hello_random() const { return true; }
 bool Policy::hide_unknown_users() const { return false; }
 bool Policy::server_uses_own_ciphersuite_preferences() const { return true; }
 bool Policy::negotiate_encrypt_then_mac() const { return true; }
-Botan::optional<uint16_t> Policy::record_size_limit() const { return std::nullopt; }
+Botan::optional<uint16_t> Policy::record_size_limit() const { return Botan::nullopt; }
 bool Policy::support_cert_status_message() const { return true; }
 bool Policy::allow_resumption_for_renegotiation() const { return true; }
 bool Policy::tls_13_middlebox_compatibility_mode() const { return true; }

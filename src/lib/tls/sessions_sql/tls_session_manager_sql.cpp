@@ -215,7 +215,7 @@ Botan::optional<Session> Session_Manager_SQL::retrieve_one(const Session_Handle&
          }
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 std::vector<Session_with_Handle> Session_Manager_SQL::find_some(const Server_Information& info,

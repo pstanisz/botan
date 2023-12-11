@@ -27,8 +27,11 @@ enum class Cipher_Dir : int {
    Encryption,
    Decryption,
 
-   ENCRYPTION BOTAN_DEPRECATED("Use Cipher_Dir::Encryption") = Encryption,
-   DECRYPTION BOTAN_DEPRECATED("Use Cipher_Dir::Decryption") = Decryption,
+   // TODO: pstanisz to check
+   //ENCRYPTION BOTAN_DEPRECATED("Use Cipher_Dir::Encryption") = Encryption,
+   //DECRYPTION BOTAN_DEPRECATED("Use Cipher_Dir::Decryption") = Decryption,
+   ENCRYPTION = Encryption,
+   DECRYPTION = Decryption,
 };
 
 /**

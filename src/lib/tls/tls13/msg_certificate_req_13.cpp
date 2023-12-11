@@ -129,7 +129,7 @@ Certificate_Request_13::maybe_create(const Client_Hello_13& client_hello,
 
    if(client_auth_CAs.empty() && !policy.request_client_certificate_authentication())
       {
-      return std::nullopt;
+      return Botan::nullopt;
       }
 
    return Certificate_Request_13(std::move(client_auth_CAs),

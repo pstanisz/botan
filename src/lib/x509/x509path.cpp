@@ -304,7 +304,7 @@ PKIX::check_ocsp(const std::vector<X509_Certificate>& cert_path,
       const X509_Certificate& subject = cert_path.at(i);
       const X509_Certificate& ca = cert_path.at(i+1);
 
-      if(i < ocsp_responses.size() && (ocsp_responses.at(i) != std::nullopt)
+      if(i < ocsp_responses.size() && (ocsp_responses.at(i) != Botan::nullopt)
             && (ocsp_responses.at(i)->status() == OCSP::Response_Status_Code::Successful))
          {
          try
@@ -755,7 +755,7 @@ PKIX::build_all_certificate_paths(std::vector<std::vector<X509_Certificate>>& ce
       {
       Botan::optional<X509_Certificate> last = stack.back().first;
       // found a deletion marker that guides the DFS, backtracing
-      if(last == std::nullopt)
+      if(last == Botan::nullopt)
          {
          stack.pop_back();
          std::string fprint = path_so_far.back().fingerprint("SHA-256");

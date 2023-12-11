@@ -111,7 +111,7 @@ Botan::optional<OCSP::Response> TLS::Callbacks::tls_parse_ocsp_response(const st
    catch(const Decoding_Error&)
       {
       // ignore parsing errors and just ignore the broken OCSP response
-      return std::nullopt;
+      return Botan::nullopt;
       }
    }
 

@@ -122,7 +122,7 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
       template<typename MsgT>
       std::reference_wrapper<MsgT> sending(MsgT msg)
          {
-         static_assert(std::is_constructible_v<Outbound_Message_T, MsgT>,
+         static_assert(std::is_constructible<Outbound_Message_T, MsgT>::value,
                        "Cannot send handshake message of type MsgT");
 
          return std::reference_wrapper<decltype(msg)>(store(std::move(msg), false));
@@ -144,7 +144,7 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
          {
          return std::visit([&](auto msg) -> as_wrapped_references_t<Inbound_Message_T>
             {
-            if constexpr(std::is_constructible_v<Inbound_Message_T, decltype(msg)>)
+            if constexpr(std::is_constructible<Inbound_Message_T, decltype(msg)>::value)
                {
                return std::reference_wrapper<decltype(msg)>(store(std::move(msg), true));
                }
@@ -157,7 +157,7 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
          {
          return std::visit([](auto msg) -> Inbound_Post_Handshake_Message_T
             {
-            if constexpr(std::is_constructible_v<Inbound_Post_Handshake_Message_T, decltype(msg)>)
+            if constexpr(std::is_constructible<Inbound_Post_Handshake_Message_T, decltype(msg)>::value)
                {
                return msg;
                }

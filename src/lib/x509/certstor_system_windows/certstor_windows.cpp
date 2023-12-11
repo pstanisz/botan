@@ -222,7 +222,7 @@ Certificate_Store_Windows::find_cert(const X509_DN& subject_dn,
    {
    const auto certs = find_cert_by_dn_and_key_id(subject_dn, key_id, true);
    if(certs.empty())
-      return std::nullopt;
+      return Botan::nullopt;
    else
       return certs.front();
    }
@@ -272,7 +272,7 @@ Botan::optional<X509_CRL> Certificate_Store_Windows::find_crl_for(const X509_Cer
    {
    // TODO: this could be implemented by using the CertFindCRLInStore function
    BOTAN_UNUSED(subject);
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Botan::optional<X509_Certificate>
@@ -307,8 +307,8 @@ Certificate_Store_Windows::find_cert_by_pubkey_sha1_via_exhaustive_search(const 
       }
 
    // insert a negative query result into the cache
-   m_non_rfc3289_certs[key_hash] = std::nullopt;
-   return std::nullopt;
+   m_non_rfc3289_certs[key_hash] = Botan::nullopt;
+   return Botan::nullopt;
    }
 
 }

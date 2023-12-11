@@ -23,6 +23,16 @@ namespace Botan {
 uint64_t prefetch_array_raw(size_t bytes, const void* array) noexcept;
 
 /**
+* Prefetch single array
+*/
+template<typename T, size_t N>
+T prefetch_arrays(T (&arr)[N]) noexcept
+   {
+   static_assert(std::is_integral<T>::value, "prefetch_arrays must use integral type");
+   return static_cast<T>(prefetch_array_raw(sizeof(T)*N, arr));
+   }
+
+/**
 * Prefetch several arrays
 *
 * This function returns a uint64_t which is accumulated from values
@@ -30,11 +40,11 @@ uint64_t prefetch_array_raw(size_t bytes, const void* array) noexcept;
 * to not elide otherwise "useless" reads. The return value will always
 * be zero.
 */
-template<typename T, size_t... Ns>
-T prefetch_arrays(T (&...arr)[Ns]) noexcept
+template<typename T, size_t N, size_t... Ns>
+T prefetch_arrays(T (&array)[N], T (&...arrays)[Ns]) noexcept
    {
    static_assert(std::is_integral<T>::value, "prefetch_arrays must use integral type");
-   return (static_cast<T>(prefetch_array_raw(sizeof(T)*Ns, arr)) & ...);
+   return (static_cast<T>(prefetch_array_raw(sizeof(T)*N, array)) & prefetch_arrays(arrays...));
    }
 
 }

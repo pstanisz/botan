@@ -60,7 +60,7 @@ inline Botan::optional<size_t> checked_mul(size_t x, size_t y)
    if(y && z / y != x)
 #endif
       {
-      return std::nullopt;
+      return Botan::nullopt;
       }
    return z;
    }

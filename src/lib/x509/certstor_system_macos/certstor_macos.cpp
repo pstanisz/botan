@@ -304,7 +304,7 @@ BOTAN_DIAGNOSTIC_POP
          if(result)
             return readCertificate(result.get());
          else
-            return std::nullopt;
+            return Botan::nullopt;
          }
 
       std::vector<X509_Certificate> findAll(Query query) const

@@ -249,7 +249,7 @@ class Test
                {
                if (m_ns_taken == 0)
                   {
-                  return std::nullopt;
+                  return Botan::nullopt;
                   }
                else
                   {
@@ -382,7 +382,7 @@ class Test
             template<typename T>
             bool test_not_nullopt(const std::string& what, Botan::optional<T> val)
                {
-               if(val == std::nullopt)
+               if(val == Botan::nullopt)
                   return test_failure(what + " was nullopt");
                else
                   return test_success(what + " was not nullopt");
@@ -609,7 +609,7 @@ class Test
             std::string to_string(const T& v)
                {
                if constexpr(detail::is_optional_v<T>)
-                  return (v.has_value()) ? to_string(v.value()) : std::string("std::nullopt");
+                  return (v.has_value()) ? to_string(v.value()) : std::string("Botan::nullopt");
                else if constexpr(detail::has_Botan_to_string<T>)
                   return Botan::to_string(v);
                else if constexpr(detail::has_ostream_operator<T>)
@@ -767,7 +767,7 @@ class FnTest : public Test
       std::vector<TestFnVariant> make_variant_vector(TestFn fn)
          {
          using T = std::decay_t<decltype(fn)>;
-         static_assert(std::is_same_v<T, test_fn> || std::is_same_v<T, test_fn_vec>,
+         static_assert(std::is_same<T, test_fn>::value || std::is_same<T, test_fn_vec>::value,
                        "functions passed to BOTAN_REGISTER_TEST_FN must either return a "
                        "single Test::Result or a std::vector of Test::Result");
          return { fn };
@@ -794,7 +794,7 @@ class FnTest : public Test
             std::visit([&](auto&& fn)
                {
                using T = std::decay_t<decltype(fn)>;
-               if constexpr(std::is_same_v<T, test_fn>)
+               if constexpr(std::is_same<T, test_fn>::value)
                   {
                   result.emplace_back(fn());
                   }

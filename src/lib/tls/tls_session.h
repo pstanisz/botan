@@ -111,14 +111,14 @@ class BOTAN_PUBLIC_API(3, 0) Session_Handle
        * If the Session_Handle was constructed with a Session_ID or an
        * Opaque_Session_Handle that can be converted to a Session_ID (up to
        * 32 bytes long), this returns the handle as a Session_ID. Otherwise,
-       * std::nullopt is returned.
+       * Botan::nullopt is returned.
        */
       Botan::optional<Session_ID> id() const;
 
       /**
        * If the Session_Handle was constructed with a Session_Ticket or an
        * Opaque_Session_Handle this returns the handle as a Session_ID.
-       * Otherwise, std::nullopt is returned.
+       * Otherwise, Botan::nullopt is returned.
        */
       Botan::optional<Session_Ticket> ticket() const;
 

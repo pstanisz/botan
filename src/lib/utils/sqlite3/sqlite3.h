@@ -27,7 +27,7 @@ class BOTAN_PUBLIC_API(2,0) Sqlite3_Database final : public SQL_Database
        * @param sqlite_open_flags  flags that will be passed to sqlite3_open_v2()
        *                           (default: SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX)
        */
-      Sqlite3_Database(Botan::string_view file, Botan::optional<int> sqlite_open_flags = std::nullopt);
+      Sqlite3_Database(Botan::string_view file, Botan::optional<int> sqlite_open_flags = Botan::nullopt);
 
       ~Sqlite3_Database();
 

@@ -86,7 +86,7 @@ size_t Server_Impl_13::send_new_session_tickets(const size_t tickets)
       {
       auto nonce = m_cipher_state->next_ticket_nonce();
       const Session session(m_cipher_state->psk(nonce),
-                            std::nullopt,  // early data not yet implemented
+                            Botan::nullopt,  // early data not yet implemented
                             policy().session_ticket_lifetime(),
                             peer_cert_chain(),
                             m_handshake_state.client_hello(),

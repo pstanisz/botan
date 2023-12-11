@@ -72,7 +72,7 @@ Botan::optional<Session_ID> Session_Handle::id() const
          { return Session_ID(handle.get()); }
       }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 Botan::optional<Session_Ticket> Session_Handle::ticket() const
@@ -84,7 +84,7 @@ Botan::optional<Session_Ticket> Session_Handle::ticket() const
    if(is_opaque_handle())
       { return Session_Ticket(std::get<Opaque_Session_Handle>(m_handle).get()); }
 
-   return std::nullopt;
+   return Botan::nullopt;
    }
 
 

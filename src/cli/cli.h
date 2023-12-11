@@ -148,7 +148,7 @@ class Command
       std::string get_arg_or(const std::string& opt_name, const std::string& otherwise) const;
 
       /*
-      * Like get_arg() but if the argument was not specified or is empty, returns std::nullopt
+      * Like get_arg() but if the argument was not specified or is empty, returns Botan::nullopt
       */
       Botan::optional<std::string> get_arg_maybe(const std::string& opt_name) const;
 

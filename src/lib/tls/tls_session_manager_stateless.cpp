@@ -33,11 +33,11 @@ Botan::optional<Session_Handle> Session_Manager_Stateless::establish(
    BOTAN_ASSERT(session.side() == Connection_Side::Server,
                 "Client tried to establish a session");
    if(tls12_no_ticket)
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    const auto key = get_ticket_key();
    if(!key.has_value())
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    return Session_Ticket{session.encrypt(key.value(), *m_rng)};
    }
@@ -51,11 +51,11 @@ Botan::optional<Session> Session_Manager_Stateless::retrieve_one(const Session_H
    {
    auto ticket = handle.ticket();
    if(!ticket.has_value())
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    const auto key = get_ticket_key();
    if(!key.has_value())
-      { return std::nullopt; }
+      { return Botan::nullopt; }
 
    try
       {
@@ -66,7 +66,7 @@ Botan::optional<Session> Session_Manager_Stateless::retrieve_one(const Session_H
       // RFC 8446 4.2.11
       //    Any unknown PSKs (e.g., ones not in the PSK database or encrypted
       //    with an unknown key) SHOULD simply be ignored.
-      return std::nullopt;
+      return Botan::nullopt;
       }
    }
 
@@ -81,12 +81,12 @@ Botan::optional<SymmetricKey> Session_Manager_Stateless::get_ticket_key() noexce
       {
       auto key = m_credentials_manager->psk("tls-server", "session-ticket", "");
       if(key.length() == 0)
-         { return std::nullopt; }
+         { return Botan::nullopt; }
       return key;
       }
    catch(...)
       {
-      return std::nullopt;
+      return Botan::nullopt;
       }
    }
 

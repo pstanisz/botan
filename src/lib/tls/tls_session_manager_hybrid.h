@@ -57,7 +57,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_Hybrid final : public Session_Manag
          bool prefer_tickets = true);
 
       Botan::optional<Session_Handle> establish(const Session& session,
-                                              const Botan::optional<Session_ID>& id = std::nullopt,
+                                              const Botan::optional<Session_ID>& id = Botan::nullopt,
                                               bool tls12_no_ticket = false) override;
 
       Botan::optional<Session> retrieve(const Session_Handle& handle,

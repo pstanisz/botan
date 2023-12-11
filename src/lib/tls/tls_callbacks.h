@@ -399,11 +399,11 @@ class BOTAN_PUBLIC_API(2,0) Callbacks
        *
        * Default implementation tries to parse the provided raw OCSP response.
        *
-       * This function should not throw an exception but return a std::nullopt
+       * This function should not throw an exception but return a Botan::nullopt
        * if the OCSP response cannot be parsed.
        *
        * @param raw_response raw OCSP response buffer
-       * @returns the parsed OCSP response or std::nullopt on error
+       * @returns the parsed OCSP response or Botan::nullopt on error
        */
        virtual Botan::optional<OCSP::Response> tls_parse_ocsp_response(const std::vector<uint8_t>& raw_response);
 
