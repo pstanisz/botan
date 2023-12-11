@@ -154,13 +154,13 @@ bool TLS::Callbacks::tls_verify_message(
 
 namespace {
 
-bool is_dh_group(const std::variant<TLS::Group_Params, DL_Group>& group)
+bool is_dh_group(const Botan::variant<TLS::Group_Params, DL_Group>& group)
    {
-   return std::holds_alternative<DL_Group>(group) ||
+   return Botan::holds_alternative<DL_Group>(group) ||
           is_dh(std::get<TLS::Group_Params>(group));
    }
 
-DL_Group get_dl_group(const std::variant<TLS::Group_Params, DL_Group>& group)
+DL_Group get_dl_group(const Botan::variant<TLS::Group_Params, DL_Group>& group)
    {
    BOTAN_ASSERT_NOMSG(is_dh_group(group));
 
@@ -177,7 +177,7 @@ DL_Group get_dl_group(const std::variant<TLS::Group_Params, DL_Group>& group)
 }
 
 std::unique_ptr<PK_Key_Agreement_Key> TLS::Callbacks::tls_generate_ephemeral_key(
-   const std::variant<TLS::Group_Params, DL_Group>& group,
+   const Botan::variant<TLS::Group_Params, DL_Group>& group,
    RandomNumberGenerator& rng)
    {
    if(is_dh_group(group))
@@ -186,7 +186,7 @@ std::unique_ptr<PK_Key_Agreement_Key> TLS::Callbacks::tls_generate_ephemeral_key
       return std::make_unique<DH_PrivateKey>(rng, dl_group);
       }
 
-   BOTAN_ASSERT_NOMSG(std::holds_alternative<TLS::Group_Params>(group));
+   BOTAN_ASSERT_NOMSG(Botan::holds_alternative<TLS::Group_Params>(group));
    const auto group_params = std::get<TLS::Group_Params>(group);
 
    if(is_ecdh(group_params))
@@ -206,7 +206,7 @@ std::unique_ptr<PK_Key_Agreement_Key> TLS::Callbacks::tls_generate_ephemeral_key
    }
 
 secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
-   const std::variant<TLS::Group_Params, DL_Group>& group,
+   const Botan::variant<TLS::Group_Params, DL_Group>& group,
    const PK_Key_Agreement_Key& private_key,
    const std::vector<uint8_t>& public_value,
    RandomNumberGenerator& rng,
@@ -242,7 +242,7 @@ secure_vector<uint8_t> TLS::Callbacks::tls_ephemeral_key_agreement(
       return agree(private_key, peer_key);
       }
 
-   BOTAN_ASSERT_NOMSG(std::holds_alternative<TLS::Group_Params>(group));
+   BOTAN_ASSERT_NOMSG(Botan::holds_alternative<TLS::Group_Params>(group));
    const auto group_params = std::get<TLS::Group_Params>(group);
 
    if(is_ecdh(group_params))

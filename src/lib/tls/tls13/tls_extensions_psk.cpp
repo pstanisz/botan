@@ -52,7 +52,7 @@ class PSK::PSK_Internal
       PSK_Internal(Server_PSK srv_psk) : psk(srv_psk) {}
       PSK_Internal(std::vector<Client_PSK> clt_psks) : psk(std::move(clt_psks)) {}
 
-      std::variant<std::vector<Client_PSK>, Server_PSK> psk;
+      Botan::variant<std::vector<Client_PSK>, Server_PSK> psk;
    };
 
 
@@ -191,18 +191,18 @@ PSK::~PSK() = default;
 
 bool PSK::empty() const
    {
-   if(std::holds_alternative<Server_PSK>(m_impl->psk))
+   if(Botan::holds_alternative<Server_PSK>(m_impl->psk))
       return false;
 
-   BOTAN_ASSERT_NOMSG(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_ASSERT_NOMSG(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
    return std::get<std::vector<Client_PSK>>(m_impl->psk).empty();
    }
 
 
 std::unique_ptr<Cipher_State> PSK::select_cipher_state(const PSK& server_psk, const Ciphersuite& cipher)
    {
-   BOTAN_STATE_CHECK(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
-   BOTAN_STATE_CHECK(std::holds_alternative<Server_PSK>(server_psk.m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<Server_PSK>(server_psk.m_impl->psk));
 
    const auto id = std::get<Server_PSK>(server_psk.m_impl->psk).selected_identity;
    auto& ids = std::get<std::vector<Client_PSK>>(m_impl->psk);
@@ -242,7 +242,7 @@ std::unique_ptr<PSK> PSK::select_offered_psk(const Ciphersuite& cipher,
                                              Callbacks& callbacks,
                                              const Policy& policy)
    {
-   BOTAN_STATE_CHECK(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
 
    auto& psks = std::get<std::vector<Client_PSK>>(m_impl->psk);
    std::vector<Ticket> tickets;
@@ -273,7 +273,7 @@ std::unique_ptr<PSK> PSK::select_offered_psk(const Ciphersuite& cipher,
 
 void PSK::filter(const Ciphersuite& cipher)
    {
-   BOTAN_STATE_CHECK(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
    auto& psks = std::get<std::vector<Client_PSK>>(m_impl->psk);
 
    const auto r = std::remove_if(psks.begin(), psks.end(), [&](const auto& psk)
@@ -287,7 +287,7 @@ void PSK::filter(const Ciphersuite& cipher)
 
 Session PSK::take_session_to_resume()
    {
-   BOTAN_STATE_CHECK(std::holds_alternative<Server_PSK>(m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<Server_PSK>(m_impl->psk));
    auto& session_to_resume = std::get<Server_PSK>(m_impl->psk).session_to_resume;
    BOTAN_STATE_CHECK(session_to_resume.has_value());
    Session s = std::move(session_to_resume.value());
@@ -340,7 +340,7 @@ std::vector<uint8_t> PSK::serialize(Connection_Side side) const
 // See RFC 8446 4.2.11.2 for details on how these binders are calculated
 void PSK::calculate_binders(const Transcript_Hash_State& truncated_transcript_hash)
    {
-   BOTAN_ASSERT_NOMSG(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_ASSERT_NOMSG(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
    for(auto& psk : std::get<std::vector<Client_PSK>>(m_impl->psk))
       {
       auto tth = truncated_transcript_hash.clone();
@@ -352,8 +352,8 @@ void PSK::calculate_binders(const Transcript_Hash_State& truncated_transcript_ha
 
 bool PSK::validate_binder(const PSK& server_psk, const std::vector<uint8_t>& binder) const
    {
-   BOTAN_STATE_CHECK(std::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
-   BOTAN_STATE_CHECK(std::holds_alternative<Server_PSK>(server_psk.m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<std::vector<Client_PSK>>(m_impl->psk));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<Server_PSK>(server_psk.m_impl->psk));
 
    const auto index = std::get<Server_PSK>(server_psk.m_impl->psk).selected_identity;
    const auto& psks = std::get<std::vector<Client_PSK>>(m_impl->psk);

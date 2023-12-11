@@ -96,7 +96,7 @@ size_t Channel_Impl_13::from_peer(Botan::span<const uint8_t> data)
 
          auto result = m_record_layer.next_record(m_cipher_state.get());
 
-         if(std::holds_alternative<BytesNeeded>(result))
+         if(Botan::holds_alternative<BytesNeeded>(result))
             { return std::get<BytesNeeded>(result); }
 
          const auto& record = std::get<Record>(result);

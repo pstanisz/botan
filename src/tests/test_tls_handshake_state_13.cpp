@@ -68,7 +68,7 @@ std::vector<Test::Result> finished_message_handling()
 
          auto server_fin = state.received(std::move(server_finished));
          result.require("client can receive server finished",
-                        std::holds_alternative<std::reference_wrapper<Finished_13>>(server_fin));
+                        Botan::holds_alternative<std::reference_wrapper<Finished_13>>(server_fin));
          result.test_eq("correct client Finished stored", state.client_finished().serialize(), client_finished_message);
          result.test_eq("correct server Finished stored", state.server_finished().serialize(), server_finished_message);
          }),
@@ -104,7 +104,7 @@ std::vector<Test::Result> handshake_message_filtering()
 
          auto filtered = state.received(std::move(server_hello));
          result.confirm("client can receive server hello",
-                        std::holds_alternative<std::reference_wrapper<Server_Hello_13>>(filtered));
+                        Botan::holds_alternative<std::reference_wrapper<Server_Hello_13>>(filtered));
 
          result.test_eq("correct server hello stored", state.server_hello().serialize(), server_hello_message);
          }),

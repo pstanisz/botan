@@ -223,7 +223,7 @@ class Channel_Impl_13 : public Channel_Impl
       void opportunistically_update_traffic_keys() { m_opportunistic_key_update = true; }
 
       template<typename... MsgTs>
-      std::vector<uint8_t> send_handshake_message(const std::variant<MsgTs...>& message)
+      std::vector<uint8_t> send_handshake_message(const Botan::variant<MsgTs...>& message)
          {
          return aggregate_handshake_messages()
                    .add(generalize_to<Handshake_Message_13_Ref>(message))

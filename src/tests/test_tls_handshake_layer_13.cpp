@@ -29,7 +29,7 @@ bool has_message(
    const Botan::optional<Handshake_Message_13>& read_result)
    {
    test_result.require("has a message", read_result.has_value());
-   return std::holds_alternative<T>(read_result.value());
+   return Botan::holds_alternative<T>(read_result.value());
    }
 
 template<typename T>

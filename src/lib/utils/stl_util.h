@@ -17,8 +17,9 @@
 #include <botan/span.h>
 #include <tuple>
 
-#include <botan/secmem.h>
 #include <botan/cpp20_traits.h>
+#include <botan/secmem.h>
+#include <botan/variant.h>
 
 namespace Botan {
 
@@ -167,6 +168,44 @@ class BufferSlicer final
    };
 
 /**
+ * Returns the size of buffer.
+ * @return the size of \p buffer
+ */
+template <typename T>
+decltype(auto) buffers_size(T&& buffer) {
+   return buffer.size();   
+}
+
+/**
+ * Returns the size of multiple buffers.
+ * @return the size of all \p buffers
+ */
+template <typename T, typename... Ts>
+decltype(auto) buffers_size(T&& buffer, Ts&& ...buffers) {
+   return buffer.size() + buffers_size(buffers...);
+}
+
+/**
+ * Concatenates buffer with other buffer.
+ * @return the buffer concatenated with \p other
+ */
+template <typename T, typename U>
+decltype(auto) concat_buffers(T& buffer, U&& other) {
+    buffer.insert(buffer.end(), other.begin(), other.end());
+    return buffer;
+}
+
+/**
+ * Concatenates buffer with an arbitrary number of buffers.
+ * @return the buffer concatenated with \p other and \p buffers
+ */
+template <typename T, typename U, typename... Ts>
+decltype(auto) concat_buffers(T& buffer, U&& other, Ts&& ...buffers) {
+    buffer.insert(buffer.end(), other.begin(), other.end());
+    return concat_buffers(buffer, buffers...);
+}
+
+/**
  * Concatenate an arbitrary number of buffers.
  * @return the concatenation of \p buffers as the container type of the first buffer
  */
@@ -177,8 +216,9 @@ decltype(auto) concat(Ts&& ...buffers)
 
    using result_t = Botan::remove_cvref_t<std::tuple_element_t<0, std::tuple<Ts...>>>;
    result_t result;
-   result.reserve((buffers.size() + ...));
-   (result.insert(result.end(), buffers.begin(), buffers.end()), ...);
+   result.reserve(buffers_size(buffers...));
+   result = concat_buffers(result, buffers...);
+
    return result;
    }
 
@@ -193,21 +233,32 @@ ResultT concat_as(Ts&& ...buffers)
    return concat(ResultT(), std::forward<Ts>(buffers)...);
    }
 
-template<typename... Alts, typename... Ts>
-constexpr bool holds_any_of(const std::variant<Ts...>& v) noexcept {
-    return (std::holds_alternative<Alts>(v) || ...);
+template <typename Alt, typename... Ts>
+constexpr bool holds_any_of(const Botan::variant<Ts...>& v) noexcept {
+    return Botan::holds_alternative<Alt>(v);
+}
+
+template <typename Alt, typename... Alts, typename... Ts>
+constexpr bool holds_any_of(const Botan::variant<Ts...>& v) noexcept {
+    return Botan::holds_alternative<Alt>(v) || holds_any_of<Alts..., Ts...>(v);
 }
 
 template<typename GeneralVariantT, typename SpecialT>
 constexpr bool is_generalizable_to(const SpecialT&) noexcept
    {
-   return std::is_constructible_v<GeneralVariantT, SpecialT>;
+   return std::is_constructible<GeneralVariantT, SpecialT>::value;
    }
 
-template<typename GeneralVariantT, typename... SpecialTs>
-constexpr bool is_generalizable_to(const std::variant<SpecialTs...>&) noexcept
+template<typename GeneralVariantT, typename SpecialT>
+constexpr bool is_generalizable_to(const Botan::variant<SpecialT>&) noexcept
    {
-   return (std::is_constructible_v<GeneralVariantT, SpecialTs> && ...);
+   return std::is_constructible<GeneralVariantT, SpecialT>::value;
+   }
+
+template<typename GeneralVariantT, typename SpecialT, typename... SpecialTs>
+constexpr bool is_generalizable_to(const Botan::variant<SpecialT, SpecialTs...>&) noexcept
+   {
+   return std::is_constructible<GeneralVariantT, SpecialT>::value && is_generalizable_to<GeneralVariantT, SpecialTs...>;
    }
 
 /**
@@ -220,7 +271,7 @@ constexpr bool is_generalizable_to(const std::variant<SpecialTs...>&) noexcept
 template<typename GeneralVariantT, typename SpecialT>
 constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept
    {
-   static_assert(std::is_constructible_v<GeneralVariantT, std::decay_t<SpecialT>>,
+   static_assert(std::is_constructible<GeneralVariantT, std::decay_t<SpecialT>>::value,
                  "Desired general type must be implicitly constructible by the specific type");
    return std::forward<SpecialT>(specific);
    }
@@ -233,18 +284,20 @@ constexpr GeneralVariantT generalize_to(SpecialT&& specific) noexcept
  * variants types.
  */
 template<typename GeneralVariantT, typename... SpecialTs>
-constexpr GeneralVariantT generalize_to(std::variant<SpecialTs...> specific) noexcept
+constexpr GeneralVariantT generalize_to(Botan::variant<SpecialTs...> specific) noexcept
    {
    static_assert(is_generalizable_to<GeneralVariantT>(specific),
-                 "Desired general type must be implicitly constructible by all types of the specialized std::variant<>");
-   return std::visit([](auto s) -> GeneralVariantT { return s; }, std::move(specific));
+                 "Desired general type must be implicitly constructible by all types of the specialized Botan::variant<>");
+   return Botan::visit([](auto s) -> GeneralVariantT { return s; }, std::move(specific));
    }
 
 // This is a helper utility to emulate pattern matching with std::visit.
 // See https://en.cppreference.com/w/cpp/utility/variant/visit for more info.
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+// TODO: pstanisz
+//template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+// TODO: pstanisz
 // explicit deduction guide (not needed as of C++20)
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+//template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 }
 

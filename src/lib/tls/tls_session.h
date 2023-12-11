@@ -96,9 +96,9 @@ class BOTAN_PUBLIC_API(3, 0) Session_Handle
       Session_Handle(Opaque_Session_Handle ticket) : m_handle(std::move(ticket))
          { validate_constraints(); }
 
-      bool is_id() const { return std::holds_alternative<Session_ID>(m_handle); }
-      bool is_ticket() const { return std::holds_alternative<Session_Ticket>(m_handle); }
-      bool is_opaque_handle() const { return std::holds_alternative<Opaque_Session_Handle>(m_handle); }
+      bool is_id() const { return Botan::holds_alternative<Session_ID>(m_handle); }
+      bool is_ticket() const { return Botan::holds_alternative<Session_Ticket>(m_handle); }
+      bool is_opaque_handle() const { return Botan::holds_alternative<Opaque_Session_Handle>(m_handle); }
 
       /**
        * Returns the Session_Handle as an opaque handle. If the object was not
@@ -128,7 +128,7 @@ class BOTAN_PUBLIC_API(3, 0) Session_Handle
       void validate_constraints() const;
 
    private:
-      std::variant<Session_ID, Session_Ticket, Opaque_Session_Handle> m_handle;
+      Botan::variant<Session_ID, Session_Ticket, Opaque_Session_Handle> m_handle;
    };
 
 class Client_Hello_13;

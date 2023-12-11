@@ -52,7 +52,7 @@ class BOTAN_TEST_API Record_Layer
       Record_Layer(Connection_Side side);
 
       template <typename ResT>
-      using ReadResult = std::variant<BytesNeeded, ResT>;
+      using ReadResult = Botan::variant<BytesNeeded, ResT>;
 
       /**
        * Reads data that was received by the peer and stores it internally for further

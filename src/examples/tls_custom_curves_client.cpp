@@ -27,9 +27,9 @@ public:
 
   std::unique_ptr<Botan::PK_Key_Agreement_Key>
   tls_generate_ephemeral_key(
-     const std::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
+     const Botan::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
      Botan::RandomNumberGenerator &rng) override {
-    if (std::holds_alternative<Botan::TLS::Group_Params>(group) &&
+    if (Botan::holds_alternative<Botan::TLS::Group_Params>(group) &&
         std::get<Botan::TLS::Group_Params>(group) == Botan::TLS::Group_Params(0xFE00)) {
       // generate a private key of my custom curve
       const Botan::EC_Group ec_group("testcurve1102");
@@ -41,10 +41,10 @@ public:
   }
 
   Botan::secure_vector<uint8_t> tls_ephemeral_key_agreement(
-      const std::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
+      const Botan::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
       const Botan::PK_Key_Agreement_Key &private_key, const std::vector<uint8_t> &public_value,
       Botan::RandomNumberGenerator &rng, const Botan::TLS::Policy &policy) override {
-    if (std::holds_alternative<Botan::TLS::Group_Params>(group) &&
+    if (Botan::holds_alternative<Botan::TLS::Group_Params>(group) &&
         std::get<Botan::TLS::Group_Params>(group) == Botan::TLS::Group_Params(0xFE00)) {
       // perform a key agreement on my custom curve
       const Botan::EC_Group ec_group("testcurve1102");

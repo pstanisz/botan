@@ -318,7 +318,7 @@ span<const byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(
     return {reinterpret_cast<const byte*>(s.data()), s.size_bytes()};
 }
 
-template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const_v<Type>, bool> = true>
+template <typename Type, size_t Extent, typename std::enable_if_t<!std::is_const<Type>::value, bool> = true>
 span<byte, (detail::is_dynamic_extent_v<Extent> ? dynamic_extent : sizeof(Type) * Extent)> as_writable_bytes(span<Type, Extent> s) noexcept {
     return {reinterpret_cast<byte*>(s.data()), s.size_bytes()};
 }

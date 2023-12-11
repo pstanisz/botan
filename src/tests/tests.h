@@ -761,7 +761,7 @@ typedef std::vector<Test::Result> (*test_fn_vec)();
 class FnTest : public Test
    {
    private:
-      using TestFnVariant = std::variant<test_fn, test_fn_vec>;
+      using TestFnVariant = Botan::variant<test_fn, test_fn_vec>;
 
       template <typename TestFn>
       std::vector<TestFnVariant> make_variant_vector(TestFn fn)

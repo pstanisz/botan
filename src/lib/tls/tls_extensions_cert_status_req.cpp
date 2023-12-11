@@ -85,7 +85,7 @@ class RFC6066_Certificate_Status_Request
 class Certificate_Status_Request_Internal
    {
    private:
-      using Contents = std::variant<
+      using Contents = Botan::variant<
                        RFC6066_Empty_Certificate_Status_Request,
                        RFC6066_Certificate_Status_Request,
                        Certificate_Status>;
@@ -186,7 +186,7 @@ Certificate_Status_Request::~Certificate_Status_Request() = default;
 const std::vector<uint8_t>& Certificate_Status_Request::get_ocsp_response() const
    {
    BOTAN_ASSERT_NONNULL(m_impl);
-   BOTAN_STATE_CHECK(std::holds_alternative<Certificate_Status>(m_impl->content));
+   BOTAN_STATE_CHECK(Botan::holds_alternative<Certificate_Status>(m_impl->content));
    return std::get<Certificate_Status>(m_impl->content).response();
    }
 

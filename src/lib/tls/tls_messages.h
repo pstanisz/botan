@@ -233,7 +233,7 @@ class BOTAN_UNSTABLE_API Client_Hello_13 final : public Client_Hello
                       const std::vector<std::string>& next_protocols,
                       Botan::optional<Session_with_Handle>& session);
 
-      static std::variant<Client_Hello_13, Client_Hello_12>
+      static Botan::variant<Client_Hello_13, Client_Hello_12>
       parse(const std::vector<uint8_t>& buf);
 
       void retry(const Hello_Retry_Request& hrr,
@@ -423,10 +423,10 @@ class BOTAN_UNSTABLE_API Server_Hello_13 : public Server_Hello
       explicit Server_Hello_13(std::unique_ptr<Server_Hello_Internal> data, Hello_Retry_Request_Creation_Tag tag);
 
    public:
-      static std::variant<Hello_Retry_Request, Server_Hello_13>
+      static Botan::variant<Hello_Retry_Request, Server_Hello_13>
       create(const Client_Hello_13& ch, bool hello_retry_request_allowed, Session_Manager& session_mgr, RandomNumberGenerator& rng, const Policy& policy, Callbacks& cb);
 
-      static std::variant<Hello_Retry_Request, Server_Hello_13, Server_Hello_12>
+      static Botan::variant<Hello_Retry_Request, Server_Hello_13, Server_Hello_12>
       parse(const std::vector<uint8_t>& buf);
 
       /**
@@ -1026,9 +1026,9 @@ struct as_wrapped_references
    };
 
 template <typename... AlternativeTs>
-struct as_wrapped_references<std::variant<AlternativeTs...>>
+struct as_wrapped_references<Botan::variant<AlternativeTs...>>
    {
-   using type = std::variant<std::reference_wrapper<AlternativeTs>...>;
+   using type = Botan::variant<std::reference_wrapper<AlternativeTs>...>;
    };
 
 template <typename T>
@@ -1036,7 +1036,7 @@ using as_wrapped_references_t = typename as_wrapped_references<T>::type;
 }
 
 // Handshake message types from RFC 8446 4.
-using Handshake_Message_13 = std::variant<
+using Handshake_Message_13 = Botan::variant<
                              Client_Hello_13,
                              Client_Hello_12,
                              Server_Hello_13,
@@ -1050,17 +1050,17 @@ using Handshake_Message_13 = std::variant<
                              Finished_13>;
 using Handshake_Message_13_Ref = as_wrapped_references_t<Handshake_Message_13>;
 
-using Post_Handshake_Message_13 = std::variant<
+using Post_Handshake_Message_13 = Botan::variant<
                                   New_Session_Ticket_13,
                                   Key_Update>;
 
 // Key_Update is handled generically by the Channel. The messages assigned
 // to those variants are the ones that need to be handled by the specific
 // client and/or server implementations.
-using Server_Post_Handshake_13_Message = std::variant<New_Session_Ticket_13, Key_Update>;
-using Client_Post_Handshake_13_Message = std::variant<Key_Update>;
+using Server_Post_Handshake_13_Message = Botan::variant<New_Session_Ticket_13, Key_Update>;
+using Client_Post_Handshake_13_Message = Botan::variant<Key_Update>;
 
-using Server_Handshake_13_Message = std::variant<
+using Server_Handshake_13_Message = Botan::variant<
                                     Server_Hello_13,
                                     Server_Hello_12,  // indicates a TLS version downgrade
                                     Hello_Retry_Request,
@@ -1071,7 +1071,7 @@ using Server_Handshake_13_Message = std::variant<
                                     Finished_13>;
 using Server_Handshake_13_Message_Ref = as_wrapped_references_t<Server_Handshake_13_Message>;
 
-using Client_Handshake_13_Message = std::variant<
+using Client_Handshake_13_Message = Botan::variant<
                                     Client_Hello_13,
                                     Client_Hello_12,  // indicates a TLS peer that does not offer TLS 1.3
                                     Certificate_13,

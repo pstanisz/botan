@@ -8,15 +8,15 @@
 #ifndef BOTAN_OPTIONAL_H_
 #define BOTAN_OPTIONAL_H_
 
-#include <optional>
+#include <experimental/optional>
 
 namespace Botan {
 
 // Replaces C++17 std::optional
 template< typename T>
-using optional = std::optional<T>;
+using optional = std::experimental::optional<T>;
 
-constexpr std::nullopt_t nullopt = std::nullopt;
+constexpr std::experimental::nullopt_t nullopt = std::experimental::nullopt;
 
 }
 

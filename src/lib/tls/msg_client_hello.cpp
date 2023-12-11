@@ -871,7 +871,7 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
    }
 
 
-std::variant<Client_Hello_13, Client_Hello_12>
+Botan::variant<Client_Hello_13, Client_Hello_12>
 Client_Hello_13::parse(const std::vector<uint8_t>& buf)
    {
    auto data = std::make_unique<Client_Hello_Internal>(buf);

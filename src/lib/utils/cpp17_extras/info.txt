@@ -8,7 +8,9 @@ brief -> "C++17 features which are provided by Botan to allow compilation with l
 </module_info>
 
 <header:public>
+cpp17_attrs.h
 cpp17_traits.h
 optional.h
 string_view.h
+variant.h
 </header:public>

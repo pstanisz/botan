@@ -511,7 +511,7 @@ Server_Hello_13::Server_Hello_Tag Server_Hello_13::as_server_hello;
 Server_Hello_13::Hello_Retry_Request_Tag Server_Hello_13::as_hello_retry_request;
 Server_Hello_13::Hello_Retry_Request_Creation_Tag Server_Hello_13::as_new_hello_retry_request;
 
-std::variant<Hello_Retry_Request, Server_Hello_13> Server_Hello_13::create(const Client_Hello_13& ch,
+Botan::variant<Hello_Retry_Request, Server_Hello_13> Server_Hello_13::create(const Client_Hello_13& ch,
       bool hello_retry_request_allowed,
       Session_Manager& session_mgr,
       RandomNumberGenerator& rng, const Policy& policy, Callbacks& cb)
@@ -554,7 +554,7 @@ std::variant<Hello_Retry_Request, Server_Hello_13> Server_Hello_13::create(const
       }
    }
 
-std::variant<Hello_Retry_Request, Server_Hello_13, Server_Hello_12>
+Botan::variant<Hello_Retry_Request, Server_Hello_13, Server_Hello_12>
 Server_Hello_13::parse(const std::vector<uint8_t>& buf)
    {
    auto data = std::make_unique<Server_Hello_Internal>(buf);

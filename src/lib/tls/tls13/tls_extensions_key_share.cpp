@@ -435,7 +435,7 @@ class Key_Share_HelloRetryRequest
 class Key_Share::Key_Share_Impl
    {
    public:
-      using Key_Share_Type = std::variant<Key_Share_ClientHello, Key_Share_ServerHello, Key_Share_HelloRetryRequest>;
+      using Key_Share_Type = Botan::variant<Key_Share_ClientHello, Key_Share_ServerHello, Key_Share_HelloRetryRequest>;
 
       Key_Share_Impl(Key_Share_Type ks) : key_share(std::move(ks)) {}
 

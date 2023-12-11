@@ -466,10 +466,10 @@ class TLS_Handshake_Test final
                }
 
             std::unique_ptr<Botan::PK_Key_Agreement_Key> tls_generate_ephemeral_key(
-               const std::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
+               const Botan::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
                Botan::RandomNumberGenerator& rng) override
                {
-               if(std::holds_alternative<Botan::TLS::Group_Params>(group) &&
+               if(Botan::holds_alternative<Botan::TLS::Group_Params>(group) &&
                   static_cast<uint16_t>(std::get<Botan::TLS::Group_Params>(group)) == 0xFEE1)
                   {
                   const Botan::EC_Group ec_group("secp112r1");
@@ -480,13 +480,13 @@ class TLS_Handshake_Test final
                }
 
             Botan::secure_vector<uint8_t> tls_ephemeral_key_agreement(
-               const std::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
+               const Botan::variant<Botan::TLS::Group_Params, Botan::DL_Group>& group,
                const Botan::PK_Key_Agreement_Key& private_key,
                const std::vector<uint8_t>& public_value,
                Botan::RandomNumberGenerator& rng,
                const Botan::TLS::Policy& policy) override
                {
-               if(std::holds_alternative<Botan::TLS::Group_Params>(group) &&
+               if(Botan::holds_alternative<Botan::TLS::Group_Params>(group) &&
                   static_cast<uint16_t>(std::get<Botan::TLS::Group_Params>(group)) == 0xFEE1)
                   {
                   const Botan::EC_Group ec_group("secp112r1");
