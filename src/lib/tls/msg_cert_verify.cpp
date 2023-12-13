@@ -19,7 +19,9 @@
 #include <botan/tls_extensions.h>
 #include <botan/credentials_manager.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /*
 * Create a new Certificate Verify message for TLS 1.2
@@ -229,5 +231,7 @@ bool Certificate_Verify_13::verify(const X509_Certificate& cert,
    }
 
 #endif  // BOTAN_HAS_TLS_13
+
+}
 
 }

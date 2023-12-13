@@ -13,7 +13,9 @@
 
 #include <algorithm>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager_In_Memory::Session_Manager_In_Memory(
    const std::shared_ptr<RandomNumberGenerator>& rng,
@@ -93,7 +95,7 @@ size_t Session_Manager_In_Memory::remove(const Session_Handle& handle)
 
 size_t Session_Manager_In_Memory::remove_internal(const Session_Handle& handle)
    {
-   return std::visit(overloaded
+   return boost::apply_visitor(overloaded
       {
       // We deliberately leave the deleted session in m_fifo. Finding it would be
       // another O(n) operation. Instead, purging will run in a loop and skip m_fifo
@@ -142,5 +144,7 @@ size_t Session_Manager_In_Memory::remove_all()
 
    return sessions;
    }
+
+}
 
 }

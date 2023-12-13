@@ -11,7 +11,9 @@
 #include <botan/tls_callbacks.h>
 #include <botan/credentials_manager.h>
 
-namespace Botan::TLS
+namespace Botan {
+
+namespace TLS
 {
 
 Handshake_Type Certificate_Request_13::type() const
@@ -173,4 +175,6 @@ std::vector<uint8_t> Certificate_Request_13::serialize() const
    return buf;
    }
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+}  // namespace Botan

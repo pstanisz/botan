@@ -9,9 +9,13 @@
 #include <botan/tls_session_manager_noop.h>
 #include <botan/rng.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager_Noop::Session_Manager_Noop()
  : Session_Manager(std::make_shared<Null_RNG>()) {}
+
+}
 
 }

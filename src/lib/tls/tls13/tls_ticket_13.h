@@ -16,7 +16,9 @@
 #include <cstdint>
 #include <vector>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
  * Represents a TLS 1.3 ticket with an opaque identity and an associated
@@ -46,6 +48,8 @@ class BOTAN_PUBLIC_API(3,0) Ticket
       uint32_t m_obfuscated_age;
    };
 
-}
+}  // namespace TLS
+
+}  // namespace Botan
 
 #endif

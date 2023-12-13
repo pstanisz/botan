@@ -181,7 +181,10 @@ int botan_srp6_client_agree(const char* identity, const char* password,
          std::vector<uint8_t> saltv(salt, salt + salt_len);
          Botan::RandomNumberGenerator& rng = safe_get(rng_obj);
          auto b_bn = Botan::BigInt::decode(b, b_len);
-         auto [A_bn, K_sk] = Botan::srp6_client_agree(
+
+         Botan::BigInt A_bn;
+         Botan::SymmetricKey K_sk;
+         std::tie(A_bn, K_sk) = Botan::srp6_client_agree(
             identity, password, group_id, hash_id, saltv, b_bn, rng);
          auto ret_a = write_vec_output(A, A_len, Botan::BigInt::encode(A_bn));
          auto ret_k = write_vec_output(K, K_len, K_sk.bits_of());

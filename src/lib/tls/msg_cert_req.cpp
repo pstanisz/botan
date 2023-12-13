@@ -15,7 +15,9 @@
 #include <botan/der_enc.h>
 #include <botan/ber_dec.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Handshake_Type Certificate_Request_12::type() const
    {
@@ -158,4 +160,6 @@ std::vector<uint8_t> Certificate_Request_12::serialize() const
 
    return buf;
    }
+}
+
 }

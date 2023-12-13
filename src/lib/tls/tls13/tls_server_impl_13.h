@@ -13,7 +13,9 @@
 #include <botan/internal/tls_handshake_state_13.h>
 #include <botan/internal/tls_handshake_transitions.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
 * SSL/TLS Server 1.3 implementation
@@ -61,6 +63,8 @@ class Server_Impl_13 : public Channel_Impl_13
       Botan::optional<Session> m_resumed_session;
    };
 
-}
+}  // namespace TLS
+
+}  // namespace Botan
 
 #endif

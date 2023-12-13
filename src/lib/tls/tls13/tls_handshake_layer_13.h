@@ -15,7 +15,9 @@
 #include <botan/tls_magic.h>
 #include <botan/tls_messages.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 class Transcript_Hash_State;
 
@@ -87,6 +89,8 @@ class BOTAN_TEST_API Handshake_Layer
       std::vector<uint8_t> m_read_buffer;
       Connection_Side m_peer;
    };
+
+}
 
 }
 

@@ -24,7 +24,9 @@ class HKDF_Expand;
 
 }
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 class Ciphersuite;
 
@@ -347,6 +349,8 @@ class BOTAN_TEST_API Cipher_State
       secure_vector<uint8_t> m_early_secret;
       secure_vector<uint8_t> m_binder_key;
    };
+
+}
 
 }
 

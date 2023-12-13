@@ -36,7 +36,9 @@
       #include <botan/tls_session_manager_sqlite.h>
    #endif
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 // TODO: remove this, once TLS 1.3 is fully implemented
 class Strict_Policy_Without_TLS13 : public Strict_Policy
@@ -1330,6 +1332,8 @@ BOTAN_REGISTER_TEST("tls", "tls_dtls_reconnect", DTLS_Reconnection_Test);
 
 #endif
 
-}
+}  // namespace TLS
+
+}  // namespace Botan
 
 }

@@ -18,7 +18,9 @@
 #include <botan/x509cert.h>
 #include <botan/contains.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Channel_Impl_12::Channel_Impl_12(const std::shared_ptr<Callbacks>& callbacks,
                                  const std::shared_ptr<Session_Manager>& session_manager,
@@ -734,5 +736,7 @@ SymmetricKey Channel_Impl_12::key_material_export(Botan::string_view label,
       throw Invalid_State("Channel_Impl_12::key_material_export connection not active");
       }
    }
+
+}
 
 }

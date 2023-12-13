@@ -11,7 +11,7 @@ int main() {
   // work with the token
 
   std::vector<Botan::PKCS11::SlotId> slot_ids;
-  [[maybe_unused]] bool success = module->C_GetSlotList(true, slot_ids);
+  MAYBE_UNUSED bool success = module->C_GetSlotList(true, slot_ids);
 
   // C_Finalize is automatically called by the destructor of the Module
 

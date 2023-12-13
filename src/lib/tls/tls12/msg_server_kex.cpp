@@ -23,7 +23,9 @@
   #include <botan/curve25519.h>
 #endif
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
 * Create a new Server Key Exchange message
@@ -262,5 +264,7 @@ const Private_Key& Server_Key_Exchange::server_kex_key() const
    BOTAN_ASSERT_NONNULL(m_kex_key);
    return *m_kex_key;
    }
+
+}
 
 }

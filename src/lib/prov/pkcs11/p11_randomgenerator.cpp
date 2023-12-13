@@ -8,7 +8,9 @@
 
 #include <botan/p11_randomgenerator.h>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 PKCS11_RNG::PKCS11_RNG(Session& session)
    : m_session(session)
@@ -29,3 +31,4 @@ void PKCS11_RNG::fill_bytes_with_input(Botan::span<uint8_t> output, Botan::span<
 
 }
 
+}

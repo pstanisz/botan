@@ -8,7 +8,9 @@
 
 #include <botan/tls_ticket_13.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -36,4 +38,6 @@ std::chrono::milliseconds Ticket::age(const uint32_t ticket_age_add) const
              obfuscate_ticket_age(m_obfuscated_age, ticket_age_add));
    }
 
-}
+}  // namespace TLS
+
+}  // namespace Botan

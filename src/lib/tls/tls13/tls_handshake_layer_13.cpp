@@ -14,7 +14,9 @@
 #include <botan/internal/tls_reader.h>
 #include <botan/internal/stl_util.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 void Handshake_Layer::copy_data(Botan::span<const uint8_t> data_from_peer)
    {
@@ -165,7 +167,7 @@ const T& get(const T& v)
 template<typename T>
 std::vector<uint8_t> marshall_message(const T& message)
    {
-   auto [type, serialized] = std::visit([](const auto& msg)
+   auto [type, serialized] = boost::apply_visitor([](const auto& msg)
       {
       return std::pair(get(msg).wire_type(), get(msg).serialize());
       }, message);
@@ -199,4 +201,6 @@ std::vector<uint8_t> Handshake_Layer::prepare_post_handshake_message(const Post_
    return marshall_message(message);
    }
 
-} // namespace Botan::TLS
+} // namespace TLS
+
+} // namespace Botan

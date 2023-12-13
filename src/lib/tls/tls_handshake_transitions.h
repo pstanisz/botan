@@ -14,7 +14,9 @@
 
 #include <botan/tls_magic.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
  * Manages the expectations for incoming handshake messages in both TLS 1.2 and 1.3.
@@ -60,6 +62,8 @@ class BOTAN_TEST_API Handshake_Transitions
       uint32_t m_hand_expecting_mask = 0;
       uint32_t m_hand_received_mask = 0;
    };
+
+}
 
 }
 

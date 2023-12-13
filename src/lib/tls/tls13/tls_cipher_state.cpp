@@ -102,7 +102,9 @@
 #include <botan/internal/hmac.h>
 #include <botan/internal/loadstor.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 // RFC 8446 5.3
@@ -647,4 +649,6 @@ void Cipher_State::clear_write_keys()
    zap(m_write_application_traffic_secret);
    }
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+} // namespace Botan

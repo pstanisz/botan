@@ -465,7 +465,7 @@ class TLS_13_Message_Parsing_Test final : public Text_Based_Test
             {
             try
                {
-               std::visit([&](auto ch) {
+               boost::apply_visitor([&](auto ch) {
                   if constexpr(std::is_same<Botan::TLS::Client_Hello_12, decltype(ch)>::value)
                      {
                      result.confirm("expected Client_Hello_12", msg_type == "client_hello_12");
@@ -511,7 +511,7 @@ class TLS_13_Message_Parsing_Test final : public Text_Based_Test
 
             try
                {
-               std::visit([&](auto msg) {
+               boost::apply_visitor([&](auto msg) {
                   if constexpr(std::is_same<Botan::TLS::Server_Hello_12, decltype(msg)>::value)
                      {
                      result.confirm("expected Server_Hello_12", msg_type == "server_hello_12");

@@ -22,11 +22,13 @@
 
 #include <utility>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 void Session_Handle::validate_constraints() const
    {
-   std::visit(overloaded
+   boost::apply_visitor(overloaded
       {
       [](const Session_ID& id)
          {
@@ -56,7 +58,7 @@ void Session_Handle::validate_constraints() const
 Opaque_Session_Handle Session_Handle::opaque_handle() const
    {
    // both a Session_ID and a Session_Ticket could be an Opaque_Session_Handle
-   return Opaque_Session_Handle(std::visit([](const auto& handle) { return handle.get(); }, m_handle));
+   return Opaque_Session_Handle(boost::apply_visitor([](const auto& handle) { return handle.get(); }, m_handle));
    }
 
 Botan::optional<Session_ID> Session_Handle::id() const
@@ -508,5 +510,7 @@ Session Session::decrypt(Botan::span<const uint8_t> in, const SymmetricKey& key)
                            std::string(e.what()));
       }
    }
+
+}
 
 }

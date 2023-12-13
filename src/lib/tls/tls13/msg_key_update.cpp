@@ -9,7 +9,9 @@
 #include <botan/tls_messages.h>
 #include <botan/tls_exceptn.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Key_Update::Key_Update(const bool request_peer_update)
    : m_update_requested(request_peer_update) {}
@@ -37,5 +39,7 @@ std::vector<uint8_t> Key_Update::serialize() const
    {
    return std::vector<uint8_t>(1, (m_update_requested ? 1 : 0));
    }
+
+}
 
 }

@@ -832,7 +832,7 @@ class PolynomialMatrix
             {
             for(uint8_t j = 0; j < mode.k(); ++j)
                {
-               const auto pos = (transposed) ? std::tuple(i, j) : std::tuple(j, i);
+               const auto pos = (transposed) ? std::make_tuple(i, j) : std::make_tuple(j, i);
                xof->set_position(pos);
                matrix.m_mat[i][j] = Polynomial::sample_rej_uniform(*xof);
                }

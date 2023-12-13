@@ -44,7 +44,7 @@ int main() {
   // copy the object
   Botan::PKCS11::AttributeContainer copy_attributes;
   copy_attributes.add_string(Botan::PKCS11::AttributeType::Label, "copied object");
-  [[maybe_unused]] Botan::PKCS11::ObjectHandle copied_obj_handle = data_obj.copy(copy_attributes);
+  MAYBE_UNUSED Botan::PKCS11::ObjectHandle copied_obj_handle = data_obj.copy(copy_attributes);
 
   // search for an object
   Botan::PKCS11::AttributeContainer search_template;

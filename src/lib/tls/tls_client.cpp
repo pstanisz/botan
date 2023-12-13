@@ -21,7 +21,9 @@
 #include <iterator>
 #include <sstream>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /*
 * TLS Client Constructor
@@ -179,5 +181,7 @@ std::string Client::application_protocol() const
    {
    return m_impl->application_protocol();
    }
+
+}
 
 }

@@ -14,17 +14,12 @@ namespace Botan {
 
 // Replaces C++17 std::variang
 template <typename... Ts>
-using variant = boost::variant<Ts...>;\
+using variant = boost::variant<Ts...>;
 
 template <typename T, typename... Ts>
-constexpr bool holds_alternative(const Botan::variant<Ts...>& v) noexcept
+bool holds_alternative(const boost::variant<Ts...>& v) noexcept
 {
-    return holds_alternative(v);
-}
-
-template <typename Visitor, typename... Variants>
-constexpr decltype(auto) visit(Visitor&& vis, Variants&&... vars) {
-    return visit(vis, vars...);
+    return boost::get<T>(&v) != nullptr;
 }
 
 }

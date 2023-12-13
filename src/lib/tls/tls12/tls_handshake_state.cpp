@@ -13,7 +13,9 @@
 #include <botan/kdf.h>
 #include <sstream>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 std::string Handshake_Message::type_string() const
    {
@@ -213,7 +215,7 @@ void Handshake_State::client_finished(Finished_12* client_finished)
 
 const Ciphersuite& Handshake_State::ciphersuite() const
    {
-   if(!m_ciphersuite.has_value())
+   if(!Botan::has_value(m_ciphersuite))
       {
       throw Invalid_State("Cipher suite is not set");
       }
@@ -312,7 +314,7 @@ Handshake_State::choose_sig_format(const Private_Key& key,
                           "Policy refuses to accept signing with any hash supported by peer");
       }
 
-   if(!chosen_scheme.format().has_value())
+   if(!Botan::has_value(chosen_scheme.format()))
       { throw Invalid_Argument(sig_algo + " is invalid/unknown for TLS signatures"); }
 
    return std::make_pair(chosen_scheme.padding_string(), chosen_scheme.format().value());
@@ -391,10 +393,12 @@ Handshake_State::parse_sig_format(const Public_Key& key,
                           key_type + "/" + hash_algo + " signature");
       }
 
-   if(!scheme.format().has_value())
+   if(!Botan::has_value(scheme.format()))
       { throw Invalid_Argument(key_type + " is invalid/unknown for TLS signatures"); }
 
    return std::make_pair(scheme.padding_string(), scheme.format().value());
    }
+
+}
 
 }

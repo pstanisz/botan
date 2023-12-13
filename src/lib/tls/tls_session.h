@@ -18,6 +18,7 @@
 #include <botan/strong_type.h>
 #include <botan/symkey.h>
 #include <botan/span.h>
+#include <botan/variant.h>
 
 #include <algorithm>
 #include <chrono>

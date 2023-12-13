@@ -11,7 +11,9 @@
 
 #include <botan/tls_session_manager.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
  * An implementation of Session_Manager that does not save sessions at all,
@@ -37,6 +39,8 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager_Noop final : public Session_Manager
       Botan::optional<Session> retrieve_one(const Session_Handle&) override { return Botan::nullopt; }
       std::vector<Session_with_Handle> find_some(const Server_Information&, const size_t) override { return {}; }
    };
+
+}
 
 }
 

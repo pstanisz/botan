@@ -26,7 +26,9 @@ namespace Botan {
 class RandomNumberGenerator;
 }
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 class Callbacks;
 class Policy;
@@ -280,6 +282,8 @@ class BOTAN_PUBLIC_API(3, 0) Session_Manager
    private:
       recursive_mutex_type m_mutex;
    };
+
+}
 
 }
 

@@ -27,7 +27,9 @@
 #include <botan/ecdh.h>
 #include <botan/dl_group.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -481,12 +483,12 @@ Key_Share::~Key_Share() = default;
 
 std::vector<uint8_t> Key_Share::serialize(Connection_Side /*whoami*/) const
    {
-   return std::visit([](const auto& key_share) { return key_share.serialize(); }, m_impl->key_share);
+   return boost::apply_visitor([](const auto& key_share) { return key_share.serialize(); }, m_impl->key_share);
    }
 
 bool Key_Share::empty() const
    {
-   return std::visit([](const auto& key_share) { return key_share.empty(); }, m_impl->key_share);
+   return boost::apply_visitor([](const auto& key_share) { return key_share.empty(); }, m_impl->key_share);
    }
 
 secure_vector<uint8_t> Key_Share::exchange(const Key_Share& peer_keyshare,
@@ -494,7 +496,7 @@ secure_vector<uint8_t> Key_Share::exchange(const Key_Share& peer_keyshare,
       Callbacks& cb,
       RandomNumberGenerator& rng) const
    {
-   return std::visit(overloaded
+   return boost::apply_visitor(overloaded
       {
       [&](const Key_Share_ClientHello& ch, const Key_Share_ServerHello& sh)
          {
@@ -513,7 +515,7 @@ secure_vector<uint8_t> Key_Share::exchange(const Key_Share& peer_keyshare,
 
 std::vector<Named_Group> Key_Share::offered_groups() const
    {
-   return std::visit([](const auto& keyshare)
+   return boost::apply_visitor([](const auto& keyshare)
          { return keyshare.offered_groups(); },
          m_impl->key_share);
    }
@@ -521,7 +523,7 @@ std::vector<Named_Group> Key_Share::offered_groups() const
 
 Named_Group Key_Share::selected_group() const
    {
-   return std::visit([](const auto& keyshare)
+   return boost::apply_visitor([](const auto& keyshare)
          { return keyshare.selected_group(); },
          m_impl->key_share);
    }
@@ -531,7 +533,7 @@ void Key_Share::retry_offer(const Key_Share& retry_request_keyshare,
                             Callbacks& cb,
                             RandomNumberGenerator& rng)
    {
-   std::visit(overloaded
+   boost::apply_visitor(overloaded
       {
       [&](Key_Share_ClientHello& ch, const Key_Share_HelloRetryRequest& hrr)
          {
@@ -553,7 +555,9 @@ void Key_Share::retry_offer(const Key_Share& retry_request_keyshare,
 
 void Key_Share::erase()
    {
-   std::visit([](auto& key_share) { key_share.erase(); }, m_impl->key_share);
+   boost::apply_visitor([](auto& key_share) { key_share.erase(); }, m_impl->key_share);
    }
 
-}  // Botan::TLS
+}  // TLS
+
+}  // Botan

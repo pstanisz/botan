@@ -19,10 +19,13 @@
 #include <botan/internal/tls_handshake_hash.h>
 #include <botan/internal/loadstor.h>
 #include <botan/data_src.h>
+#include <botan/optional.h>
 
 #include <iterator>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -112,7 +115,7 @@ void Certificate_13::verify(Callbacks& callbacks,
             {
             // Note: The make_optional instead of simply nullopt is necessary to work around a GCC <= 10.0 bug
             //       see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80635
-            ocsp_responses.push_back(std::make_optional<OCSP::Response>());
+            ocsp_responses.push_back(Botan::make_optional<OCSP::Response>());
             }
          }
       }
@@ -161,7 +164,8 @@ void Certificate_13::setup_entries(std::vector<X509_Certificate> cert_chain,
       //       context depending on the message whose extensions should be
       //       manipulatable.
       callbacks.tls_modify_extensions(exts, m_side, type());
-      auto& entry = m_entries.emplace_back();
+      m_entries.emplace_back();
+      auto& entry = m_entries.back();
       entry.certificate = cert_chain[i];
       if(!ocsp_responses[i].empty())
          {
@@ -352,5 +356,7 @@ std::vector<uint8_t> Certificate_13::serialize() const
 
    return buf;
    }
+
+}
 
 }

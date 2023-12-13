@@ -249,7 +249,7 @@ class Channel_Impl
          BOTAN_STATE_CHECK(m_downgrade_info &&
                            m_downgrade_info->client_hello_message.empty() &&
                            m_downgrade_info->peer_transcript.empty() &&
-                           !m_downgrade_info->tls12_session.has_value());
+                           !Botan::has_value(m_downgrade_info->tls12_session));
          BOTAN_ASSERT_NOMSG(session.session.version().is_pre_tls_13());
          m_downgrade_info->tls12_session = std::move(session);
          request_downgrade();

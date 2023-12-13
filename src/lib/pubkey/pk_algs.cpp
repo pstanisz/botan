@@ -9,6 +9,7 @@
 #include <botan/internal/parsing.h>
 #include <botan/internal/fmt.h>
 #include <botan/starts_with.h>
+#include <botan/cpp17_attrs.h>
 
 #if defined(BOTAN_HAS_RSA)
   #include <botan/rsa.h>
@@ -86,7 +87,7 @@ namespace Botan {
 
 std::unique_ptr<Public_Key>
 load_public_key(const AlgorithmIdentifier& alg_id,
-                [[maybe_unused]] Botan::span<const uint8_t> key_bits)
+                MAYBE_UNUSED Botan::span<const uint8_t> key_bits)
    {
    const std::string oid_str = alg_id.oid().to_formatted_string();
    const std::vector<std::string> alg_info = split_on(oid_str, '/');
@@ -177,7 +178,7 @@ load_public_key(const AlgorithmIdentifier& alg_id,
 
 std::unique_ptr<Private_Key>
 load_private_key(const AlgorithmIdentifier& alg_id,
-                 [[maybe_unused]] Botan::span<const uint8_t> key_bits)
+                 MAYBE_UNUSED Botan::span<const uint8_t> key_bits)
    {
    const std::string oid_str = alg_id.oid().to_formatted_string();
    const std::vector<std::string> alg_info = split_on(oid_str, '/');
@@ -334,7 +335,8 @@ create_private_key(Botan::string_view alg_name,
 #if defined(BOTAN_HAS_MCELIECE)
    if(alg_name == "McEliece")
       {
-      const auto [n, t] = [&]() -> std::pair<size_t, size_t>
+      size_t n, t;
+      std::tie(n, t) = [&]() -> std::pair<size_t, size_t>
          {
          if(params.empty())
             return {2960, 57};

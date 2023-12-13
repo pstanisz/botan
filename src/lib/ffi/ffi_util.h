@@ -81,6 +81,20 @@ T& safe_get(botan_struct<T,M>* p)
 
 int ffi_guard_thunk(const char* func_name, const std::function<int ()>& thunk);
 
+template <typename T, typename F, typename RetT, typename = void>
+struct ffi_guard_thunk_caller {
+   static int call(const char* func_name, F func, T* p) {
+      return ffi_guard_thunk(func_name, [&] { return func(*p); });
+   }
+};
+
+template <typename T, typename F, typename RetT>
+struct ffi_guard_thunk_caller<T, F, RetT, std::enable_if_t<std::is_void<RetT>::value>> {
+   static int call(const char* func_name, F func, T* p) {
+      return ffi_guard_thunk(func_name, [&] { func(*p); return BOTAN_FFI_SUCCESS; });
+   }
+};
+
 template<typename T, uint32_t M, typename F>
 int botan_ffi_visit(botan_struct<T, M>* o, F func, const char* func_name)
    {
@@ -99,14 +113,7 @@ int botan_ffi_visit(botan_struct<T, M>* o, F func, const char* func_name)
    if(p == nullptr)
       return BOTAN_FFI_ERROR_INVALID_OBJECT;
 
-   if constexpr(std::is_void<RetT>::value)
-      {
-      return ffi_guard_thunk(func_name, [&] { func(*p); return BOTAN_FFI_SUCCESS; });
-      }
-   else
-      {
-      return ffi_guard_thunk(func_name, [&] { return func(*p); });
-      }
+   return ffi_guard_thunk_caller<T, F, RetT>::call(func_name, func, p);
    }
 
 // TODO: C++20 introduces std::source_location which will allow to eliminate this

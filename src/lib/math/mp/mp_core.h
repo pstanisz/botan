@@ -10,6 +10,7 @@
 #ifndef BOTAN_MP_CORE_OPS_H_
 #define BOTAN_MP_CORE_OPS_H_
 
+#include <botan/cpp17_attrs.h>
 #include <botan/types.h>
 #include <botan/exceptn.h>
 #include <botan/mem_ops.h>
@@ -490,7 +491,7 @@ inline void bigint_shr2(word y[], const word x[], size_t x_size,
 /*
 * Linear Multiply - returns the carry
 */
-[[nodiscard]] inline word bigint_linmul2(word x[], size_t x_size, word y)
+NO_DISCARD word bigint_linmul2(word x[], size_t x_size, word y)
    {
    const size_t blocks = x_size - (x_size % 8);
 

@@ -18,7 +18,9 @@
 #include <botan/tls_magic.h>
 #include <botan/internal/tls_channel_impl.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
  * Resembles the `TLSPlaintext` structure in RFC 8446 5.1
@@ -119,6 +121,8 @@ class BOTAN_TEST_API Record_Layer
       bool m_sending_compat_mode;
       bool m_receiving_compat_mode;
    };
+
+}
 
 }
 

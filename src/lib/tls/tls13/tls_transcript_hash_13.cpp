@@ -14,7 +14,9 @@
 
 #include <utility>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Transcript_Hash_State::Transcript_Hash_State(Botan::string_view algo_spec)
    {
@@ -229,4 +231,6 @@ Transcript_Hash_State Transcript_Hash_State::clone() const
    return *this;
    }
 
-}
+}  // namespace TLS
+
+}  // namespace Botan

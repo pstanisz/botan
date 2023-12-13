@@ -15,7 +15,9 @@
 #include <botan/internal/keypair.h>
 #include <botan/rng.h>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 ECDSA_PublicKey PKCS11_ECDSA_PublicKey::export_key() const
    {
@@ -229,6 +231,8 @@ PKCS11_ECDSA_KeyPair generate_ecdsa_keypair(Session& session, const EC_PublicKey
    return std::make_pair(PKCS11_ECDSA_PublicKey(session, pub_key_handle), PKCS11_ECDSA_PrivateKey(session,
                          priv_key_handle));
    }
+
+}
 
 }
 

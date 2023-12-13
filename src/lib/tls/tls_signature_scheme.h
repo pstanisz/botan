@@ -16,7 +16,9 @@
 #include <botan/optional.h>
 #include <string>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 class Protocol_Version;
 
@@ -98,6 +100,8 @@ class BOTAN_PUBLIC_API(3,0) Signature_Scheme
 
 std::vector<AlgorithmIdentifier> to_algorithm_identifiers(const std::vector<Signature_Scheme>& schemes);
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+} // namespace Botan
 
 #endif  // BOTAN_TLS_SIGNATURE_SCHEME_H_

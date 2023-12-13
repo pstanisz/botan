@@ -72,7 +72,7 @@ class BOTAN_PUBLIC_API(2,0) Certificate_Store
       */
       bool certificate_known(const X509_Certificate& cert) const
          {
-         return find_cert(cert.subject_dn(), cert.subject_key_id()).has_value();
+         return Botan::has_value(find_cert(cert.subject_dn(), cert.subject_key_id()));
          }
 
       // remove this (used by TLS::Server)

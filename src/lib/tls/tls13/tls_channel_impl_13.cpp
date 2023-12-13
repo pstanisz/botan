@@ -38,7 +38,9 @@ bool is_error_alert(const Botan::TLS::Alert& alert)
    }
 }
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Channel_Impl_13::Channel_Impl_13(const std::shared_ptr<Callbacks>& callbacks,
                                  const std::shared_ptr<Session_Manager>& session_manager,
@@ -96,10 +98,12 @@ size_t Channel_Impl_13::from_peer(Botan::span<const uint8_t> data)
 
          auto result = m_record_layer.next_record(m_cipher_state.get());
 
+         // TODO: pstanisz
          if(Botan::holds_alternative<BytesNeeded>(result))
-            { return std::get<BytesNeeded>(result); }
+            { return boost::get<BytesNeeded>(result); }
 
-         const auto& record = std::get<Record>(result);
+         // TODO: pstanisz
+         const auto& record = boost::get<Record>(result);
 
          // RFC 8446 5.1
          //   Handshake messages MUST NOT be interleaved with other record types.
@@ -176,7 +180,7 @@ size_t Channel_Impl_13::from_peer(Botan::span<const uint8_t> data)
             }
          else if(record.type == Record_Type::ApplicationData)
             {
-            BOTAN_ASSERT(record.seq_no.has_value(), "decrypted application traffic had a sequence number");
+            BOTAN_ASSERT(Botan::has_value(record.seq_no), "decrypted application traffic had a sequence number");
             callbacks().tls_record_received(record.seq_no.value(), record.fragment);
             }
          else if(record.type == Record_Type::Alert)
@@ -258,7 +262,7 @@ Channel_Impl_13::AggregatedHandshakeMessages::AggregatedHandshakeMessages(
 Channel_Impl_13::AggregatedHandshakeMessages&
 Channel_Impl_13::AggregatedHandshakeMessages::add(const Handshake_Message_13_Ref message)
    {
-   std::visit([&](const auto msg) { m_channel.callbacks().tls_inspect_handshake_msg(msg.get()); }, message);
+   boost::apply_visitor([&](const auto msg) { m_channel.callbacks().tls_inspect_handshake_msg(msg.get()); }, message);
    m_message_buffer += m_handshake_layer.prepare_message(message, m_transcript_hash);
    return *this;
    }
@@ -266,7 +270,7 @@ Channel_Impl_13::AggregatedHandshakeMessages::add(const Handshake_Message_13_Ref
 Channel_Impl_13::AggregatedPostHandshakeMessages&
 Channel_Impl_13::AggregatedPostHandshakeMessages::add(Post_Handshake_Message_13 message)
    {
-   std::visit([&](const auto& msg) { m_channel.callbacks().tls_inspect_handshake_msg(msg); }, message);
+   boost::apply_visitor([&](const auto& msg) { m_channel.callbacks().tls_inspect_handshake_msg(msg); }, message);
    m_message_buffer += m_handshake_layer.prepare_post_handshake_message(message);
    return *this;
    }
@@ -475,5 +479,7 @@ void Channel_Impl_13::set_record_size_limits(const uint16_t outgoing_limit,
    {
    m_record_layer.set_record_size_limits(outgoing_limit, incoming_limit);
    }
+
+}
 
 }

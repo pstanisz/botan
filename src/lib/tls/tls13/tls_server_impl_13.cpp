@@ -13,7 +13,9 @@
 #include <botan/credentials_manager.h>
 #include <botan/rng.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Server_Impl_13::Server_Impl_13(const std::shared_ptr<Callbacks>& callbacks,
                                const std::shared_ptr<Session_Manager>& session_manager,
@@ -117,7 +119,7 @@ size_t Server_Impl_13::send_new_session_tickets(const size_t tickets)
 
 void Server_Impl_13::process_handshake_msg(Handshake_Message_13 message)
    {
-   std::visit([&](auto msg)
+   boost::apply_visitor([&](auto msg)
       {
       // first verify that the message was expected by the state machine...
       m_transitions.confirm_transition_to(msg.get().type());
@@ -134,7 +136,7 @@ void Server_Impl_13::process_post_handshake_msg(Post_Handshake_Message_13 messag
    {
    BOTAN_STATE_CHECK(handshake_finished());
 
-   std::visit([&](auto msg)
+   boost::apply_visitor([&](auto msg)
       {
       handle(msg);
       }, m_handshake_state.received(std::move(message)));
@@ -464,7 +466,7 @@ void Server_Impl_13::handle(const Client_Hello_13& client_hello)
       }
 
    callbacks().tls_examine_extensions(exts, Connection_Side::Client, client_hello.type());
-   std::visit([this](auto msg) { handle_reply_to_client_hello(std::move(msg)); },
+   boost::apply_visitor([this](auto msg) { handle_reply_to_client_hello(std::move(msg)); },
               Server_Hello_13::create(
                   client_hello,
                   is_initial_client_hello,
@@ -597,4 +599,6 @@ void Server_Impl_13::handle(const Finished_13& finished_msg)
       }
    }
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+}  // namespace Botan

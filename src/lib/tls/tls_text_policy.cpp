@@ -12,7 +12,9 @@
 #include <botan/optional.h>
 #include <sstream>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 std::vector<std::string> Text_Policy::allowed_ciphers() const
    {
@@ -382,5 +384,7 @@ bool Text_Policy::set_value(const std::string& key, Botan::string_view val, bool
    m_kv.insert(i, std::make_pair(key, val));
    return true;
    }
+
+}
 
 }

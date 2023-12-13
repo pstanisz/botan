@@ -20,7 +20,9 @@
 #include <botan/rsa.h>
 #include <botan/ecdh.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /*
 * Create a new Client Key Exchange message
@@ -346,5 +348,7 @@ Client_Key_Exchange::Client_Key_Exchange(const std::vector<uint8_t>& contents,
          throw Internal_Error("Client_Key_Exchange: Unknown key exchange negotiated");
       }
    }
+
+}
 
 }

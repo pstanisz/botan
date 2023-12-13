@@ -20,7 +20,9 @@
 #include <iterator>
 #include <utility>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Client_Impl_13::Client_Impl_13(const std::shared_ptr<Callbacks>& callbacks,
                                const std::shared_ptr<Session_Manager>& session_manager,
@@ -80,7 +82,7 @@ Client_Impl_13::Client_Impl_13(const std::shared_ptr<Callbacks>& callbacks,
 
 void Client_Impl_13::process_handshake_msg(Handshake_Message_13 message)
    {
-   std::visit([&](auto msg)
+   boost::apply_visitor([&](auto msg)
       {
       // first verify that the message was expected by the state machine...
       m_transitions.confirm_transition_to(msg.get().type());
@@ -97,7 +99,7 @@ void Client_Impl_13::process_post_handshake_msg(Post_Handshake_Message_13 messag
    {
    BOTAN_STATE_CHECK(handshake_finished());
 
-   std::visit([&](auto msg)
+   boost::apply_visitor([&](auto msg)
       {
       handle(msg);
       }, m_handshake_state.received(std::move(message)));
@@ -183,7 +185,7 @@ void Client_Impl_13::handle(const Server_Hello_12& server_hello_msg)
    //    MUST check that the [downgrade indication is not set]. [...] If a match
    //    is found, the client MUST abort the handshake with an
    //    "illegal_parameter" alert.
-   if(server_hello_msg.random_signals_downgrade().has_value())
+   if(Botan::has_value(server_hello_msg.random_signals_downgrade()))
       {
       throw TLS_Exception(AlertType::IllegalParameter, "Downgrade attack detected");
       }
@@ -663,5 +665,7 @@ std::string Client_Impl_13::application_protocol() const
    return "";
    }
 
+
+}
 
 }

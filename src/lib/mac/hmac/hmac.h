@@ -34,8 +34,11 @@ class HMAC final : public MessageAuthenticationCode
       */
       explicit HMAC(std::unique_ptr<HashFunction> hash);
 
-      HMAC(const HMAC&) = delete;
-      HMAC& operator=(const HMAC&) = delete;
+   // TODO: pstanisz - why clang thinks that above is copy ctor??
+   public:
+      HMAC(const HMAC&);
+      HMAC& operator=(const HMAC&);
+
    private:
       void add_data(const uint8_t[], size_t) override;
       void final_result(uint8_t[]) override;

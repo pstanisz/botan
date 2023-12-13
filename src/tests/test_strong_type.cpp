@@ -44,7 +44,7 @@ std::vector<Test::Result> test_strong_type()
          Test_Size size1;
 
          // value initialization
-         [[maybe_unused]] Test_Size size2(42);
+         MAYBE_UNUSED Test_Size size2(42);
 
          // assignment operator
          size1 = Test_Size(42);
@@ -83,8 +83,8 @@ std::vector<Test::Result> test_container_strong_type()
       {
       Botan_Tests::CHECK("initialization", [](auto&)
          {
-         [[maybe_unused]] Test_Nonce empty_nonce;
-         [[maybe_unused]] Test_Nonce short_nonce(Botan::hex_decode("DEADBEEF"));
+         MAYBE_UNUSED Test_Nonce empty_nonce;
+         MAYBE_UNUSED Test_Nonce short_nonce(Botan::hex_decode("DEADBEEF"));
          }),
 
       Botan_Tests::CHECK("behaves like a standard container", [](auto& result)

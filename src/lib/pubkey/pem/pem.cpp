@@ -11,7 +11,9 @@
 #include <botan/exceptn.h>
 #include <botan/internal/fmt.h>
 
-namespace Botan::PEM_Code {
+namespace Botan {
+   
+namespace PEM_Code {
 
 namespace {
 
@@ -173,5 +175,7 @@ bool matches(DataSource& source, Botan::string_view extra,
 
    return false;
    }
+
+}
 
 }

@@ -14,7 +14,9 @@
 #include <botan/internal/tls_cipher_state.h>
 #include <botan/internal/tls_reader.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -398,4 +400,6 @@ void Record_Layer::set_record_size_limits(const uint16_t outgoing_limit,
    m_incoming_record_size_limit = incoming_limit;
    }
 
-}  // namespace Botan::TLS
+}  // namespace TLS
+
+}  // namespace Botan

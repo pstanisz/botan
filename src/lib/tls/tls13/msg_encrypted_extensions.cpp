@@ -11,7 +11,9 @@
 #include <botan/tls_callbacks.h>
 #include <botan/internal/tls_reader.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Encrypted_Extensions::Encrypted_Extensions(const Client_Hello_13& client_hello, const Policy& policy, Callbacks& cb)
    {
@@ -38,7 +40,7 @@ Encrypted_Extensions::Encrypted_Extensions(const Client_Hello_13& client_hello, 
       //    respected.
       m_extensions.add(new Record_Size_Limit(record_size_limit.value_or(max_record_size)));
       }
-   else if(record_size_limit.has_value() && record_size_limit.value() < max_record_size)
+   else if(Botan::has_value(record_size_limit) && record_size_limit.value() < max_record_size)
       {
       // RFC 8449 4
       //    Endpoints SHOULD advertise the "record_size_limit" extension, even if
@@ -123,5 +125,7 @@ std::vector<uint8_t> Encrypted_Extensions::serialize() const
    {
    return m_extensions.serialize(Connection_Side::Server);
    }
+
+}
 
 }

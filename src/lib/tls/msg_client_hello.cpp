@@ -18,6 +18,7 @@
 #include <botan/credentials_manager.h>
 #include <botan/tls_version.h>
 #include <botan/contains.h>
+#include <botan/optional.h>
 
 #include <botan/internal/stl_util.h>
 #include <botan/internal/tls_reader.h>
@@ -33,7 +34,9 @@
 #include <chrono>
 #include <iterator>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 enum
    {
@@ -368,12 +371,15 @@ Botan::optional<Session_Handle> Client_Hello_12::session_handle() const
    //    If a ticket is presented by the client, the server MUST NOT attempt
    //    to use the Session ID in the ClientHello for stateful session
    //    resumption.
-   if(auto ticket = session_ticket(); !ticket.empty())
+   auto ticket = session_ticket();
+   if(!ticket.empty())
       { return ticket; }
-   else if(const auto& id = session_id(); !id.empty())
+
+   const auto& id = session_id();
+   if (!id.empty())
       { return id; }
-   else
-      { return Botan::nullopt; }
+   
+   return Botan::nullopt;
    }
 
 bool Client_Hello::supports_alpn() const
@@ -828,7 +834,7 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
    // We currently support "record_size_limit" for TLS 1.3 exclusively. Hence,
    // when TLS 1.2 is advertised as a supported protocol, we must not offer this
    // extension.
-   if(policy.record_size_limit().has_value() && !policy.allow_tls12())
+   if(Botan::has_value(policy.record_size_limit()) && !policy.allow_tls12())
       m_data->extensions().add(new Record_Size_Limit(policy.record_size_limit().value()));
 
    if(!next_protocols.empty())
@@ -849,7 +855,7 @@ Client_Hello_13::Client_Hello_13(const Policy& policy,
          m_data->extensions().add(new Supported_Point_Formats(policy.use_ecc_point_compression()));
       }
 
-   if(session.has_value())
+   if(Botan::has_value(session))
       {
       m_data->extensions().add(new PSK(session.value(), cb));
       }
@@ -922,7 +928,7 @@ void Client_Hello_13::retry(const Hello_Retry_Request& hrr,
       {
       // Cipher suite should always be a known suite as this is checked upstream
       const auto cipher = Ciphersuite::by_id(hrr.ciphersuite());
-      BOTAN_ASSERT_NOMSG(cipher.has_value());
+      BOTAN_ASSERT_NOMSG(Botan::has_value(cipher));
 
       // RFC 8446 4.1.4
       //    In [...] its updated ClientHello, the client SHOULD NOT offer
@@ -1077,7 +1083,7 @@ Botan::optional<Protocol_Version> Client_Hello_13::highest_supported_version(con
       if(!v.known_version() || !policy.acceptable_protocol_version(v))
          { continue; }
 
-      result = (result.has_value())
+      result = (Botan::has_value(result))
          ? Botan::optional<Protocol_Version>(std::max(result.value(), v))
          : Botan::optional<Protocol_Version>(v);
       }
@@ -1086,5 +1092,7 @@ Botan::optional<Protocol_Version> Client_Hello_13::highest_supported_version(con
    }
 
 #endif // BOTAN_HAS_TLS_13
+
+}
 
 }

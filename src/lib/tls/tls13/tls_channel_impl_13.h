@@ -16,7 +16,9 @@
 #include <botan/internal/tls_transcript_hash_13.h>
 #include <botan/internal/stl_util.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
 * Generic interface for TLS 1.3 endpoint
@@ -38,11 +40,6 @@ class Channel_Impl_13 : public Channel_Impl
             AggregatedMessages(Channel_Impl_13& channel,
                                Handshake_Layer& handshake_layer);
 
-            AggregatedMessages(const AggregatedMessages&) = delete;
-            AggregatedMessages& operator=(const AggregatedMessages&) = delete;
-            AggregatedMessages(AggregatedMessages&&) = delete;
-            AggregatedMessages& operator=(AggregatedMessages&&) = delete;
-
             ~AggregatedMessages() = default;
 
             /**
@@ -60,6 +57,11 @@ class Channel_Impl_13 : public Channel_Impl
 
             Channel_Impl_13& m_channel;
             Handshake_Layer& m_handshake_layer;
+
+            AggregatedMessages(const AggregatedMessages&);
+            AggregatedMessages& operator=(const AggregatedMessages&);
+            AggregatedMessages(AggregatedMessages&&);
+            AggregatedMessages& operator=(AggregatedMessages&&);
          };
 
       /**
@@ -320,6 +322,8 @@ class Channel_Impl_13 : public Channel_Impl
       bool m_first_message_sent;
       bool m_first_message_received;
    };
+}
+
 }
 
 #endif

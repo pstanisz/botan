@@ -17,7 +17,9 @@
 
 #include <iterator>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -931,4 +933,6 @@ bool EarlyDataIndication::empty() const
    }
 
 #endif
+}
+
 }

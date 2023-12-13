@@ -10,7 +10,7 @@
 #define BOTAN_TLS_HANDSHAKE_STATE_13_H_
 
 #include <botan/optional.h>
-#include <variant>
+#include <botan/variant.h>
 #include <vector>
 #include <functional>
 
@@ -19,20 +19,22 @@
 #include <botan/tls_exceptn.h>
 #include <botan/internal/stl_util.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace Internal {
 class BOTAN_TEST_API Handshake_State_13_Base
    {
    public:
-      bool has_client_hello() const { return m_client_hello.has_value(); }
-      bool has_server_hello() const { return m_server_hello.has_value(); }
-      bool has_server_certificate_chain() const { return m_server_certificate.has_value(); }
-      bool has_client_certificate_chain() const { return m_client_certificate.has_value(); }
-      bool has_hello_retry_request() const { return m_hello_retry_request.has_value(); }
-      bool has_certificate_request() const { return m_certificate_request.has_value(); }
-      bool has_server_finished() const { return m_server_finished.has_value(); }
-      bool has_client_finished() const { return m_client_finished.has_value(); }
+      bool has_client_hello() const { return Botan::has_value(m_client_hello); }
+      bool has_server_hello() const { return Botan::has_value(m_server_hello); }
+      bool has_server_certificate_chain() const { return Botan::has_value(m_server_certificate); }
+      bool has_client_certificate_chain() const { return Botan::has_value(m_client_certificate); }
+      bool has_hello_retry_request() const { return Botan::has_value(m_hello_retry_request); }
+      bool has_certificate_request() const { return Botan::has_value(m_certificate_request); }
+      bool has_server_finished() const { return Botan::has_value(m_server_finished); }
+      bool has_client_finished() const { return Botan::has_value(m_client_finished); }
 
       bool handshake_finished() const { return has_server_finished() && has_client_finished(); }
 
@@ -134,7 +136,7 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
          static_assert(is_generalizable_to<Outbound_Message_T>(message),
                        "Cannot send handshake message of types MsgTs...");
 
-         return std::visit([&](auto msg) -> as_wrapped_references_t<Botan::variant<MsgTs...>>
+         return boost::apply_visitor([&](auto msg) -> as_wrapped_references_t<Botan::variant<MsgTs...>>
             {
             return sending(std::move(msg));
             }, std::move(message));
@@ -142,9 +144,10 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
 
       decltype(auto) received(Handshake_Message_13 message)
          {
-         return std::visit([&](auto msg) -> as_wrapped_references_t<Inbound_Message_T>
+         return boost::apply_visitor([&](auto msg) -> as_wrapped_references_t<Inbound_Message_T>
             {
-            if constexpr(std::is_constructible<Inbound_Message_T, decltype(msg)>::value)
+            // TODO: pstanisz
+            if /*constexpr*/(std::is_constructible<Inbound_Message_T, decltype(msg)>::value)
                {
                return std::reference_wrapper<decltype(msg)>(store(std::move(msg), true));
                }
@@ -155,9 +158,10 @@ class BOTAN_TEST_API Handshake_State_13 : public Internal::Handshake_State_13_Ba
 
       decltype(auto) received(Post_Handshake_Message_13 message)
          {
-         return std::visit([](auto msg) -> Inbound_Post_Handshake_Message_T
+         return boost::apply_visitor([](auto msg) -> Inbound_Post_Handshake_Message_T
             {
-            if constexpr(std::is_constructible<Inbound_Post_Handshake_Message_T, decltype(msg)>::value)
+            // TODO: pstanisz
+            if /*constexpr*/(std::is_constructible<Inbound_Post_Handshake_Message_T, decltype(msg)>::value)
                {
                return msg;
                }
@@ -176,6 +180,8 @@ using Server_Handshake_State_13 = Handshake_State_13<Connection_Side::Server,
       Server_Handshake_13_Message,
       Client_Handshake_13_Message,
       Client_Post_Handshake_13_Message>;
+}
+
 }
 
 #endif

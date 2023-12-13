@@ -17,7 +17,9 @@
 #include <sstream>
 #include <botan/optional.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -35,7 +37,7 @@ class Client_Handshake_State_12 final : public Handshake_State
          return *server_public_key.get();
          }
 
-      bool is_a_resumption() const { return resumed_session.has_value(); }
+      bool is_a_resumption() const { return Botan::has_value(resumed_session); }
 
       bool is_a_renegotiation() const { return m_is_reneg; }
 
@@ -110,7 +112,7 @@ Client_Impl_12::Client_Impl_12(const Channel_Impl::Downgrade_Information& downgr
       {
       // Downgrade initiated after a TLS 1.2 session was found. No communication
       // has happened yet but the found session should be used for resumption.
-      BOTAN_ASSERT_NOMSG(downgrade_info.tls12_session.has_value() &&
+      BOTAN_ASSERT_NOMSG(Botan::has_value(downgrade_info.tls12_session) &&
                          downgrade_info.tls12_session->session.version().is_pre_tls_13());
       send_client_hello(state, false, downgrade_info.tls12_session->session.version(), downgrade_info.tls12_session, downgrade_info.next_protocols);
       }
@@ -162,15 +164,16 @@ void Client_Impl_12::send_client_hello(Handshake_State& state_base,
    if(!force_full_renegotiation)
       {
       // if no session is provided, we need to try and find one opportunistically
-      if(!session_and_handle.has_value() && !m_info.empty())
+      if(!Botan::has_value(session_and_handle) && !m_info.empty())
          {
-         if(auto sessions = session_manager().find(m_info, callbacks(), policy()); !sessions.empty())
+         auto sessions = session_manager().find(m_info, callbacks(), policy()); 
+         if(!sessions.empty())
             {
             session_and_handle = std::move(sessions.front());
             }
          }
 
-      if(session_and_handle.has_value())
+      if(Botan::has_value(session_and_handle))
          {
          /*
          Ensure that the session protocol cipher and version are acceptable
@@ -323,8 +326,8 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
                              "Server replied with ciphersuite we didn't send");
          }
 
-      if(const auto suite = Ciphersuite::by_id(state.server_hello()->ciphersuite());
-         !suite || !suite->usable_in_version(state.server_hello()->legacy_version()))
+      const auto suite = Ciphersuite::by_id(state.server_hello()->ciphersuite());
+      if(!suite || !suite->usable_in_version(state.server_hello()->legacy_version()))
          {
          throw TLS_Exception(AlertType::HandshakeFailure,
                              "Server replied using a ciphersuite not allowed in version it offered");
@@ -353,8 +356,8 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
          //   abort the handshake with an "illegal_parameter" alert.
          //
          // TLS 1.3 servers will still set the magic string to DOWNGRADE_TLS12. Don't abort in this case.
-         if(auto requested = state.server_hello()->random_signals_downgrade();
-            requested.has_value() && requested.value() <= Version_Code::TLS_V11)
+         auto requested = state.server_hello()->random_signals_downgrade();
+         if(Botan::has_value(requested) && requested.value() <= Version_Code::TLS_V11)
             throw TLS_Exception(AlertType::IllegalParameter, "Downgrade attack detected");
          }
 
@@ -399,7 +402,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
       if(server_returned_same_session_id)
          {
          // successful resumption
-         BOTAN_ASSERT_NOMSG(state.resumed_session.has_value());
+         BOTAN_ASSERT_NOMSG(Botan::has_value(state.resumed_session));
 
          /*
          * In this case, we offered the version used in the original
@@ -456,7 +459,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
                }
             }
 
-         state.resumed_session.reset(); // non-null if we were attempting a resumption
+         Botan::reset(state.resumed_session); // non-null if we were attempting a resumption
 
          if(state.client_hello()->legacy_version().is_datagram_protocol() !=
             state.server_hello()->legacy_version().is_datagram_protocol())
@@ -790,12 +793,15 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
       //    discards any Session ID that was sent in the ServerHello.
       const auto handle = [&]() -> Botan::optional<Session_Handle>
          {
-         if(const auto& session_ticket = state.session_ticket(); !session_ticket.empty())
+         const auto& session_ticket = state.session_ticket();
+         if(!session_ticket.empty())
             { return session_ticket; }
-         else if(const auto& session_id = state.server_hello()->session_id(); !session_id.empty())
+         
+         const auto& session_id = state.server_hello()->session_id();
+         if(!session_id.empty())
             { return session_id; }
-         else
-            { return Botan::nullopt; }
+
+         return Botan::nullopt;
          }();
 
       // Give the application a chance for a final veto before fully
@@ -811,7 +817,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
          return summary;
          }());
 
-      if(handle.has_value())
+      if(Botan::has_value(handle))
          {
          const bool should_save =
             callbacks().tls_should_persist_resumption_information(session_info);
@@ -848,5 +854,7 @@ void Client_Impl_12::process_handshake_msg(const Handshake_State* active_state,
    else
       throw Unexpected_Message("Unknown handshake message received");
    }
+
+}
 
 }

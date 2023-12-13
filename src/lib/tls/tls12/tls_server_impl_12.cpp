@@ -17,7 +17,9 @@
 #include <botan/tls_magic.h>
 #include <botan/contains.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 class Server_Handshake_State final : public Handshake_State
    {
@@ -68,7 +70,7 @@ Botan::optional<Session> check_for_resume(const Session_Handle& handle_to_resume
                                         const Client_Hello_12* client_hello)
    {
    auto session = session_manager.retrieve(handle_to_resume, cb, policy);
-   if(!session.has_value())
+   if(!Botan::has_value(session))
       return Botan::nullopt;
 
    // wrong version
@@ -153,7 +155,7 @@ uint16_t choose_ciphersuite(
 
       const auto suite = Ciphersuite::by_id(suite_id);
 
-      if(!suite.has_value() || !suite->valid())
+      if(!Botan::has_value(suite) || !suite->valid())
          {
          continue;
          }
@@ -474,7 +476,7 @@ void Server_Impl_12::process_client_hello_msg(const Handshake_State* active_stat
    const auto session_handle = pending_state.client_hello()->session_handle();
 
    Botan::optional<Session> session_info;
-   if(pending_state.allow_session_resumption() && session_handle.has_value())
+   if(pending_state.allow_session_resumption() && Botan::has_value(session_handle))
       {
       session_info = check_for_resume(session_handle.value(),
                                       session_manager(),
@@ -489,7 +491,7 @@ void Server_Impl_12::process_client_hello_msg(const Handshake_State* active_stat
       m_next_protocol = callbacks().tls_server_choose_app_protocol(pending_state.client_hello()->next_protocols());
       }
 
-   if(session_info.has_value())
+   if(Botan::has_value(session_info))
       {
       this->session_resume(pending_state, {session_info.value(), session_handle.value()});
       }
@@ -628,7 +630,7 @@ void Server_Impl_12::process_finished_msg(Server_Handshake_State& pending_state,
          auto handle = session_manager().establish(session_info, pending_state.server_hello()->session_id(), !pending_state.server_hello()->supports_session_ticket());
 
          if(pending_state.server_hello()->supports_session_ticket()
-            && handle.has_value() && handle->is_ticket())
+            && Botan::has_value(handle) && handle->is_ticket())
             {
             pending_state.new_session_ticket(
                new New_Session_Ticket_12(pending_state.handshake_io(),
@@ -763,7 +765,7 @@ void Server_Impl_12::session_resume(Server_Handshake_State& pending_state,
 
    if(pending_state.server_hello()->supports_session_ticket())
       {
-      if(new_handle.has_value() && new_handle->is_ticket())
+      if(Botan::has_value(new_handle) && new_handle->is_ticket())
          {
          pending_state.new_session_ticket(
             new New_Session_Ticket_12(pending_state.handshake_io(),
@@ -928,4 +930,6 @@ void Server_Impl_12::session_create(Server_Handshake_State& pending_state)
 
    pending_state.server_hello_done(new Server_Hello_Done(pending_state.handshake_io(), pending_state.hash()));
    }
+}
+
 }

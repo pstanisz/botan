@@ -14,7 +14,9 @@
 #include <string>
 #include <functional>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 // NOLINTNEXTLINE(*-no-int-to-ptr)
 ReturnValue* ThrowException = reinterpret_cast< ReturnValue* >(-1);
@@ -770,5 +772,7 @@ bool LowLevel::C_CancelFunction(SessionHandle session,
    {
    return handle_return_value(m_func_list_ptr->C_CancelFunction(session), return_value);
    }
+
+}
 
 }

@@ -16,7 +16,9 @@
    #include <botan/internal/tls_cipher_state.h>
 #endif
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -98,4 +100,6 @@ bool Finished_13::verify(Cipher_State* cipher_state, const Transcript_Hash& tran
    return cipher_state->verify_peer_finished_mac(transcript_hash, m_verification_data);
    }
 #endif
+}
+
 }

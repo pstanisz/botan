@@ -13,7 +13,9 @@
 #include <botan/internal/loadstor.h>
 #include <chrono>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager_SQL::Session_Manager_SQL(std::shared_ptr<SQL_Database> db,
                                          Botan::string_view passphrase,
@@ -313,5 +315,7 @@ void Session_Manager_SQL::prune_session_cache()
    remove_oldest->bind(1, m_max_sessions);
    remove_oldest->spin();
    }
+
+}
 
 }

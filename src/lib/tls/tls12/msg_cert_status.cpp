@@ -14,7 +14,9 @@
 #include <botan/ber_dec.h>
 #include <botan/ocsp.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Certificate_Status::Certificate_Status(const std::vector<uint8_t>& buf, const Connection_Side)
    {
@@ -68,5 +70,7 @@ std::vector<uint8_t> Certificate_Status::serialize() const
    buf += m_response;
    return buf;
    }
+
+}
 
 }

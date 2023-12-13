@@ -791,7 +791,7 @@ class FnTest : public Test
 
          for(auto fn_variant = m_fns.crbegin(); fn_variant != m_fns.crend(); ++fn_variant)
             {
-            std::visit([&](auto&& fn)
+            boost::apply_visitor([&](auto&& fn)
                {
                using T = std::decay_t<decltype(fn)>;
                if constexpr(std::is_same<T, test_fn>::value)

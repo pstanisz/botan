@@ -19,7 +19,9 @@
   #include <botan/internal/tls_server_impl_13.h>
 #endif
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /*
 * TLS Server Constructor
@@ -162,4 +164,6 @@ std::string Server::application_protocol() const
    {
    return m_impl->application_protocol();
    }
+}
+
 }

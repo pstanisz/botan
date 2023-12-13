@@ -10,7 +10,9 @@
 #include <botan/tls_version.h>
 #include <botan/tls_exceptn.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 std::string Protocol_Version::to_string() const
    {
@@ -90,5 +92,7 @@ bool Protocol_Version::known_version() const
 #endif
            m_version == static_cast<uint16_t>(Version_Code::DTLS_V12));
    }
+
+}
 
 }

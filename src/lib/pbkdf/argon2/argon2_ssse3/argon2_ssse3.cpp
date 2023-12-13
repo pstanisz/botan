@@ -72,17 +72,18 @@ class SIMD_2x64 final
          {
          static_assert(ROT > 0 && ROT < 64, "Invalid rotation constant");
 
-         if constexpr(ROT == 16)
+         // TODO: pstanisz to check
+         if /*constexpr*/(ROT == 16)
             {
             auto tab = _mm_setr_epi8(2, 3, 4, 5, 6, 7, 0, 1, 10, 11, 12, 13, 14, 15, 8, 9);
             return SIMD_2x64(_mm_shuffle_epi8(m_simd, tab));
             }
-         else if constexpr(ROT == 24)
+         else if /*constexpr*/(ROT == 24)
             {
             auto tab = _mm_setr_epi8(3, 4, 5, 6, 7, 0, 1, 2, 11, 12, 13, 14, 15, 8, 9, 10);
             return SIMD_2x64(_mm_shuffle_epi8(m_simd, tab));
          }
-         else if constexpr(ROT == 32)
+         else if /*constexpr*/(ROT == 32)
             {
             auto tab = _mm_setr_epi8(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11);
             return SIMD_2x64(_mm_shuffle_epi8(m_simd, tab));

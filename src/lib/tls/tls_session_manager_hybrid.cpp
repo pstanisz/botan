@@ -11,7 +11,9 @@
 
 #include <functional>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager_Hybrid::Session_Manager_Hybrid(
    std::unique_ptr<Session_Manager> stateful,
@@ -84,5 +86,7 @@ Botan::optional<Session> Session_Manager_Hybrid::retrieve(const Session_Handle& 
    {
    return m_stateless.emits_session_tickets() || m_stateful->emits_session_tickets();
    }
+
+}
 
 }

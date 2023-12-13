@@ -193,7 +193,7 @@ const std::vector<uint8_t>& Certificate_Status_Request::get_ocsp_response() cons
 std::vector<uint8_t> Certificate_Status_Request::serialize(Connection_Side) const
    {
    BOTAN_ASSERT_NONNULL(m_impl);
-   return std::visit([](const auto& c) { return c.serialize(); }, m_impl->content);
+   return boost::apply_visitor([](const auto& c) { return c.serialize(); }, m_impl->content);
    }
 
 }

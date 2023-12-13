@@ -9,7 +9,9 @@
 #include <botan/exceptn.h>
 #include <botan/internal/fmt.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 std::string kdf_algo_to_string(KDF_Algo algo)
    {
@@ -177,5 +179,7 @@ std::string group_param_to_string(Group_Params group)
          return "";
       }
    }
+
+}
 
 }

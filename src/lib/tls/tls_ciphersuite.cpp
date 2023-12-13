@@ -13,7 +13,9 @@
 #include <botan/hash.h>
 #include <algorithm>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 size_t Ciphersuite::nonce_bytes_from_handshake() const
    {
@@ -222,3 +224,4 @@ bool Ciphersuite::is_usable() const
 
 }
 
+}

@@ -22,7 +22,9 @@
 #include <botan/string_view.h>
 #include <botan/span.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
 * Generic interface for TLS endpoint
@@ -167,6 +169,8 @@ class BOTAN_PUBLIC_API(2,0) Channel
 
       virtual std::string application_protocol() const = 0;
    };
+}
+
 }
 
 #endif

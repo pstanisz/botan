@@ -23,7 +23,9 @@
 #include <vector>
 #include <botan/span.h>
 
-namespace Botan::Dilithium {
+namespace Botan {
+
+namespace Dilithium {
 
 class Polynomial
    {
@@ -1598,6 +1600,8 @@ class PolynomialMatrix
          return m_mat;
          }
    };
+}
+
 }
 
 #endif

@@ -17,7 +17,9 @@
 #include <botan/optional.h>
 #include <sstream>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 std::vector<Signature_Scheme> Policy::allowed_signature_schemes() const
    {
@@ -637,5 +639,7 @@ std::vector<std::string> Strict_Policy::allowed_key_exchange_methods() const
    {
    return { "ECDH" };
    }
+
+}
 
 }

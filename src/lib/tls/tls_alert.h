@@ -60,9 +60,14 @@ enum class AlertType {
    None                          = 256,
 
    // Compat enum variants, will be removed in a future major release
-   CLOSE_NOTIFY BOTAN_DEPRECATED("Use CloseNotify") = CloseNotify,
-   NO_APPLICATION_PROTOCOL BOTAN_DEPRECATED("Use NoApplicationProtocol") = NoApplicationProtocol,
-   PROTOCOL_VERSION BOTAN_DEPRECATED("Use ProtocolVersion") = ProtocolVersion,
+   CLOSE_NOTIFY = CloseNotify,
+   NO_APPLICATION_PROTOCOL = NoApplicationProtocol,
+   PROTOCOL_VERSION = ProtocolVersion,
+
+   // TODO: pstanisz
+   // CLOSE_NOTIFY BOTAN_DEPRECATED("Use CloseNotify") = CloseNotify,
+   // NO_APPLICATION_PROTOCOL BOTAN_DEPRECATED("Use NoApplicationProtocol") = NoApplicationProtocol,
+   // PROTOCOL_VERSION BOTAN_DEPRECATED("Use ProtocolVersion") = ProtocolVersion,
 };
 
 /**

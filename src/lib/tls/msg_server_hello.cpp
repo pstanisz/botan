@@ -25,7 +25,9 @@
 
 #include <array>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -789,7 +791,7 @@ Server_Hello_13::Server_Hello_13(const Client_Hello_13& ch,
    // initializer list, accordingly.
    m_data->extensions().add(new Supported_Versions(Version_Code::TLS_V13));
 
-   if(key_exchange_group.has_value())
+   if(Botan::has_value(key_exchange_group))
       { m_data->extensions().add(new Key_Share(key_exchange_group.value(), cb, rng)); }
 
    auto& ch_exts = ch.extensions();
@@ -886,5 +888,7 @@ Hello_Retry_Request::Hello_Retry_Request(const Client_Hello_13& ch, Named_Group 
    }
 
 #endif // BOTAN_HAS_TLS_13
+
+}
 
 }

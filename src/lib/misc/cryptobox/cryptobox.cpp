@@ -15,7 +15,9 @@
 #include <botan/internal/loadstor.h>
 #include <botan/mem_ops.h>
 
-namespace Botan::CryptoBox {
+namespace Botan {
+
+namespace CryptoBox {
 
 namespace {
 
@@ -179,5 +181,7 @@ std::string decrypt(Botan::string_view input,
                   input.size(), passphrase);
    }
 BOTAN_DIAGNOSTIC_POP
+
+}
 
 }

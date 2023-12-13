@@ -19,7 +19,9 @@
 
 #include <botan/span.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 New_Session_Ticket_12::New_Session_Ticket_12(Handshake_IO& io,
                                              Handshake_Hash& hash,
@@ -124,7 +126,7 @@ Botan::optional<uint32_t> New_Session_Ticket_13::early_data_byte_limit() const
       return Botan::nullopt;
 
    const EarlyDataIndication* ext = m_extensions.get<EarlyDataIndication>();
-   BOTAN_ASSERT_NOMSG(ext->max_early_data_size().has_value());
+   BOTAN_ASSERT_NOMSG(Botan::has_value(ext->max_early_data_size()));
    return ext->max_early_data_size().value();
    }
 
@@ -152,5 +154,7 @@ std::vector<uint8_t> New_Session_Ticket_13::serialize() const
    }
 
 #endif
+
+}
 
 }

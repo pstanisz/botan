@@ -8,7 +8,9 @@
 #include <botan/tls_alert.h>
 #include <botan/tls_exceptn.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Alert::Alert(const secure_vector<uint8_t>& buf)
    {
@@ -125,5 +127,7 @@ std::string Alert::type_string() const
 
    return "unrecognized_alert_" + std::to_string(static_cast<size_t>(type()));
    }
+
+}
 
 }

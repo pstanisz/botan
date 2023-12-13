@@ -15,7 +15,9 @@
 #include <botan/internal/loadstor.h>
 #include <botan/data_src.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
 * Create a new Certificate message
@@ -101,5 +103,7 @@ std::vector<uint8_t> Certificate_12::serialize() const
 
    return buf;
    }
+
+}
 
 }

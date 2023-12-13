@@ -20,9 +20,12 @@ namespace Botan {
 
 #else
 
-#define NO_DISCARD void
+#define NO_DISCARD /*nothing*/
 
 #endif
+
+// TODO: pstanisz
+#define MAYBE_UNUSED /*nothing*/
 
 }
 

@@ -12,7 +12,9 @@
 #include <botan/tls_policy.h>
 #include <botan/rng.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager::Session_Manager(const std::shared_ptr<RandomNumberGenerator>& rng)
    : m_rng(rng)
@@ -256,5 +258,7 @@ Botan::optional<std::pair<Session, uint16_t>>
    }
 
 #endif
+
+}
 
 }

@@ -20,7 +20,9 @@
 
 #if defined(BOTAN_HAS_TLS_13)
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -300,7 +302,7 @@ std::vector<uint8_t> PSK::serialize(Connection_Side side) const
    {
    std::vector<uint8_t> result;
 
-   std::visit(overloaded
+   boost::apply_visitor(overloaded
       {
       [&](const Server_PSK& psk)
          {
@@ -362,6 +364,8 @@ bool PSK::validate_binder(const PSK& server_psk, const std::vector<uint8_t>& bin
    return psks[index].binder == binder;
    }
 
-}  // Botan::TLS
+}  // TLS
+
+}  // Botan
 
 #endif  // HAS_TLS_13

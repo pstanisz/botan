@@ -35,11 +35,18 @@ enum class ECIES_Flags : uint32_t {
    /// (decryption only) if set: test if the (ephemeral) public key is on the curve
    CheckMode = 8,
 
-   NONE BOTAN_DEPRECATED("Use None") = None,
-   SINGLE_HASH_MODE BOTAN_DEPRECATED("Use SingleHashMode") = SingleHashMode,
-   COFACTOR_MODE BOTAN_DEPRECATED("Use CofactorMode") = CofactorMode,
-   OLD_COFACTOR_MODE BOTAN_DEPRECATED("Use OldCofactorMode") = OldCofactorMode,
-   CHECK_MODE BOTAN_DEPRECATED("Use CheckMode") = CheckMode,
+   NONE = None,
+   SINGLE_HASH_MODE = SingleHashMode,
+   COFACTOR_MODE = CofactorMode,
+   OLD_COFACTOR_MODE = OldCofactorMode,
+   CHECK_MODE = CheckMode,
+
+   // TODO: pstanisz to check
+   // NONE BOTAN_DEPRECATED("Use None") = None,
+   // SINGLE_HASH_MODE BOTAN_DEPRECATED("Use SingleHashMode") = SingleHashMode,
+   // COFACTOR_MODE BOTAN_DEPRECATED("Use CofactorMode") = CofactorMode,
+   // OLD_COFACTOR_MODE BOTAN_DEPRECATED("Use OldCofactorMode") = OldCofactorMode,
+   // CHECK_MODE BOTAN_DEPRECATED("Use CheckMode") = CheckMode,
    };
 
 inline ECIES_Flags operator |(ECIES_Flags a, ECIES_Flags b)

@@ -610,7 +610,8 @@ Dilithium_PrivateKey::Dilithium_PrivateKey(RandomNumberGenerator& rng, Dilithium
    Dilithium::PolynomialVector s2(mode.k());
    Dilithium::PolynomialVector::fill_polyvec_uniform_eta(s2, rhoprime, mode.l(), mode);
 
-   auto [ t0, t1 ] = calculate_t0_and_t1(mode, rho, s1, s2);
+   Dilithium::PolynomialVector t0, t1;
+   std::tie(t0, t1) = calculate_t0_and_t1(mode, rho, s1, s2);
 
    m_public = std::make_shared<Dilithium_PublicKeyInternal>(mode, rho, std::move(t1));
 

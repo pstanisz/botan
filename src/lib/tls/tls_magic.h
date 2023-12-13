@@ -46,8 +46,12 @@ enum class Connection_Side {
    Client = 1,
    Server = 2,
 
-   CLIENT BOTAN_DEPRECATED("Use Connection_Side::Client") = Client,
-   SERVER BOTAN_DEPRECATED("Use Connection_Side::Server") = Server,
+   CLIENT = Client,
+   SERVER = Server,
+   
+   // TODO: pstanisz to check
+   // CLIENT BOTAN_DEPRECATED("Use Connection_Side::Client") = Client,
+   // SERVER BOTAN_DEPRECATED("Use Connection_Side::Server") = Server,
 };
 
 enum class Handshake_Type {

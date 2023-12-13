@@ -167,7 +167,7 @@ DL_Group get_dl_group(const Botan::variant<TLS::Group_Params, DL_Group>& group)
    // TLS 1.2 allows specifying arbitrary DL_Group parameters in-lieu of
    // a standardized DH group identifier. TLS 1.3 just offers pre-defined
    // groups.
-   return std::visit(overloaded
+   return boost::apply_visitor(overloaded
       {
       [](const DL_Group& dl_group) { return dl_group; },
       [&](TLS::Group_Params group_param) { return DL_Group(group_param_to_string(group_param)); }

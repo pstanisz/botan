@@ -12,7 +12,9 @@
 #include <botan/internal/fmt.h>
 #include <tuple>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 namespace {
 using PSS_Params = std::tuple<size_t, MechanismType, MGF>;
@@ -309,5 +311,7 @@ MechanismWrapper MechanismWrapper::create_ecdh_mechanism(Botan::string_view para
    mech.m_mechanism.ulParameterLen = sizeof(Ecdh1DeriveParams);
    return mech;
    }
+
+}
 
 }

@@ -17,7 +17,9 @@
 #include <vector>
 #include <botan/span.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 /**
  * Wraps the behaviour of the TLS 1.3 transcript hash as described in
@@ -95,6 +97,8 @@ class BOTAN_TEST_API Transcript_Hash_State
       Transcript_Hash m_truncated;
    };
 
-}
+}  // namespace TLS
+
+}  // namespace Botan
 
 #endif // BOTAN_TLS_TRANSCRIPT_HASH_13_H_

@@ -16,7 +16,9 @@
 #include <botan/der_enc.h>
 #include <botan/hex.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 const std::vector<Signature_Scheme>& Signature_Scheme::all_available_schemes()
    {
@@ -360,4 +362,6 @@ std::vector<AlgorithmIdentifier> to_algorithm_identifiers(const std::vector<Sign
    return result;
    }
 
-}  // Botan::TLS
+}  // TLS
+
+} // Botan

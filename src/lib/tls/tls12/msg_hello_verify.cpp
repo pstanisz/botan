@@ -8,7 +8,9 @@
 #include <botan/tls_messages.h>
 #include <botan/mac.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Hello_Verify_Request::Hello_Verify_Request(const std::vector<uint8_t>& buf)
    {
@@ -60,5 +62,7 @@ std::vector<uint8_t> Hello_Verify_Request::serialize() const
    bits += m_cookie;
    return bits;
    }
+
+}
 
 }

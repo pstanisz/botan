@@ -119,16 +119,29 @@ class BOTAN_PUBLIC_API(3,0) Key_Constraints
 
          // Deprecated SHOUTING_CASE names for Key_Constraints
          // will be removed in a future major release
-         NO_CONSTRAINTS    BOTAN_DEPRECATED("Use None")             = None,
-         DIGITAL_SIGNATURE BOTAN_DEPRECATED("Use DigitalSignature") = DigitalSignature,
-         NON_REPUDIATION   BOTAN_DEPRECATED("Use NonRepudiation")   = NonRepudiation,
-         KEY_ENCIPHERMENT  BOTAN_DEPRECATED("Use KeyEncipherment")  = KeyEncipherment,
-         DATA_ENCIPHERMENT BOTAN_DEPRECATED("Use DataEncipherment") = DataEncipherment,
-         KEY_AGREEMENT     BOTAN_DEPRECATED("Use KeyAgreement")     = KeyAgreement,
-         KEY_CERT_SIGN     BOTAN_DEPRECATED("Use KeyCertSign")      = KeyCertSign,
-         CRL_SIGN          BOTAN_DEPRECATED("Use CrlSign")          = CrlSign,
-         ENCIPHER_ONLY     BOTAN_DEPRECATED("Use EncipherOnly")     = EncipherOnly,
-         DECIPHER_ONLY     BOTAN_DEPRECATED("Use DecipherOnly")     = DecipherOnly,
+
+         NO_CONSTRAINTS    = None,
+         DIGITAL_SIGNATURE = DigitalSignature,
+         NON_REPUDIATION   = NonRepudiation,
+         KEY_ENCIPHERMENT  = KeyEncipherment,
+         DATA_ENCIPHERMENT = DataEncipherment,
+         KEY_AGREEMENT     = KeyAgreement,
+         KEY_CERT_SIGN     = KeyCertSign,
+         CRL_SIGN          = CrlSign,
+         ENCIPHER_ONLY     = EncipherOnly,
+         DECIPHER_ONLY     = DecipherOnly,
+
+         // TODO: pstanisz to check
+         // NO_CONSTRAINTS    BOTAN_DEPRECATED("Use None")             = None,
+         // DIGITAL_SIGNATURE BOTAN_DEPRECATED("Use DigitalSignature") = DigitalSignature,
+         // NON_REPUDIATION   BOTAN_DEPRECATED("Use NonRepudiation")   = NonRepudiation,
+         // KEY_ENCIPHERMENT  BOTAN_DEPRECATED("Use KeyEncipherment")  = KeyEncipherment,
+         // DATA_ENCIPHERMENT BOTAN_DEPRECATED("Use DataEncipherment") = DataEncipherment,
+         // KEY_AGREEMENT     BOTAN_DEPRECATED("Use KeyAgreement")     = KeyAgreement,
+         // KEY_CERT_SIGN     BOTAN_DEPRECATED("Use KeyCertSign")      = KeyCertSign,
+         // CRL_SIGN          BOTAN_DEPRECATED("Use CrlSign")          = CrlSign,
+         // ENCIPHER_ONLY     BOTAN_DEPRECATED("Use EncipherOnly")     = EncipherOnly,
+         // DECIPHER_ONLY     BOTAN_DEPRECATED("Use DecipherOnly")     = DecipherOnly,
       };
 
       Key_Constraints(const Key_Constraints& other) = default;
@@ -163,10 +176,16 @@ class BOTAN_PUBLIC_API(3,0) Key_Constraints
       bool includes(Key_Constraints other) const { return (m_value & other.m_value) == other.m_value; }
 
       // Return true if any of the bits provided are set
-      template <typename... Ts>
-      bool includes_any(Ts&& ...bits) const
+      template <typename T>
+      bool includes_any(T&& bit) const
          {
-         return (m_value & (bits | ...)) > 0;
+         return (m_value & bit) > 0;
+         }
+
+      template <typename T, typename... Ts>
+      bool includes_any(T&& bit, Ts&& ...bits) const
+         {
+         return (m_value & (bit | includes_any(bits...))) > 0;
          }
 
       bool empty() const { return m_value == 0; }

@@ -233,14 +233,33 @@ ResultT concat_as(Ts&& ...buffers)
    return concat(ResultT(), std::forward<Ts>(buffers)...);
    }
 
-template <typename Alt, typename... Ts>
-constexpr bool holds_any_of(const Botan::variant<Ts...>& v) noexcept {
-    return Botan::holds_alternative<Alt>(v);
-}
+// template <typename Alt, typename... Ts>
+// constexpr bool holds_any_of(const Botan::variant<Ts...>& v) noexcept {
+//     return Botan::holds_alternative<Alt>(v);
+// }
 
-template <typename Alt, typename... Alts, typename... Ts>
+template <typename... Ts>
+struct Variant_checker {
+    Variant_checker(const Botan::variant<Ts...>& variant) : m_variant(variant) {}
+    
+    template <typename Alt>
+    constexpr bool holds_any_of() noexcept {
+        return Botan::holds_alternative<Alt>(m_variant);
+    }
+    
+    template <typename Alt1, typename Alt2, typename... Alts>
+    constexpr bool holds_any_of() noexcept {
+        return Botan::holds_alternative<Alt1>(m_variant) || holds_any_of<Alt2, Alts...>();
+    }
+    
+    const Botan::variant<Ts...>& m_variant;
+};
+
+template <typename... Alts, typename... Ts>
 constexpr bool holds_any_of(const Botan::variant<Ts...>& v) noexcept {
-    return Botan::holds_alternative<Alt>(v) || holds_any_of<Alts..., Ts...>(v);
+   Variant_checker<Ts...> checker(v);
+   return checker.template holds_any_of<Alts...>();
+   //return Botan::holds_alternative<Alt>(v) || holds_any_of<Alts..., Ts...>(v);
 }
 
 template<typename GeneralVariantT, typename SpecialT>
@@ -288,7 +307,7 @@ constexpr GeneralVariantT generalize_to(Botan::variant<SpecialTs...> specific) n
    {
    static_assert(is_generalizable_to<GeneralVariantT>(specific),
                  "Desired general type must be implicitly constructible by all types of the specialized Botan::variant<>");
-   return Botan::visit([](auto s) -> GeneralVariantT { return s; }, std::move(specific));
+   return boost::apply_visitor([](auto s) -> GeneralVariantT { return s; }, std::move(specific));
    }
 
 // This is a helper utility to emulate pattern matching with std::visit.

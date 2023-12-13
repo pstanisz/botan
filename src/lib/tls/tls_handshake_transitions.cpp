@@ -12,7 +12,9 @@
 
 #include <sstream>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 namespace {
 
@@ -187,5 +189,7 @@ bool Handshake_Transitions::change_cipher_spec_expected() const
    {
    return (bitmask_for_handshake_type(Handshake_Type::HandshakeCCS) & m_hand_expecting_mask) != 0;
    }
+
+}
 
 }

@@ -18,7 +18,9 @@
 #include <botan/rng.h>
 #include <botan/internal/blinding.h>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 RSA_PublicKeyImportProperties::RSA_PublicKeyImportProperties(const BigInt& modulus, const BigInt& pub_exponent)
    : PublicKeyProperties(KeyType::Rsa), m_modulus(modulus), m_pub_exponent(pub_exponent)
@@ -499,6 +501,8 @@ PKCS11_RSA_KeyPair generate_rsa_keypair(Session& session, const RSA_PublicKeyGen
 
    return std::make_pair(PKCS11_RSA_PublicKey(session, pub_key_handle), PKCS11_RSA_PrivateKey(session, priv_key_handle));
    }
+
+}
 
 }
 

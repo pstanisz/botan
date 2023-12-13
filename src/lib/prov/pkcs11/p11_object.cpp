@@ -9,7 +9,9 @@
 #include <botan/p11_object.h>
 #include <map>
 
-namespace Botan::PKCS11 {
+namespace Botan {
+
+namespace PKCS11 {
 
 AttributeContainer::AttributeContainer(ObjectClass object_class)
    {
@@ -225,4 +227,6 @@ ObjectHandle Object::copy(const AttributeContainer& modified_attributes) const
                           &copied_handle);
    return copied_handle;
    }
+}
+
 }

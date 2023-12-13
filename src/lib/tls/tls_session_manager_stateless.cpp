@@ -14,7 +14,9 @@
 
 #include <botan/internal/stl_util.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 Session_Manager_Stateless::Session_Manager_Stateless(
    const std::shared_ptr<Credentials_Manager>& creds,
@@ -89,5 +91,7 @@ Botan::optional<SymmetricKey> Session_Manager_Stateless::get_ticket_key() noexce
       return Botan::nullopt;
       }
    }
+
+}
 
 }

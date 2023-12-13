@@ -10,7 +10,9 @@
 
 #include <botan/tls_ciphersuite.h>
 
-namespace Botan::TLS {
+namespace Botan {
+   
+namespace TLS {
 
 //static
 const std::vector<Ciphersuite>& Ciphersuite::all_known_ciphersuites()
@@ -115,5 +117,7 @@ const std::vector<Ciphersuite>& Ciphersuite::all_known_ciphersuites()
 
    return g_ciphersuite_list;
    }
+
+}
 
 }

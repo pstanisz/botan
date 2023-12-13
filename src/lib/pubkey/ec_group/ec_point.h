@@ -21,9 +21,14 @@ enum class EC_Point_Format {
    Compressed = 1,
    Hybrid = 2,
 
-   UNCOMPRESSED BOTAN_DEPRECATED("Use EC_Point_Format::Uncompressed") = Uncompressed,
-   COMPRESSED BOTAN_DEPRECATED("Use EC_Point_Format::Compressed") = Compressed,
-   HYBRID BOTAN_DEPRECATED("Use EC_Point_Format::Hybrid") = Hybrid,
+   UNCOMPRESSED = Uncompressed,
+   COMPRESSED   = Compressed,
+   HYBRID       = Hybrid,
+
+   // TODO: pstanisz to check
+   // UNCOMPRESSED BOTAN_DEPRECATED("Use EC_Point_Format::Uncompressed") = Uncompressed,
+   // COMPRESSED BOTAN_DEPRECATED("Use EC_Point_Format::Compressed") = Compressed,
+   // HYBRID BOTAN_DEPRECATED("Use EC_Point_Format::Hybrid") = Hybrid,
 };
 
 /**
